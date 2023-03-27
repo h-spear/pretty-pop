@@ -4,7 +4,9 @@ import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Entity
@@ -21,6 +23,12 @@ public class Member extends BaseEntity {
     private String password;
 
     private String name;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+    private int age;
+    private LocalDate birthDate;
+
     private String nickname;
 
     @Embedded
@@ -30,6 +38,10 @@ public class Member extends BaseEntity {
 
     private String email;
     private int point;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Builder.Default
+    private List<String> roles = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
@@ -47,23 +59,31 @@ public class Member extends BaseEntity {
         this.nickname = nickname;
     }
 
-    public void changePersonalInfo(String name, Address address, String phoneNumber, String email) {
+    public void changePersonalInfo(String name, Gender gender, int age, LocalDate birthDate, String nickname, Address address, String phoneNumber, String email) {
         this.name = name;
+        this.gender = gender;
+        this.age = age;
+        this.birthDate = birthDate;
+        this.nickname = nickname;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.email = email;
     }
 
     @Builder
-    public Member(String username, String password, String name, String nickname, Address address, String phoneNumber, String email, int point) {
+    public Member(String username, String password, String name, Gender gender, int age, LocalDate birthDate, String nickname, Address address, String phoneNumber, String email, int point) {
         this.username = username;
         this.password = password;
         this.name = name;
+        this.gender = gender;
+        this.age = age;
+        this.birthDate = birthDate;
         this.nickname = nickname;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.point = point;
+        this.roles.add("ROLE_USER");
     }
 
     public void addCartItem(Item item, int count) {
