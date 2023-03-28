@@ -26,7 +26,6 @@ public class Member extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
-    private int age;
     private LocalDate birthDate;
 
     private String nickname;
@@ -59,10 +58,9 @@ public class Member extends BaseEntity {
         this.nickname = nickname;
     }
 
-    public void changePersonalInfo(String name, Gender gender, int age, LocalDate birthDate, String nickname, Address address, String phoneNumber, String email) {
+    public void changePersonalInfo(String name, Gender gender, LocalDate birthDate, String nickname, Address address, String phoneNumber, String email) {
         this.name = name;
         this.gender = gender;
-        this.age = age;
         this.birthDate = birthDate;
         this.nickname = nickname;
         this.address = address;
@@ -70,13 +68,23 @@ public class Member extends BaseEntity {
         this.email = email;
     }
 
+    public void increasePoint(int point) {
+        this.point += point;
+    }
+
+    public void decreasePoint(int point) {
+        if (this.point < point) {
+            throw new IllegalArgumentException("포인트가 부족합니다.");
+        }
+        this.point -= point;
+    }
+
     @Builder
-    public Member(String username, String password, String name, Gender gender, int age, LocalDate birthDate, String nickname, Address address, String phoneNumber, String email, int point) {
+    public Member(String username, String password, String name, Gender gender, LocalDate birthDate, String nickname, Address address, String phoneNumber, String email, int point) {
         this.username = username;
         this.password = password;
         this.name = name;
         this.gender = gender;
-        this.age = age;
         this.birthDate = birthDate;
         this.nickname = nickname;
         this.address = address;

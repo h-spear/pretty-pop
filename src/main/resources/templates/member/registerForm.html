@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
-<head th:replace="fragment/header :: header('Join')" />
+<head th:replace="fragment/header :: header(#{title.joinPage})" />
 
 <body class="bg-primary">
     <div id="layoutAuthentication">
@@ -11,7 +11,7 @@
                         <div class="col-lg-6">
                             <fieldset class="card shadow-lg border-0 rounded-lg mt-5 mb-5">
                                 <div class="card-header">
-                                    <h3 class="text-center font-weight-light my-4">Create Account</h3>
+                                    <h3 class="text-center font-weight-light my-4">[[#{title.joinForm}]]</h3>
                                 </div>
                                 <div class="card-body">
                                     <form role="form" action="/member/join" th:object="${joinForm}" method="post">
@@ -100,9 +100,9 @@
                                                            id="detailAddress" th:field="*{detailAddress}" style="width: 30%"
                                                            th:placeholder="#{form.detailAddress.placeholder}">
                                                 </div>
-                                                <input id="jibunAddress" th:field="*{jibunAddress}" disabled
+                                                <input id="jibunAddress" th:field="*{jibunAddress}" readonly
                                                        th:placeholder="#{form.address.defaultMessage}"
-                                                       style="width:100%; border:none; background: transparent" class="form-text text-muted ms-sm-1 mb-2">
+                                                       style="width:100%; border:none; background: transparent; cursor: default;" class="form-text text-muted ms-sm-1 mb-2">
                                             </fieldset>
 
                                             <!-- Phone Number -->
