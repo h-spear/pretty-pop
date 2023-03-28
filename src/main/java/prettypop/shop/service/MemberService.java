@@ -20,6 +20,7 @@ public class MemberService {
     private static final int BASE_POINT = 3000;
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public Long join(MemberRegisterParam param) {
@@ -30,9 +31,11 @@ public class MemberService {
             throw new IllegalArgumentException("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
         }
 
+        String encodedPassword = passwordEncoder.encode(param.getPassword());
+
         Member member = Member.builder()
                 .username(param.getUsername())
-                .password(param.getPassword())
+                .password(encodedPassword)
                 .name(param.getName())
                 .nickname(generateRandomNickname())
                 .gender(param.getGender())
