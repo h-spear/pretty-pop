@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head th:replace="fragment/header :: header('Join')" />
+
+<body class="bg-primary">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-6">
+                            <fieldset class="card shadow-lg border-0 rounded-lg mt-5 mb-5">
+                                <div class="card-header">
+                                    <h3 class="text-center font-weight-light my-4">Create Account</h3>
+                                </div>
+                                <div class="card-body">
+                                    <form role="form" action="/member/join" th:object="${joinForm}" method="post">
+                                        <fieldset>
+                                            <!-- ID -->
+                                            <div class="form-group">
+                                                <label for="username"
+                                                       class="form-label mt-4"
+                                                       th:text="#{form.username}">ID</label>
+                                                <div class="input-group mb-2">
+                                                    <input type="text" class="form-control"
+                                                           placeholder="Create a ID" th:placeholder="#{form.username.placeholder}"
+                                                           id="username" th:field="*{username}">
+                                                    <button class="btn btn-primary" type="button" id="button-id-check"
+                                                            th:text="#{button.idCheck}" onclick="idCheck()">Check</button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Password -->
+                                            <div class="form-group">
+                                                <label for="password" class="form-label mt-4"
+                                                       th:text="#{form.password}">Password</label>
+                                                <input type="password" class="form-control"
+                                                       id="password" th:field="*{password}"
+                                                       placeholder="Password" th:placeholder="#{form.password.placeholder}">
+                                            </div>
+
+                                            <!-- Password Confirm -->
+                                            <div class="form-group">
+                                                <label for="passwordConfirm" class="form-label mt-4"
+                                                       th:text="#{form.passwordConfirm}">PasswordConfirm</label>
+                                                <input type="password" class="form-control"
+                                                       id="passwordConfirm" th:field="*{passwordConfirm}"
+                                                       placeholder="PasswordConfirm" th:placeholder="#{form.passwordConfirm.placeholder}">
+                                            </div>
+
+                                            <!-- Name -->
+                                            <div class="form-group">
+                                                <label for="passwordConfirm" class="form-label mt-4"
+                                                       th:text="#{form.name}">Name</label>
+                                                <input type="text" class="form-control"
+                                                       id="name" th:field="*{name}"
+                                                       placeholder="Name" th:placeholder="#{form.name.placeholder}">
+                                            </div>
+
+                                            <!-- Gender -->
+                                            <fieldset class="form-group mt-1">
+                                                <label class="form-label mt-4"
+                                                       th:text="#{form.gender}">Gender</label>
+                                                <div class="form-check form-check-inline">
+                                                    <div class="form-check form-check-inline">
+                                                        <input type="radio" value="MALE" class="form-check-input" id="genderMale" name="gender" th:checked="true">
+                                                        <label for="genderMale" class="form-check-label" th:text="#{form.gender.male}">Male</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline ms-sm-2">
+                                                        <input type="radio" value="FEMALE" class="form-check-input" id="genderFemale" name="gender">
+                                                        <label for="genderFemale" class="form-check-label" th:text="#{form.gender.female}">Female</label>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+
+                                            <!-- Birthday -->
+                                            <div class="form-group">
+                                                <label for="birthDate" class="form-label mt-4"
+                                                       th:text="#{form.birthDate}">Birthday</label>
+                                                <input type="date" class="form-control"
+                                                       id="birthDate" th:field="*{birthDate}">
+                                            </div>
+
+                                            <!-- Address -->
+                                            <fieldset class="form-group" th:object="${joinForm.address}">
+                                                <label for="address" class="form-label mt-4"
+                                                       th:text="#{form.address}">Address</label>
+
+                                                <div class="input-group mb-2">
+                                                    <input type="text" class="form-control" th:placeholder="#{form.zipcode.placeholder}" readonly
+                                                           id="zipcode" th:field="*{zipcode}">
+                                                    <button class="btn btn-primary" type="button" id="button-zipcode"
+                                                            th:text="#{button.zipcode}" onclick="getPostcode()">Find postal code</button>
+                                                </div>
+                                                <div style="display: flex">
+                                                    <input type="text" class="form-control" readonly
+                                                           id="address" th:field="*{address}" style="width: 70%"
+                                                           th:placeholder="#{form.roadAddress.placeholder}">
+                                                    <input type="text" class="form-control ms-sm-2"
+                                                           id="detailAddress" th:field="*{detailAddress}" style="width: 30%"
+                                                           th:placeholder="#{form.detailAddress.placeholder}">
+                                                </div>
+                                                <input id="jibunAddress" th:field="*{jibunAddress}" disabled
+                                                       th:placeholder="#{form.address.defaultMessage}"
+                                                       style="width:100%; border:none; background: transparent" class="form-text text-muted ms-sm-1 mb-2">
+                                            </fieldset>
+
+                                            <!-- Phone Number -->
+                                            <div class="form-group">
+                                                <label for="phoneNumber" class="form-label mt-4"
+                                                       th:text="#{form.phoneNumber}">Phone Number</label>
+                                                <input type="text" class="form-control"
+                                                       placeholder="Phone Number" th:placeholder="#{form.phoneNumber.placeholder}"
+                                                       id="phoneNumber" th:field="*{phoneNumber}" maxlength="13">
+                                            </div>
+
+                                            <!-- email -->
+                                            <div class="form-group">
+                                                <label for="phoneNumber" class="form-label mt-4"
+                                                       th:text="#{form.email}">Email</label>
+                                                <div class="input-group mb-2">
+                                                    <input type="text" class="form-control"
+                                                           placeholder="Enter your e-mail address" th:placeholder="#{form.email.placeholder}"
+                                                           id="email" th:field="*{email}">
+                                                    <button class="btn btn-primary" type="button" id="button-email-check"
+                                                            th:text="#{button.emailCheck}" onclick="emailCheck()">Check</button>
+                                                </div>
+                                            </div>
+
+                                            <!-- Button -->
+                                            <div class="mt-5 mb-2" style="display: flex; justify-content: center">
+                                                <button type="submit" class="btn btn-primary" style="width: 100%" th:text="#{button.registerSubmit}">Submit</button>
+                                            </div>
+
+                                        </fieldset>
+                                    </form>
+                                </div>
+                                <div class="card-footer text-center py-3">
+                                    <div class="small"><a href="login.html">Have an account? Go to login</a></div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+        // 아이디 체크
+        function idCheck() {
+            console.log('id check logic');
+        }
+
+        // 이메일 체크
+        function idCheck() {
+            console.log('email check logic');
+        }
+
+        // 우편 번호 다움 API
+        function getPostcode() {
+            event.preventDefault();
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    document.getElementById('zipcode').value = data.zonecode;
+                    document.getElementById("address").value = data.roadAddress;
+                    document.getElementById("jibunAddress").value = data.jibunAddress;
+                }
+            }).open();
+        }
+
+        // 휴대폰 번호 자동 하이픈 처리
+        function autoHypenPhone(str){
+            str = str.replace(/[^0-9]/g, '');
+            let tmp = '';
+            if (str.length < 4) {
+                return str;
+            } else if (str.length < 7) {
+                tmp += str.substr(0, 3);
+                tmp += '-';
+                tmp += str.substr(3);
+                return tmp;
+            } else if(str.length < 11) {
+                tmp += str.substr(0, 3);
+                tmp += '-';
+                tmp += str.substr(3, 3);
+                tmp += '-';
+                tmp += str.substr(6);
+                return tmp;
+            } else {
+                tmp += str.substr(0, 3);
+                tmp += '-';
+                tmp += str.substr(3, 4);
+                tmp += '-';
+                tmp += str.substr(7);
+                return tmp;
+            }
+            return str;
+        }
+
+        let cellPhone = document.getElementById('phoneNumber');
+        cellPhone.onkeyup = function(event){
+            event = event || window.event;
+            let _val = this.value.trim();
+            this.value = autoHypenPhone(_val) ;
+        }
+    </script>
+</body>
+
+</html>
