@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<header id="layoutHeader" th:fragment="header" class="d-flex flex-column position-relative m-0 w-100">
+  <style>
+
+    .header-logo {
+      width: 200px;
+    }
+
+    .max-width-1000 {
+      max-width: 1000px;
+    }
+
+    #topMenu {
+      background: #ebebeb;
+    }
+
+    #topMenu ul,
+    #userMenu ul{
+      display: flex;
+      flex-direction: row;
+    }
+
+    #topMenu ul > li,
+    #userMenu ul > li{
+      list-style:none;
+      padding: 0;
+      margin-left: 0.5rem;
+      margin-right: 0.5rem;
+    }
+
+    #topMenu ul > li > a {
+      font-size: 0.75em;
+      text-decoration: none;
+      color: black;
+    }
+
+    #userMenu ul > li > a {
+      font-size: 2em;
+      text-decoration: none;
+      color: black;
+    }
+  </style>
+
+  <div th:object="${#authentication.principal}">
+    <div id="topMenu" class="m-0 w-100 d-flex justify-content-center py-1">
+      <div class="max-width-1000 w-100 d-flex justify-content-end">
+        <ul class="m-0 p-0">
+          <li sec:authorize="isAnonymous()">
+            <a href="#" th:text="#{header.button.login}" th:href="@{/login}">Login</a>
+          </li>
+          <li sec:authorize="isAnonymous()">
+            <a href="#" th:text="#{header.button.join}" th:href="@{/member/join}">Join</a>
+          </li>
+          <li sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
+            <a href="#" th:text="#{header.button.mypage}">My page</a>
+          </li>
+          <li sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
+            <a href="#" th:text="#{header.button.logout}">Logout</a>
+          </li>
+          <li><a href="#" th:text="#{header.button.notice}">Notice</a></li>
+          <li><a href="#" th:text="#{header.button.cscenter}">CS Center</a></li>
+          <li sec:authorize="hasAnyRole('ROLE_ADMIN')">
+            <a href="#" th:text="#{header.button.manage}">Manage</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid py-4" style="max-width: 1000px">
+    <div class="d-flex align-items-center justify-content-between small">
+      <div>
+        <img src="/assets/images/logo.png" class="header-logo"/>
+      </div>
+      <form class="d-flex mx-5 w-75" style="min-width: 400px">
+        <input class="form-control me-sm-2" type="search" placeholder="Search">
+        <button class="btn btn-primary my-sm-0" type="submit">
+          <i class="fa-solid fa-magnifying-glass"></i>
+        </button>
+      </form>
+      <div id="userMenu">
+        <ul class="m-0 p-0 d-flex justify-content-center">
+          <li>
+            <a href="#" th:href="@{/my-page}">
+              <i class="fa-solid fa-user"></i>
+            </a>
+          </li>
+          <li class="mx-4">
+            <a href="#" th:href="@{/wish}">
+              <i class="fa-solid fa-heart"></i>
+            </a>
+          </li>
+          <li>
+            <a href="#" th:href="@{/cart}">
+              <i class="fa-solid fa-cart-shopping"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</header>

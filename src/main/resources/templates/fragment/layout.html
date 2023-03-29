@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      th:fragment="html(title, main)">
+<head th:replace="fragment/header :: header(title)" />
+
+<style>
+    #layout {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 100vh;
+    }
+</style>
+
+<body>
+    <div id="layout">
+        <header th:replace="fragment/layoutHeader :: header" />
+        <nav th:replace="fragment/layoutNavbar :: navbar" />
+        <main th:replace="${main}"/>
+        <footer th:replace="fragment/layoutFooter :: footer" />
+    </div>
+</body>
+
+</html>

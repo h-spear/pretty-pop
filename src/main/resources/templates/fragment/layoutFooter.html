@@ -1,27 +1,24 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 
-<footer id="layoutAuthentication_footer" class="py-4 bg-light mt-auto" th:fragment="footer">
+<footer id="layoutFooter" class="py-4 bg-light mt-auto d-flex justify-content-center"
+        th:fragment="footer">
   <style>
-    #layoutAuthentication {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-    #layoutAuthentication #layoutAuthentication_content {
-      min-width: 0;
-      flex-grow: 1;
-    }
-    #layoutAuthentication #layoutAuthentication_footer {
-      min-width: 0;
-    }
-
     .footer-logo {
       width: 190px;
     }
+
+    #layoutFooter {
+      width: 100vw;
+      min-width: 0;
+    }
+
+    .max-width-1000 {
+      max-width: 1000px;
+    }
   </style>
 
-  <div class="container-fluid px-4" style="max-width: 1000px">
+  <div class="container-fluid m-0 max-width-1000">
     <div class="d-flex align-items-center justify-content-between small">
       <div>
         <img src="/assets/images/logo.png" class="footer-logo"/>
