@@ -40,7 +40,18 @@
     #userMenu ul > li > a {
       font-size: 2em;
       text-decoration: none;
-      color: black;
+    }
+
+    .userMenu-item > a{
+      color: dimgrey;
+    }
+
+    .userMenu-item:hover {
+      transform: scale(1.15);
+      transition: 0.5s;
+    }
+    .userMenu-item:hover a {
+      color: #eb6864;
     }
   </style>
 
@@ -55,15 +66,15 @@
             <a href="#" th:text="#{header.button.join}" th:href="@{/member/join}">Join</a>
           </li>
           <li sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
-            <a href="#" th:text="#{header.button.mypage}">My page</a>
+            <a href="#" th:text="#{header.button.myPage}" th:href="@{/my-page}">My page</a>
           </li>
           <li sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
-            <a href="#" th:text="#{header.button.logout}">Logout</a>
+            <a href="#" th:text="#{header.button.logout}" th:onclick="logout()">Logout</a>
           </li>
-          <li><a href="#" th:text="#{header.button.notice}">Notice</a></li>
-          <li><a href="#" th:text="#{header.button.cscenter}">CS Center</a></li>
+          <li><a href="#" th:text="#{header.button.notice}" th:href="@{/notice}">Notice</a></li>
+          <li><a href="#" th:text="#{header.button.csCenter}" th:href="@{/cs-center}">CS Center</a></li>
           <li sec:authorize="hasAnyRole('ROLE_ADMIN')">
-            <a href="#" th:text="#{header.button.manage}">Manage</a>
+            <a href="#" th:text="#{header.button.manage}" th:href="@{/manage}">Manage</a>
           </li>
         </ul>
       </div>
@@ -72,7 +83,9 @@
   <div class="container-fluid py-4" style="max-width: 1000px">
     <div class="d-flex align-items-center justify-content-between small">
       <div>
-        <img src="/assets/images/logo.png" class="header-logo"/>
+        <a href="#" th:href="@{/}">
+          <img src="/assets/images/logo.png" class="header-logo"/>
+        </a>
       </div>
       <form class="d-flex mx-5 w-75" style="min-width: 400px">
         <input class="form-control me-sm-2" type="search" placeholder="Search">
@@ -82,17 +95,17 @@
       </form>
       <div id="userMenu">
         <ul class="m-0 p-0 d-flex justify-content-center">
-          <li>
+          <li class="userMenu-item">
             <a href="#" th:href="@{/my-page}">
               <i class="fa-solid fa-user"></i>
             </a>
           </li>
-          <li class="mx-4">
+          <li class="userMenu-item mx-4">
             <a href="#" th:href="@{/wish}">
               <i class="fa-solid fa-heart"></i>
             </a>
           </li>
-          <li>
+          <li class="userMenu-item">
             <a href="#" th:href="@{/cart}">
               <i class="fa-solid fa-cart-shopping"></i>
             </a>
@@ -102,4 +115,15 @@
     </div>
   </div>
 
+  <script>
+    function logout() {
+      const form = document.createElement('form');
+      form.setAttribute("role", "form");
+      form.setAttribute("method", "post");
+      form.setAttribute("action", "/logout");
+
+      document.body.appendChild(form);
+      form.submit();
+    }
+  </script>
 </header>
