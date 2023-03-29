@@ -7,6 +7,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import prettypop.shop.configuration.jwt.JwtTokenUtils;
 import prettypop.shop.configuration.jwt.TokenConst;
+import prettypop.shop.configuration.security.SecurityContextUtils;
 import prettypop.shop.dto.auth.LoginParam;
 import prettypop.shop.dto.auth.Token;
 import prettypop.shop.service.auth.AuthService;
@@ -22,6 +23,7 @@ public class AuthController {
 
     private final AuthService authService;
     private final JwtTokenUtils jwtTokenUtils;
+    private final SecurityContextUtils securityContextUtils;
 
     @GetMapping("/login")
     public String loginForm(Model model) {
@@ -37,7 +39,7 @@ public class AuthController {
         Token token = authService.login(loginParam);
         jwtTokenUtils.setCookieAccessToken(response, token.getAccessToken());
         jwtTokenUtils.setCookieRefreshToken(response, token.getRefreshToken());
-        jwtTokenUtils.securityContextSetAuthentication(token.getAccessToken());
+        securityContextUtils.setAuthentication(token.getAccessToken());
         return "redirect:/home";
     }
 
@@ -59,7 +61,7 @@ public class AuthController {
 
         log.info("액세스 토큰 신규 발급={}", newAccessToken);
         jwtTokenUtils.setCookieAccessToken(response, newAccessToken);
-        jwtTokenUtils.securityContextSetAuthentication(newAccessToken);
+        securityContextUtils.setAuthentication(newAccessToken);
         return "redirect:" + redirectURL;
     }
 }

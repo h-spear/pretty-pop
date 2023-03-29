@@ -13,12 +13,14 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import prettypop.shop.configuration.filter.AuthenticationFilter;
 import prettypop.shop.configuration.jwt.JwtTokenUtils;
 import prettypop.shop.configuration.jwt.TokenConst;
+import prettypop.shop.configuration.security.SecurityContextUtils;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenUtils jwtTokenUtils;
+    private final SecurityContextUtils securityContextUtils;
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {
@@ -48,7 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/home?logout")
                 .deleteCookies(TokenConst.ACCESS_TOKEN, TokenConst.REFRESH_TOKEN);
 
-        http.addFilterBefore(new AuthenticationFilter(jwtTokenUtils),
+        http.addFilterBefore(new AuthenticationFilter(jwtTokenUtils, securityContextUtils),
                 UsernamePasswordAuthenticationFilter.class);
     }
 }

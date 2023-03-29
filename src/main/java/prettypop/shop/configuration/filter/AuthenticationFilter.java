@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.PatternMatchUtils;
 import org.springframework.web.filter.GenericFilterBean;
 import prettypop.shop.configuration.jwt.JwtTokenUtils;
+import prettypop.shop.configuration.security.SecurityContextUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -19,9 +20,11 @@ import java.io.IOException;
 public class AuthenticationFilter extends GenericFilterBean {
 
     private static final String[] whiteList = {"/", "/home", "/member/join", "/login", "/logout", "/refresh",
-                                                "/css/*", "/js/*", "/*.ico", "/error", "/assets/*"};
+                                                "/css/*", "/js/*", "/*.ico", "/error", "/assets/*",
+                                                "/items", "/items/*"};
 
     private final JwtTokenUtils jwtTokenUtils;
+    private final SecurityContextUtils securityContextUtils;
 
     @Override
     public void doFilter(ServletRequest request,
@@ -36,7 +39,7 @@ public class AuthenticationFilter extends GenericFilterBean {
         String refreshToken = jwtTokenUtils.resolveRefreshToken(httpRequest);
 
         if (accessToken != null && jwtTokenUtils.validateAccessToken(accessToken)) {
-            jwtTokenUtils.securityContextSetAuthentication(accessToken);
+            securityContextUtils.setAuthentication(accessToken);
         } else if (isAuthenticationCheckPath(requestURI)) {
             if (refreshToken != null) {
                 log.info("액세스 토큰 만료. 리프레시");

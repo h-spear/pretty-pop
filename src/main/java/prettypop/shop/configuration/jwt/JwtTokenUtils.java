@@ -22,11 +22,8 @@ import static prettypop.shop.configuration.jwt.TokenConst.ACCESS_TOKEN_VALIDITY;
 import static prettypop.shop.configuration.jwt.TokenConst.REFRESH_TOKEN_VALIDITY;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
 public class JwtTokenUtils {
-
-    private final UserDetailsServiceImpl userDetailsService;
 
     public boolean validateAccessToken(String accessToken) {
         try {
@@ -82,19 +79,5 @@ public class JwtTokenUtils {
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         response.addCookie(cookie);
-    }
-
-    public void securityContextSetAuthentication(String accessToken) {
-        Authentication authentication = getAuthentication(accessToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
-    private String getUsername(String token) {
-        return Jwts.parser().setSigningKey(TokenConst.ACCESS_SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
-    }
-
-    private Authentication getAuthentication(String token) {
-        User user = userDetailsService.loadUserByUsername(this.getUsername(token));
-        return new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
     }
 }
