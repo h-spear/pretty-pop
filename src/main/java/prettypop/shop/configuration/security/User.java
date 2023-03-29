@@ -13,13 +13,15 @@ import java.util.stream.Collectors;
 @Getter
 public class User implements UserDetails {
 
+    private Long id;
     private String username;
     private String name;
     private String nickname;
     private List<String> roles;
 
     @Builder
-    public User(String username, String name, String nickname, List<String> roles) {
+    public User(Long id, String username, String name, String nickname, List<String> roles) {
+        this.id = id;
         this.username = username;
         this.name = name;
         this.nickname = nickname;

@@ -10,14 +10,14 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import prettypop.shop.configuration.jwt.JwtAuthenticationFilter;
-import prettypop.shop.configuration.jwt.JwtTokenProvider;
+import prettypop.shop.configuration.filter.AuthenticationFilter;
+import prettypop.shop.configuration.jwt.JwtTokenUtils;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final JwtTokenProvider jwtTokenProvider;
+    private final JwtTokenUtils jwtTokenUtils;
 
     @Bean
     public PasswordEncoder getPasswordEncoder() {
@@ -39,12 +39,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/test").authenticated()
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/user/**").hasRole("USER")
-                .antMatchers("/**").permitAll()
-                .and()
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
-                        UsernamePasswordAuthenticationFilter.class);
+                .antMatchers("/**").permitAll();
+
+        http.addFilterBefore(new AuthenticationFilter(jwtTokenUtils),
+                UsernamePasswordAuthenticationFilter.class);
     }
 }

@@ -1,64 +1,49 @@
 package prettypop.shop.configuration.jwt;
 
-import io.jsonwebtoken.*;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
-import prettypop.shop.configuration.security.User;
-import prettypop.shop.configuration.security.UserDetailsServiceImpl;
+import prettypop.shop.dto.auth.Token;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import java.util.Base64;
 import java.util.Date;
-import java.util.List;
 
-@RequiredArgsConstructor
+import static prettypop.shop.configuration.jwt.TokenConst.ACCESS_TOKEN_VALIDITY;
+import static prettypop.shop.configuration.jwt.TokenConst.REFRESH_TOKEN_VALIDITY;
+
+@Slf4j
 @Component
 public class JwtTokenProvider {
-    private String secretKey = "prettypopsecret";
 
-    private long tokenValidTime = 30 * 60 * 1000L;
+    public Token createToken(String username) {
+        log.info("username={}", username);
 
-    private final UserDetailsServiceImpl userDetailsService;
+        Date now = new Date();
 
-    @PostConstruct
-    protected void init() {
-        secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
+        String accessToken = createAccessToken(username, now);
+        String refreshToken = createRefreshToken(username, now);
+
+        return Token.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .key(username).build();
     }
 
-    public String createToken(String userPk, List<String> roles) {
-        Claims claims = Jwts.claims().setSubject(userPk);
-        claims.put("roles", roles);
-        Date now = new Date();
+    public String createAccessToken(String username, Date iat) {
         return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(now)
-                .setExpiration(new Date(now.getTime() + tokenValidTime))
-                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .setSubject(username)
+                .setIssuedAt(iat)
+                .setExpiration(new Date(iat.getTime() + ACCESS_TOKEN_VALIDITY * 1000L))
+                .signWith(SignatureAlgorithm.HS256, TokenConst.ACCESS_SECRET_KEY)
                 .compact();
     }
 
-    public Authentication getAuthentication(String token) {
-        User userDetails = userDetailsService.loadUserByUsername(this.getUserPk(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
-
-    public String getUserPk(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
-    }
-
-    public String resolveToken(HttpServletRequest request) {
-        return request.getHeader("Authorization");
-    }
-
-    public boolean validateToken(String jwtToken) {
-        try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken);
-            return !claims.getBody().getExpiration().before(new Date());
-        } catch (Exception e) {
-            return false;
-        }
+    private String createRefreshToken(String username, Date iat) {
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(iat)
+                .setExpiration(new Date(iat.getTime() + REFRESH_TOKEN_VALIDITY * 1000L))
+                .signWith(SignatureAlgorithm.HS256, TokenConst.REFRESH_SECRET_KEY)
+                .compact();
     }
 }
