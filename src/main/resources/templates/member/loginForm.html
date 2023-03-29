@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
+<head th:replace="fragment/header :: header(#{title.header.loginPage})" />
+
+<body class="bg-primary">
+    <div id="layoutAuthentication">
+        <div id="layoutAuthentication_content">
+            <main>
+                <div class="container">
+                    <div class="row justify-content-center">
+                        <div class="col-lg-6">
+                            <fieldset class="card shadow-lg border-0 rounded-lg mt-5 mb-5">
+                                <div class="card-header">
+                                    <h3 class="text-center font-weight-light my-4">[[#{title.loginForm}]]</h3>
+                                </div>
+                                <div class="card-body">
+                                    <form role="form" action="/login" th:object="${loginForm}" method="post">
+                                        <fieldset>
+                                            <!-- ID -->
+                                            <div class="form-group">
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control"
+                                                           id="username" th:field="*{username}"
+                                                           placeholder="Create a ID" th:placeholder="#{form.login.username.placeholder}">
+                                                    <label for="username" th:text="#{form.username}">ID</label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Password -->
+                                            <div class="form-group">
+                                                <div class="form-floating mb-3">
+                                                    <input type="password" class="form-control"
+                                                           id="password" th:field="*{password}"
+                                                           placeholder="Password" th:placeholder="#{form.password.placeholder}">
+                                                    <label for="password" th:text="#{form.password}">Password</label>
+                                                </div>
+                                            </div>
+
+                                            <!-- Button -->
+                                            <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
+                                                <a class="small" href="password.html" th:text="#{form.login.forgotPassword}">Forgot Password?</a>
+                                                <button type="submit" class="btn btn-primary" th:text="#{button.login}">Login</button>
+                                            </div>
+                                        </fieldset>
+                                    </form>
+                                </div>
+                                <div class="card-footer text-center py-3">
+                                    <div class="small">
+                                        <a href="login.html" th:href="@{/member/join}" th:text="#{form.login.goJoinPage}">Need an account? Sign up!</a>
+                                    </div>
+                                </div>
+                            </fieldset>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
-<head th:replace="fragment/header :: header(#{title.joinPage})" />
+<head th:replace="fragment/header :: header(#{title.header.joinPage})" />
 
 <body class="bg-primary">
     <div id="layoutAuthentication">
@@ -136,7 +136,7 @@
                                     </form>
                                 </div>
                                 <div class="card-footer text-center py-3">
-                                    <div class="small"><a href="login.html">Have an account? Go to login</a></div>
+                                    <div class="small"><a href="login.html" th:href="@{/login}" th:text="#{form.join.goLoginPage}">Have an account? Go to login</a></div>
                                 </div>
                             </fieldset>
                         </div>

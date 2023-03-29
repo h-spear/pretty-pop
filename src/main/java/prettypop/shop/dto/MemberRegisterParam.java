@@ -4,7 +4,6 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 import prettypop.shop.entity.Address;
 import prettypop.shop.entity.Gender;
-import prettypop.shop.entity.Member;
 
 import javax.persistence.Embedded;
 import java.time.LocalDate;
