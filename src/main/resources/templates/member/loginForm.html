@@ -2,13 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head th:replace="fragment/header :: header(#{title.header.loginPage})" />
 
+
 <body class="bg-primary">
     <div id="layoutAuthentication">
         <div id="layoutAuthentication_content">
             <main>
                 <div class="container">
                     <div class="row justify-content-center">
-                        <div class="col-lg-6">
+                        <div class="col-lg-5">
                             <fieldset class="card shadow-lg border-0 rounded-lg mt-5 mb-5">
                                 <div class="card-header">
                                     <h3 class="text-center font-weight-light my-4">[[#{title.loginForm}]]</h3>
@@ -55,6 +56,9 @@
                 </div>
             </main>
         </div>
+
+        <footer th:replace="fragment/layoutFooter :: footer" />
+
     </div>
 </body>
 

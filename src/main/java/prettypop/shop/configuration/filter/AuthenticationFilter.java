@@ -18,8 +18,8 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthenticationFilter extends GenericFilterBean {
 
-    private static final String[] whiteList = {"/", "/home", "/member/join", "/login", "/logout",
-                                                "/css/*", "/js/*", "/*.ico", "/error", "/refresh"};
+    private static final String[] whiteList = {"/", "/home", "/member/join", "/login", "/logout", "/refresh",
+                                                "/css/*", "/js/*", "/*.ico", "/error", "/assets/*"};
 
     private final JwtTokenUtils jwtTokenUtils;
 

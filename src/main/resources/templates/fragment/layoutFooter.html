@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<footer id="layoutAuthentication_footer" class="py-4 bg-light mt-auto" th:fragment="footer">
+  <style>
+    #layoutAuthentication {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    #layoutAuthentication #layoutAuthentication_content {
+      min-width: 0;
+      flex-grow: 1;
+    }
+    #layoutAuthentication #layoutAuthentication_footer {
+      min-width: 0;
+    }
+
+    .footer-logo {
+      width: 190px;
+    }
+  </style>
+
+  <div class="container-fluid px-4" style="max-width: 1000px">
+    <div class="d-flex align-items-center justify-content-between small">
+      <div>
+        <img src="/assets/images/logo.png" class="footer-logo"/>
+      </div>
+      <div class="text-muted d-flex flex-column mx-2" style="font-size: 0.7rem">
+        <span th:text="#{footer.infoMessage1}">info1</span>
+        <span th:text="#{footer.infoMessage2}">info2</span>
+        <span th:text="#{footer.infoMessage3}">info3</span>
+        <span class="mt-2">Copyright 2023. <b><span th:text="#{title}"></span></b>. All rights reserved.</span>
+      </div>
+      <div class="d-flex align-items-center">
+        <ul class="m-0">
+          <li><a href="#" style="text-decoration: none" th:text="#{footer.button.company}">Company</a></li>
+          <li><a href="#" style="text-decoration: none" th:text="#{footer.button.use}">Use</a></li>
+          <li><a href="#" style="text-decoration: none" th:text="#{footer.button.notice}">Notice</a></li>
+          <li><a href="https://github.com/h-spear/pretty-pop"
+                 style="text-decoration: none"th:text="#{footer.button.github}">Github</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</footer>
