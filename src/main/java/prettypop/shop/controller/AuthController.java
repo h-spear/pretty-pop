@@ -43,7 +43,7 @@ public class AuthController {
         return "redirect:/home";
     }
 
-    @GetMapping("/refresh")
+    @RequestMapping("/refresh")
     public String validateRefreshToken(@RequestParam(defaultValue = "/home") String redirectURL,
                                        @CookieValue(value = TokenConst.REFRESH_TOKEN) Cookie cookie,
                                        HttpServletResponse response) {

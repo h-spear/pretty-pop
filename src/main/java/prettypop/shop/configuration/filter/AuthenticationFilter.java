@@ -22,7 +22,7 @@ import java.io.IOException;
 public class AuthenticationFilter extends GenericFilterBean {
 
     private static final String[] whiteList = {"/", "/member/join", "/login", "/logout",
-                                                "/css/*", "/js/*", "/*.ico", "/error"};
+                                                "/css/*", "/js/*", "/*.ico", "/error", "/refresh"};
 
     private final JwtTokenUtils jwtTokenUtils;
 
