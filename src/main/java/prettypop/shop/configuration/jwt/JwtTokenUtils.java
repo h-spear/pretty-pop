@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import prettypop.shop.configuration.security.User;
 import prettypop.shop.configuration.security.UserDetailsServiceImpl;
@@ -26,15 +27,6 @@ import static prettypop.shop.configuration.jwt.TokenConst.REFRESH_TOKEN_VALIDITY
 public class JwtTokenUtils {
 
     private final UserDetailsServiceImpl userDetailsService;
-
-    public Authentication getAuthentication(String token) {
-        User user = userDetailsService.loadUserByUsername(this.getUsername(token));
-        return new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
-    }
-
-    public String getUsername(String token) {
-        return Jwts.parser().setSigningKey(TokenConst.ACCESS_SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
-    }
 
     public boolean validateAccessToken(String accessToken) {
         try {
@@ -90,5 +82,19 @@ public class JwtTokenUtils {
         cookie.setHttpOnly(true);
         cookie.setSecure(true);
         response.addCookie(cookie);
+    }
+
+    public void securityContextSetAuthentication(String accessToken) {
+        Authentication authentication = getAuthentication(accessToken);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    private String getUsername(String token) {
+        return Jwts.parser().setSigningKey(TokenConst.ACCESS_SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    private Authentication getAuthentication(String token) {
+        User user = userDetailsService.loadUserByUsername(this.getUsername(token));
+        return new UsernamePasswordAuthenticationToken(user, "", user.getAuthorities());
     }
 }

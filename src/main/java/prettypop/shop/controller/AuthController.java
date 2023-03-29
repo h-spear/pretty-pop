@@ -2,8 +2,6 @@ package prettypop.shop.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -39,7 +37,7 @@ public class AuthController {
         Token token = authService.login(loginParam);
         jwtTokenUtils.setCookieAccessToken(response, token.getAccessToken());
         jwtTokenUtils.setCookieRefreshToken(response, token.getRefreshToken());
-        securityContextSetAuthentication(token.getAccessToken());
+        jwtTokenUtils.securityContextSetAuthentication(token.getAccessToken());
         return "redirect:/home";
     }
 
@@ -61,12 +59,7 @@ public class AuthController {
 
         log.info("액세스 토큰 신규 발급={}", newAccessToken);
         jwtTokenUtils.setCookieAccessToken(response, newAccessToken);
-        securityContextSetAuthentication(newAccessToken);
+        jwtTokenUtils.securityContextSetAuthentication(newAccessToken);
         return "redirect:" + redirectURL;
-    }
-
-    private void securityContextSetAuthentication(String accessToken) {
-        Authentication authentication = jwtTokenUtils.getAuthentication(accessToken);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 }

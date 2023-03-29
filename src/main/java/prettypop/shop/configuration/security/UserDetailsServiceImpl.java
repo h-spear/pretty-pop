@@ -25,8 +25,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return User.builder()
                 .id(member.getId())
                 .username(member.getUsername())
-                .nickname(member.getNickname())
                 .name(member.getName())
+                .nickname(member.getNickname())
                 .roles(member.getRoles())
                 .build();
     }

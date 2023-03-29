@@ -12,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import prettypop.shop.configuration.filter.AuthenticationFilter;
 import prettypop.shop.configuration.jwt.JwtTokenUtils;
+import prettypop.shop.configuration.jwt.TokenConst;
 
 @RequiredArgsConstructor
 @EnableWebSecurity
@@ -42,6 +43,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .antMatchers("/user/**").hasRole("USER")
                 .antMatchers("/**").permitAll();
+
+        http.logout()
+                .logoutSuccessUrl("/home?logout")
+                .deleteCookies(TokenConst.ACCESS_TOKEN, TokenConst.REFRESH_TOKEN);
 
         http.addFilterBefore(new AuthenticationFilter(jwtTokenUtils),
                 UsernamePasswordAuthenticationFilter.class);
