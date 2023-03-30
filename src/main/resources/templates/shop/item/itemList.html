@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      th:replace="fragment/layout :: html(#{title.items}, ~{::main})">
+
+
+<main class="w-100 d-flex justify-content-center">
+    <style>
+        #item-sideMenu {
+            width: 220px;
+        }
+        #item-container {
+
+        }
+        #item-categoryBox {
+            font-size: 16px;
+            font-weight: 600;
+            border: #f5e625 5px solid;
+            width: 180px;
+            height: 170px;
+        }
+        #item-searchConditionBox {
+            font-size: 12px;
+        }
+
+        #item-searchConditionBox ul > li {
+            margin-top: 2px;
+        }
+
+        #itemDetails {
+            font-size: 12px;
+        }
+
+        .card-effect:hover {
+            cursor: pointer;
+            -webkit-box-shadow: 0px 3px 13px -1px rgba(0,0,0,0.35);
+            box-shadow: 0px 3px 13px -1px rgba(0,0,0,0.35);
+            transition: 0.2s;
+        }
+
+        .badge-cart {
+            font-size: 18px;
+            color: transparent;
+        }
+
+        .badge-cart:hover {
+            transition: 0.2s;
+            color: var(--bs-info) !important;
+        }
+
+        .card:hover .badge-cart{
+            color: var(--bs-secondary);
+            transition: 0.2s;
+        }
+    </style>
+    <div class="max-width-1000 w-100 d-flex justify-content-between">
+        <section id="item-sideMenu" class="p-2">
+            <div id="item-categoryBox" class="d-flex align-items-center justify-content-center">
+                <span>CATEGORY</span>
+            </div>
+            <div id="item-searchConditionBox" class="mt-3 p-2">
+
+                <!-- Sort -->
+                <div>
+                    <ul class="p-0 ps-3 mt-1">
+                        <li class="list-unstyled">
+                            <a href="#" class="text-decoration-none">
+                                <span class="text-info fw-bold" th:text="#{item.search.notSort}"></span>
+                            </a>
+                        </li>
+                        <li class="list-unstyled">
+                            <a href="#" class="text-decoration-none">
+                                <span th:text="#{item.search.itemName}">
+                                    sort1
+                                </span>
+                                <i class="fas fa-caret-square-up text-secondary"></i>
+                                <i class="fas fa-caret-square-down text-secondary"></i>
+                            </a>
+                        </li>
+                        <li class="list-unstyled">
+                            <a href="#" class="text-decoration-none">
+                                <span th:text="#{item.search.price}">
+                                    sort1
+                                </span>
+                                <i class="fas fa-caret-square-up text-secondary"></i>
+                                <i class="fas fa-caret-square-down text-secondary"></i>
+                            </a>
+                        </li>
+                        <li class="list-unstyled">
+                            <a href="#" class="text-decoration-none">
+                                <span th:text="#{item.search.rating}">
+                                    sort1
+                                </span>
+                                <i class="fas fa-caret-square-up text-secondary"></i>
+                                <i class="fas fa-caret-square-down text-secondary"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Rating -->
+                <div class="mt-4">
+                    <span style="font-size: 15px; font-weight: 700" th:text="#{item.search.rating}">Rating</span>
+                    <ul class="p-0 ps-3 mt-1">
+                        <li class="list-unstyled">
+                            <a href="#" class="text-decoration-none">
+                                <span class="text-info fw-bold" th:text="#{item.search.ratingAll}">overall</span>
+                            </a>
+                        </li>
+                        <li class="list-unstyled">
+                            <a href="#" class="text-decoration-none">
+                                <span style="font-size: 14px; letter-spacing: -5px" class="me-1">
+                                    <i class="fa-solid fa-star text-warning"></i>
+                                    <i class="fa-solid fa-star text-warning"></i>
+                                    <i class="fa-solid fa-star text-warning"></i>
+                                    <i class="fa-solid fa-star text-warning"></i>
+                                    <i class="fa-solid fa-star text-secondary"></i>
+                                </span>
+                                <span th:text="#{item.search.ratingOrMore('4')}">4 or more</span>
+                            </a>
+                        </li>
+                        <li class="list-unstyled">
+                            <a href="#" class="text-decoration-none">
+                                <span style="font-size: 14px; letter-spacing: -5px" class="me-1">
+                                    <i class="fa-solid fa-star text-warning"></i>
+                                    <i class="fa-solid fa-star text-warning"></i>
+                                    <i class="fa-solid fa-star text-warning"></i>
+                                    <i class="fa-solid fa-star text-secondary"></i>
+                                    <i class="fa-solid fa-star text-secondary"></i>
+                                </span>
+                                <span th:text="#{item.search.ratingOrMore('3')}">4 or more</span>
+                            </a>
+                        </li>
+                        <li class="list-unstyled">
+                            <a href="#" class="text-decoration-none">
+                                <span style="font-size: 14px; letter-spacing: -5px" class="me-1">
+                                    <i class="fa-solid fa-star text-warning"></i>
+                                    <i class="fa-solid fa-star text-warning"></i>
+                                    <i class="fa-solid fa-star text-secondary"></i>
+                                    <i class="fa-solid fa-star text-secondary"></i>
+                                    <i class="fa-solid fa-star text-secondary"></i>
+                                </span>
+                                <span th:text="#{item.search.ratingOrMore('2')}">4 or more</span>
+                            </a>
+                        </li>
+                        <li class="list-unstyled">
+                            <a href="#" class="text-decoration-none">
+                                <span style="font-size: 14px; letter-spacing: -5px" class="me-1">
+                                    <i class="fa-solid fa-star text-warning"></i>
+                                    <i class="fa-solid fa-star text-secondary"></i>
+                                    <i class="fa-solid fa-star text-secondary"></i>
+                                    <i class="fa-solid fa-star text-secondary"></i>
+                                    <i class="fa-solid fa-star text-secondary"></i>
+                                </span>
+                                <span th:text="#{item.search.ratingOrMore('1')}">4 or more</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Price -->
+                <div class="mt-4">
+                    <span style="font-size: 15px; font-weight: 700" th:text="#{item.search.price}">Price</span>
+                    <ul class="p-0 ps-3 mt-1">
+                        <li class="list-unstyled">
+                            <a href="#" class="text-decoration-none">
+                                <span class="text-info fw-bold" th:text="#{item.search.priceAll}">overall</span>
+                            </a>
+                        </li>
+                        <li class="list-unstyled">
+                            <a href="#" class="text-decoration-none">
+                                <span th:text="#{item.search.priceOrLess('10,000')}">10,000 or less</span>
+                            </a>
+                        </li>
+                        <li class="list-unstyled">
+                            <a href="#" class="text-decoration-none">
+                                <span th:text="#{item.search.priceBetween('10,000', '20,000')}">10,000 ~ 20,000</span>
+                            </a>
+                        </li>
+                        <li class="list-unstyled">
+                            <a href="#" class="text-decoration-none">
+                                <span th:text="#{item.search.priceBetween('20,000', '30,000')}">20,000 ~ 30,000</span>
+                            </a>
+                        </li>
+                        <li class="list-unstyled">
+                            <a href="#" class="text-decoration-none">
+                                <span th:text="#{item.search.priceBetween('30,000', '40,000')}">30,000 ~ 40,000</span>
+                            </a>
+                        </li>
+                        <li class="list-unstyled">
+                            <a href="#" class="text-decoration-none">
+                                <span th:text="#{item.search.priceBetween('40,000', '50,000')}">40,000 ~ 50,000</span>
+                            </a>
+                        </li>
+                        <li class="list-unstyled">
+                            <a href="#" class="text-decoration-none">
+                                <span th:text="#{item.search.priceOrMore('50,000')}">50,000 or more</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <section id="item-container" class="w-100 py-2 px-3">
+            <div class="row gx-4 gx-lg-3 row-cols-2 row-cols-md-4 row-cols-xl-4 justify-content-center">
+                <!-- Product card -->
+                <div class="col p-2 mb-3 card-effect">
+                    <div class="card h-100 w-100 border-0">
+                        <!-- Sale badge-->
+                        <div class="badge bg-primary text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                        <!-- Cart badge-->
+                        <button class="badge border-0 position-absolute d-flex align-items-center badge-cart" style="top: 0.3rem; left: 0.1rem; background: transparent;">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </button>
+                        <!-- Product image-->
+                        <img class="card-img-top"
+                             src="https://dummyimage.com/450x450/ffffff/d4d4d4.jpg"
+                             alt="..." />
+                        <!-- Product details-->
+                        <div id="itemDetails" class="card-body p-2">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <span>Item Name VeryLong VeryLong VeryLong VeryLong</span>
+                                <!-- Product price-->
+                                <div>
+                                    <span class="text-muted text-decoration-line-through">$20.00</span>
+                                    <span style="font-size: 14px" class="fw-bold text-danger">$18.00</span>
+                                </div>
+                                <!-- Product Reviews -->
+                                <div class="d-flex justify-content-center mb-2 align-items-center">
+                                    <i class="fa-solid fa-star text-warning"></i>
+                                    <i class="fa-solid fa-star text-warning"></i>
+                                    <i class="fa-solid fa-star text-warning"></i>
+                                    <i class="fa-solid fa-star text-warning"></i>
+                                    <i class="fa-solid fa-star text-warning"></i>
+                                    <small>(250)</small>
+                                </div>
+                                <!-- Product Point -->
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pagination -->
+            <div class="d-flex justify-content-center">
+                <ul class="pagination">
+                    <li class="page-item disabled">
+                        <a class="page-link" href="#">&laquo;</a>
+                    </li>
+                    <li class="page-item active">
+                        <a class="page-link" href="#">1</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">2</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">3</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">4</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">5</a>
+                    </li>
+                    <li class="page-item">
+                        <a class="page-link" href="#">&raquo;</a>
+                    </li>
+                </ul>
+            </div>
+        </section>
+    </div>
+</main>
+
+</html>
