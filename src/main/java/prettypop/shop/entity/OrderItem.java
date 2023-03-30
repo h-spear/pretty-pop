@@ -17,9 +17,6 @@ public class OrderItem extends BaseEntity {
     @JoinColumn(name = "ITEM_ID")
     private Item item;
 
-    private int originalPrice;
-    private int discountPrice;
-    private int earnedPoint;
     private int count;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,9 +31,6 @@ public class OrderItem extends BaseEntity {
         OrderItem orderItem = new OrderItem();
         item.removeStock(count);
         orderItem.item = item;
-        orderItem.originalPrice = item.getPrice();
-        orderItem.discountPrice = (item.getPrice() * item.getDiscountRate()) / 100;
-        orderItem.earnedPoint = (item.getPrice() * item.getEarnedPointRate()) / 100;
         orderItem.count = count;
         return orderItem;
     }
@@ -46,6 +40,6 @@ public class OrderItem extends BaseEntity {
     }
 
     public int getTotalPrice() {
-        return (this.originalPrice - this.discountPrice) * this.count;
+        return (item.getPurchasePrice()) * this.count;
     }
 }

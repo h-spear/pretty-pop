@@ -68,7 +68,7 @@ public class Order extends BaseEntity {
     private void addOrderItem(OrderItem orderItem) {
         orderItems.add(orderItem);
         orderItem.setOrder(this);
-        earnedPoint += orderItem.getEarnedPoint();
+        earnedPoint += orderItem.getItem().getEarnedPoint();
     }
 
     private void setDelivery(Delivery delivery) {

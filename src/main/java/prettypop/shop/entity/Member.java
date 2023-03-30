@@ -51,6 +51,9 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<CartItem> shoppingCart = new ArrayList<>();
 
+    @OneToMany(mappedBy = "reviewer")
+    private List<Review> reviews = new ArrayList<>();
+
     protected Member() {
     }
 
