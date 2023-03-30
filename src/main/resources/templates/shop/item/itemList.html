@@ -3,14 +3,12 @@
       th:replace="fragment/layout :: html(#{title.items}, ~{::main})">
 
 
-<main class="w-100 d-flex justify-content-center">
+<main class="w-100 d-flex justify-content-center my-3">
     <style>
         #item-sideMenu {
             width: 220px;
         }
-        #item-container {
 
-        }
         #item-categoryBox {
             font-size: 16px;
             font-weight: 600;
@@ -18,6 +16,7 @@
             width: 180px;
             height: 170px;
         }
+
         #item-searchConditionBox {
             font-size: 12px;
         }
@@ -52,6 +51,7 @@
             transition: 0.2s;
         }
     </style>
+
     <div class="max-width-1000 w-100 d-flex justify-content-between">
         <section id="item-sideMenu" class="p-2">
             <div id="item-categoryBox" class="d-flex align-items-center justify-content-center">
@@ -203,39 +203,69 @@
         <section id="item-container" class="w-100 py-2 px-3">
             <div class="row gx-4 gx-lg-3 row-cols-2 row-cols-md-4 row-cols-xl-4 justify-content-center">
                 <!-- Product card -->
-                <div class="col p-2 mb-3 card-effect">
-                    <div class="card h-100 w-100 border-0">
+                <div th:each="item: ${itemQueryResults}" class="col p-2 mb-3 card-effect">
+                    <div class="card h-100 w-100 border-0 mb-3">
                         <!-- Sale badge-->
-                        <div class="badge bg-primary text-white position-absolute" style="top: 0.5rem; right: 0.5rem">Sale</div>
+                        <div th:if="${item.purchasePrice < item.originalPrice}"
+                             class="badge bg-primary text-white position-absolute"
+                             style="top: 0.5rem; right: 0.5rem">Sale</div>
                         <!-- Cart badge-->
                         <button class="badge border-0 position-absolute d-flex align-items-center badge-cart" style="top: 0.3rem; left: 0.1rem; background: transparent;">
                             <i class="fa-solid fa-cart-shopping"></i>
                         </button>
                         <!-- Product image-->
                         <img class="card-img-top"
-                             src="https://dummyimage.com/450x450/ffffff/d4d4d4.jpg"
-                             alt="..." />
+                             style="border-radius: 0%"
+                             src="https://dummyimage.com/300x300/d4d4d4/454545.jpg&text=Not+Image"
+                             th:if="*{item.getThumbnailImageUrl() == null}"
+                             alt="Not Image" />
+                        <img class="card-img-top"
+                             style="border-radius: 0%"
+                             src=""
+                             th:src="*{item.getThumbnailImageUrl()}"
+                             th:if="*{item.getThumbnailImageUrl() != null}"
+                             alt="Not Image" />
+
                         <!-- Product details-->
                         <div id="itemDetails" class="card-body p-2">
                             <div class="text-center">
                                 <!-- Product name-->
-                                <span>Item Name VeryLong VeryLong VeryLong VeryLong</span>
+                                <span th:text="*{item.name}">Item Name VeryLongVeryLong...</span>
                                 <!-- Product price-->
-                                <div>
-                                    <span class="text-muted text-decoration-line-through">$20.00</span>
-                                    <span style="font-size: 14px" class="fw-bold text-danger">$18.00</span>
+                                <div th:if="${item.purchasePrice < item.originalPrice}">
+                                    <span th:text="|*{item.originalPrice}#{unit.money}|"
+                                          class="text-muted text-decoration-line-through">$20.00</span>
+                                    <span th:text="|*{item.purchasePrice}#{unit.money}|"
+                                          style="font-size: 14px" class="fw-bold text-danger">$18.00</span>
+                                </div>
+                                <div th:unless="${item.purchasePrice < item.originalPrice}">
+                                    <span th:text="*{item.originalPrice}"
+                                          style="font-size: 14px" class="fw-bold text-danger">$20.00</span>
                                 </div>
                                 <!-- Product Reviews -->
-                                <div class="d-flex justify-content-center mb-2 align-items-center">
-                                    <i class="fa-solid fa-star text-warning"></i>
-                                    <i class="fa-solid fa-star text-warning"></i>
-                                    <i class="fa-solid fa-star text-warning"></i>
-                                    <i class="fa-solid fa-star text-warning"></i>
-                                    <i class="fa-solid fa-star text-warning"></i>
-                                    <small>(250)</small>
-                                </div>
-                                <!-- Product Point -->
+                                <div class="d-flex justify-content-center mb-2 align-items-center mt-1">
+                                    <!-- 평점이 0.5 미만 ☆☆☆☆☆ -->
+                                    <div th:if="*{item.getRatingIntegerPart() == 0 && item.getRatingDecimalPart() < 0.5}">
+                                        <i th:each="num: ${#numbers.sequence(1, 5)}"
+                                           class="fa-solid fa-star text-secondary"></i>
+                                    </div>
 
+                                    <!-- 평점이 4.5 이상 ★★★★★ -->
+                                    <div th:if="*{item.getRatingIntegerPart() == 4 && item.getRatingDecimalPart() >= 0.5}">
+                                        <i th:each="num: ${#numbers.sequence(1, 5)}"
+                                           class="fa-solid fa-star text-warning"></i>
+                                    </div>
+
+                                    <!-- 그외 -->
+                                    <div th:unless="*{(item.getRatingIntegerPart() == 0 && item.getRatingDecimalPart() < 0.5) ||
+                                                      (item.getRatingIntegerPart() == 4 && item.getRatingDecimalPart() >= 0.5)}">
+                                        <i th:if="*{item.getRatingIntegerPart() > 0}"
+                                           th:each="num: ${#numbers.sequence(1, 5)}"
+                                           class="fa-solid fa-star"
+                                           th:classappend="*{num <= item.getRatingIntegerPart()} ? 'text-warning' : 'text-secondary'"></i>
+                                    </div>
+                                    <small th:text="'(' + *{item.reviewCount} +  ')'">(250)</small>
+                                </div>
                             </div>
                         </div>
                     </div>
