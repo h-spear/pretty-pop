@@ -203,7 +203,9 @@
         <section id="item-container" class="w-100 py-2 px-3">
             <div class="row gx-4 gx-lg-3 row-cols-2 row-cols-md-4 row-cols-xl-4 justify-content-center">
                 <!-- Product card -->
-                <div th:each="item: ${itemQueryResults}" class="col p-2 mb-3 card-effect">
+                <a th:each="item: ${itemQueryResults}"
+                   href="#" th:href="@{/items/{id}(id=${item.id})}"
+                   class="col p-2 mb-3 card-effect text-decoration-none text-black">
                     <div class="card h-100 w-100 border-0 mb-3">
                         <!-- Sale badge-->
                         <div th:if="${item.purchasePrice < item.originalPrice}"
@@ -231,6 +233,7 @@
                             <div class="text-center">
                                 <!-- Product name-->
                                 <span th:text="*{item.name}">Item Name VeryLongVeryLong...</span>
+
                                 <!-- Product price-->
                                 <div th:if="${item.purchasePrice < item.originalPrice}">
                                     <span th:text="|*{item.originalPrice}#{unit.money}|"
@@ -269,7 +272,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </a>
             </div>
 
             <!-- Pagination -->

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      th:replace="fragment/layout :: html(#{title.items}, ~{::main})">
+
+
+<main class="w-100 d-flex justify-content-center my-3">
+    <style>
+        #itemDetail p {
+            margin-top: 2px;
+            margin-bottom: 0;
+        }
+    </style>
+
+    <div class="max-width-1000 w-100 d-flex flex-column align-items-center" th:object="${item}">
+        <!-- Product section -->
+        <section class="w-100">
+            <div class="border-bottom border-secondary small pb-1">
+                <a href="#" class="text-decoration-none text-muted">
+                    <span th:text="*{category}">Category</span></a>
+                >
+                <span th:text="*{name}">item</span>
+            </div>
+
+            <div class="py-5">
+                <div class="container px-4 px-lg-5 my-5">
+                    <div class="row gx-4 gx-lg-5 align-items-center">
+                        <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="..." /></div>
+                        <div class="col-md-6">
+                            <h1 class="display-5 fw-bolder"
+                                th:text="*{name}">Shop item template</h1>
+                            <div id="itemDetail" class="mb-5" style="font-size: 14px">
+                                <div th:if="*{originalPrice <= purchasePrice}">
+                                    <p>
+                                        <span th:text="|#{label.item.salePrice} : |">Selling Price :</span>
+                                        <b><span class="text-danger" th:text="|*{originalPrice}#{unit.money}|">9000</span></b>
+                                    </p>
+                                </div>
+                                <div th:if="*{originalPrice > purchasePrice}">
+                                    <p th:text="|#{label.item.price} : *{originalPrice}#{unit.money}|">Price : 10000</p>
+                                    <p th:text="|#{label.item.discountRate} : *{getDiscountRate()}%|">Discount Rate : 10%</p>
+                                    <p>
+                                        <span th:text="|#{label.item.salePrice} : |">Selling Price :</span>
+                                        <b><span class="text-danger" th:text="|*{purchasePrice}#{unit.money}|">9000</span></b>
+                                    </p>
+                                </div>
+                                <p th:text="|#{label.item.point} : *{earnedPoint}P|">Point : 50</p>
+                                <p th:text="|#{label.item.status} : *{itemStatus}|">Status : New</p>
+                                <p th:text="|#{label.item.salesVolume} : *{salesVolume}|">Sales Volume : 123</p>
+                                <p th:text="|#{label.item.stock} : *{stockQuantity}|">Stock : 9999</p>
+                            </div>
+                            <p class="lead" th:if="*{description != null}" th:text="*{description}" style="font-size: 12px">
+                                Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                                Praesentium at dolorem quidem modi.
+                                Nam sequi consequatur obcaecati excepturi alias magni,
+                                accusamus eius blanditiis delectus ipsam minima ea iste laborum vero?
+                            </p>
+                            <div class="d-flex">
+                                <input class="form-control text-center me-3 p-1" id="inputQuantity"
+                                       type="num" value="1" style="max-width: 3rem" />
+                                <button class="btn btn-outline-primary flex-shrink-0" type="button">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    <span th:text="#{item.view.buy}">buy</span>
+                                </button>
+                                <button class="btn btn-outline-dark flex-shrink-0 ms-3" type="button">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    <span th:text="#{item.view.cart}">cart</span>
+                                </button>
+                                <button class="btn btn-outline-dark flex-shrink-0 ms-3" type="button">
+                                    <i class="bi-cart-fill me-1"></i>
+                                    <span th:text="#{item.view.wish}">wish</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Review section -->
+        <section class="w-100">
+            <div class="border-bottom border-secondary w-100 small pb-1">
+                <h4 th:text="#{label.review}" class="d-inline me-1">Review</h4>
+                <span th:text="|(*{reviewCount})|">123</span>
+            </div>
+
+            <div th:each="review: *{reviewDtos}" class="mt-4 mb-5 px-3">
+                <a class="text-decoration-none text-info fw-bold" href="#" style="font-size: 18px"
+                   th:href="@{/member/{reviewer}(reviewer=${review.reviewerId})}"
+                   th:text="${review.reviewerNickname + '(' + review.reviewerUsername + ')'}"></a>
+                <div class="d-inline ms-2" style="font-size: 14px">
+                    <i th:each="num: ${#numbers.sequence(1, 5)}"
+                       class="fa-solid fa-star"
+                       th:classappend="${num <= item.rating} ? 'text-warning' : 'text-secondary'"></i>
+                </div>
+                <p class="d-inline text-muted ms-2" style="font-size: 10px">
+                    <span th:text="|#{label.registrationDate} : ${review.registrationDate} / |"></span>
+                    <span th:text="|#{label.lastModifiedDate} : ${review.lastModifiedDate}|"></span>
+                </p>
+                <p class="ms-4 mt-1 ft-5" th:text="${review.content}"></p>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+</html>
