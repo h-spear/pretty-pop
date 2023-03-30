@@ -94,8 +94,8 @@
                        th:classappend="${num <= item.rating} ? 'text-warning' : 'text-secondary'"></i>
                 </div>
                 <p class="d-inline text-muted ms-2" style="font-size: 10px">
-                    <span th:text="|#{label.registrationDate} : ${review.registrationDate} / |"></span>
-                    <span th:text="|#{label.lastModifiedDate} : ${review.lastModifiedDate}|"></span>
+                    <span th:text="|#{label.registrationDate} : ${#temporals.format(review.registrationDate, 'yyyy-MM-dd HH:mm:ss')} / |"></span>
+                    <span th:text="|#{label.lastModifiedDate} : ${#temporals.format(review.lastModifiedDate, 'yyyy-MM-dd HH:mm:ss')}|"></span>
                 </p>
                 <p class="ms-4 mt-1 ft-5" th:text="${review.content}"></p>
             </div>
