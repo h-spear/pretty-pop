@@ -27,8 +27,7 @@ public class Review extends BaseEntity{
     protected Review() {
     }
 
-    public Review(Long id, Item item, int rating, String content, Member reviewer) {
-        this.id = id;
+    public Review(Item item, int rating, String content, Member reviewer) {
         this.item = item;
         this.rating = rating;
         this.content = content;
