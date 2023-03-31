@@ -112,6 +112,7 @@
         }
 
         function deleteWishItem(itemId) {
+            let flag = false;
             $.ajax({
                 url: "/wish",
                 type: 'delete',
@@ -123,6 +124,7 @@
                 success: function (result) {
                     if (result.status == 'success') {
                         alert([[#{message.deleteWishItem}]]);
+                        flag = true;
                     } else if(result.status == 'fail') {
                         alert('error!!!')
                     } else {
@@ -133,6 +135,7 @@
                     alert("error!!!");
                 }
             });
+            flag && location.reload();
         }
 
     </script>
