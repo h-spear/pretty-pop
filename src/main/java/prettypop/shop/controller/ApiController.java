@@ -15,7 +15,6 @@ import prettypop.shop.service.MemberService;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-@Controller
 public class ApiController {
 
     private final SecurityContextUtils securityContextUtils;
