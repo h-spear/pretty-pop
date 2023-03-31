@@ -3,14 +3,8 @@ package prettypop.shop.configuration.jwt;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
-import prettypop.shop.configuration.security.User;
-import prettypop.shop.configuration.security.UserDetailsServiceImpl;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -24,6 +18,10 @@ import static prettypop.shop.configuration.jwt.TokenConst.REFRESH_TOKEN_VALIDITY
 @Slf4j
 @Component
 public class JwtTokenUtils {
+
+    public Long extractMemberId(String accessToken) {
+        return Long.parseLong(Jwts.parser().setSigningKey(TokenConst.ACCESS_SECRET_KEY).parseClaimsJws(accessToken).getBody().get(TokenConst.SUBJECT_ID, String.class));
+    }
 
     public boolean validateAccessToken(String accessToken) {
         try {

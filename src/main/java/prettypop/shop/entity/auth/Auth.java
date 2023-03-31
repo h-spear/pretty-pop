@@ -17,6 +17,9 @@ public class Auth {
     private Long id;
 
     @Column(nullable = false)
+    private Long userId;
+
+    @Column(nullable = false)
     private String username;
 
     @Column(nullable = false)
@@ -25,7 +28,8 @@ public class Auth {
     protected Auth() {
     }
 
-    public Auth(String username, String refreshToken) {
+    public Auth(Long userId, String username, String refreshToken) {
+        this.userId = userId;
         this.username = username;
         this.refreshToken = refreshToken;
     }

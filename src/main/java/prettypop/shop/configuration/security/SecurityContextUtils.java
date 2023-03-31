@@ -14,17 +14,13 @@ public class SecurityContextUtils {
 
     private final UserDetailsServiceImpl userDetailsService;
 
-    public User getPrincipal() {
-        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-    }
-
     public void setAuthentication(String accessToken) {
         Authentication authentication = getAuthentication(accessToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    private String getUsername(String token) {
-        return Jwts.parser().setSigningKey(TokenConst.ACCESS_SECRET_KEY).parseClaimsJws(token).getBody().getSubject();
+    private String getUsername(String accessToken) {
+        return Jwts.parser().setSigningKey(TokenConst.ACCESS_SECRET_KEY).parseClaimsJws(accessToken).getBody().getSubject();
     }
 
     private Authentication getAuthentication(String token) {

@@ -45,12 +45,12 @@ public class AuthService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        Token token = jwtTokenProvider.createToken(username);
+        Token token = jwtTokenProvider.createToken(member.getId(), username);
         String refreshToken = token.getRefreshToken();
 
         Optional<Auth> optional = authRepository.findByUsername(username);
         if (optional.isEmpty()) {
-            Auth auth = new Auth(username, refreshToken);
+            Auth auth = new Auth(member.getId(), username, refreshToken);
             authRepository.save(auth);
         } else {
             Auth auth = optional.get();
@@ -64,6 +64,6 @@ public class AuthService {
         if (!jwtTokenUtils.validateRefreshToken(refreshToken)) {
             throw new RefreshFailedException();
         }
-        return jwtTokenProvider.createAccessToken(auth.getUsername(), new Date());
+        return jwtTokenProvider.createAccessToken(auth.getUserId(), auth.getUsername(), new Date());
     }
 }
