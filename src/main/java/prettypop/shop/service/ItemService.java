@@ -1,6 +1,7 @@
 package prettypop.shop.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,7 @@ import prettypop.shop.dto.ItemQueryDto;
 import prettypop.shop.repository.ItemQueryRepository;
 import prettypop.shop.repository.ItemRepository;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 @Transactional(readOnly = true)
