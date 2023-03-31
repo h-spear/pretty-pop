@@ -1,4 +1,4 @@
-package prettypop.shop.controller.api;
+package prettypop.shop.controller.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

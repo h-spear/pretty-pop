@@ -34,40 +34,45 @@
         <!-- 찜 목록에 상품이 있다면 -->
         <section th:if="${wishList.size() > 0}" class="max-width-700 py-3 w-100">
             <div th:each="item: ${wishList}" class="wishItem mb-2 p-4 d-flex align-items-center" style="font-size: 14px">
-                <div style="width: 125px; height: 125px;">
-                    <img class="rounded-2"
-                         style="width: 125px; height: 125px;"
-                         src="https://dummyimage.com/300x300/d4d4d4/454545.jpg&text=Not+Image"
-                         th:if="*{item.thumbnailImageUrl == null}"
-                         alt="Not Image" />
-                    <img class="rounded-2"
-                         style="width: 125px; height: 125px;"
-                         src=""
-                         th:src="*{item.thumbnailImageUrl}"
-                         th:if="*{item.thumbnailImageUrl != null}"
-                         alt="Not Image" />
-                </div>
-                <div class="ms-4 w-100">
-                    <h1 class="fs-2 fw-bolder"
-                        th:text="${item.itemName}">Item Name</h1>
-                    <div th:if="${item.purchasePrice < item.originalPrice}">
-                        <span class="badge bg-danger" th:text="#{label.discount(${item.discountRate})}">Danger</span>
-                        <span th:text="|${item.originalPrice}#{unit.money}|"
-                              class="text-muted text-decoration-line-through">$20.00</span>
+                <a class="text-black" href="#" th:href="@{items/{itemId}(itemId=${item.itemId})}">
+                    <div style="width: 125px; height: 125px;">
+                        <img class="rounded-2"
+                             style="width: 125px; height: 125px;"
+                             src="https://dummyimage.com/300x300/d4d4d4/454545.jpg&text=Not+Image"
+                             th:if="*{item.thumbnailImageUrl == null}"
+                             alt="Not Image" />
+                        <img class="rounded-2"
+                             style="width: 125px; height: 125px;"
+                             src=""
+                             th:src="*{item.thumbnailImageUrl}"
+                             th:if="*{item.thumbnailImageUrl != null}"
+                             alt="Not Image" />
                     </div>
-                    <p th:text="|${item.purchasePrice}#{unit.money}|"
-                       style="font-size: 18px" class="fw-bold text-dark m-0">$18.00</p>
-                </div>
+                </a>
+                <a href="#" th:href="@{items/{itemId}(itemId=${item.itemId})}"
+                   class="ms-4 w-100 text-dark">
+                    <div>
+                        <h1 class="fs-2 fw-bolder"
+                            th:text="${item.itemName}">Item Name</h1>
+                        <div th:if="${item.purchasePrice < item.originalPrice}">
+                            <span class="badge bg-danger" th:text="#{label.discount(${item.discountRate})}">Danger</span>
+                            <span th:text="|${item.originalPrice}#{unit.money}|"
+                                  class="text-muted text-decoration-line-through">$20.00</span>
+                        </div>
+                        <p th:text="|${item.purchasePrice}#{unit.money}|"
+                           style="font-size: 18px" class="fw-bold text-dark m-0">$18.00</p>
+                    </div>
+                </a>
                 <div class="ms-5">
                     <ul class="m-0 p-0 d-flex justify-content-center fs-3">
                         <li class="wishMenu-item mx-4">
-                            <a href="#" th:onclick="'deleteWishItem(' + ${item.itemId} + ')'">
-                                <i class="fa-regular fa-trash-can"></i>
+                            <a href="#" th:onclick="'addCart(' + ${item.itemId} + ')'">
+                                <i class="fa-solid fa-cart-shopping"></i>
                             </a>
                         </li>
                         <li class="wishMenu-item ms-2">
-                            <a href="#" th:onclick="'addCart(' + ${item.itemId} + ')'">
-                                <i class="fa-solid fa-cart-shopping"></i>
+                            <a href="#" th:onclick="'deleteWishItem(' + ${item.itemId} + ')'">
+                                <i class="fa-regular fa-trash-can"></i>
                             </a>
                         </li>
                     </ul>
@@ -85,17 +90,18 @@
     </div>
 
     <script th:inline="javascript">
-
         function addCart(itemId) {
+            const obj = {
+                itemId: itemId,
+                quantity: 1
+            }
             event.preventDefault();
             $.ajax({
                 url: "/cart",
+                headers: {'Content-Type': 'application/json'},
                 type: 'post',
                 async: false,
-                data: {
-                    itemId: itemId,
-                    quantity: 1
-                },
+                data: JSON.stringify(obj),
                 success: function (result) {
                     if (result.status == 'success') {
                         alert([[#{message.addTheCartOne}]]);
@@ -113,17 +119,17 @@
 
         function deleteWishItem(itemId) {
             let flag = false;
+            const obj = {
+                itemId: itemId
+            }
             $.ajax({
                 url: "/wish",
+                headers: {'Content-Type': 'application/json'},
                 type: 'delete',
                 async: false,
-                data: {
-                    itemId: itemId,
-                    quantity: 1
-                },
+                data: JSON.stringify(obj),
                 success: function (result) {
                     if (result.status == 'success') {
-                        alert([[#{message.deleteWishItem}]]);
                         flag = true;
                     } else if(result.status == 'fail') {
                         alert('error!!!')

@@ -56,7 +56,8 @@
                             </p>
                             <div class="d-flex">
                                 <input class="form-control text-center me-3 p-1" id="inputQuantity"
-                                       type="num" value="1" style="max-width: 3rem" />
+                                       type="number" value="1" style="max-width: 5rem"
+                                       th:onchange="validateCount()"/>
                                 <button class="btn btn-outline-primary flex-shrink-0" type="button">
                                     <span th:text="#{button.item.buy}">buy</span>
                                 </button>
@@ -101,19 +102,29 @@
     </div>
 
     <script th:inline="javascript">
+
+        function validateCount(inputBoxIndex) {
+            const input = document.querySelector('#inputQuantity');
+            if (input.value * 1 <= 0) {
+                alert([[#{message.doNotUnderZero}]]);
+                input.value = 1;
+            }
+        }
+
         const itemId = [[${item.id}]];
 
         function addCart() {
             const quantity = document.querySelector('#inputQuantity').value;
-
+            const obj = {
+                itemId: itemId,
+                quantity: quantity
+            }
             $.ajax({
                 url: "/cart",
+                headers: {'Content-Type': 'application/json'},
                 type: 'post',
                 async: false,
-                data: {
-                    itemId: itemId,
-                    quantity: quantity
-                },
+                data: JSON.stringify(obj),
                 success: function (result) {
                     if (result.status == 'success') {
                         alert([[#{message.addTheCart}]]);
@@ -130,13 +141,15 @@
         }
 
         function addWishList() {
+            const obj = {
+                itemId: itemId
+            }
             $.ajax({
                 url: "/wish",
+                headers: {'Content-Type': 'application/json'},
                 type: 'post',
                 async: false,
-                data: {
-                    itemId: itemId
-                },
+                data: JSON.stringify(obj),
                 success: function (result) {
                     if (result.status == 'success') {
                         alert([[#{message.addTheWishList}]]);

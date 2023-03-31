@@ -33,7 +33,8 @@
 
         <!-- 장바구니에 상품이 있다면 -->
         <section th:if="${cartList.size() > 0}" class="max-width-700 py-3 w-100">
-            <div th:each="item: ${cartList}" class="cartItem mb-2 p-4 d-flex align-items-center" style="font-size: 14px">
+            <div th:each="item: ${cartList}" class="cartItem mb-2 p-4 d-flex align-items-center" style="font-size: 14px"
+                 th:id="cartItemContainer + ${itemStat.index}">
                 <div style="width: 125px; height: 125px;">
                     <img class="rounded-2"
                          style="width: 125px; height: 125px;"
@@ -59,23 +60,24 @@
                        style="font-size: 18px" class="fw-bold text-dark m-0">$18.00</p>
 
                     <div class="input-group mt-2 d-flex align-items-center">
-                        <input class="form-control text-center" style="max-width: 80px"
+                        <input class="form-control text-center px-1" style="max-width: 80px"
                                type="number"
                                th:onchange="'validateCount(' + ${itemStat.index} + ')'"
                                th:id="itemQuantityInput + ${itemStat.index}"
                                th:value="${item.count}">
                         <button class="btn btn-primary" type="button"
+                                th:id="itemQuantityButton + ${itemStat.index}"
                                 th:text="#{label.change}" th:onclick="'changeCount(' + ${itemStat.index} + ',' + ${item.itemId} + ')'">
                             Change
                         </button>
                     </div>
                 </div>
                 <div class="ms-5">
-
-                    <ul class="m-0 p-0 d-flex justify-content-center fs-3">
-                        <li class="cartMenu-item mx-4">
-                            <a href="#" th:onclick="'deleteItem(' + ${item.itemId} + ')'">
-                                <i class="fa-regular fa-trash-can"></i>
+                    <ul th:id="itemRemoveUl + ${itemStat.index}" class="m-0 p-0 d-flex justify-content-center fs-3">
+                        <li th:id="itemRemoveButton + ${itemStat.index}" class="cartMenu-item mx-4">
+                            <a th:id="itemRemoveLink + ${itemStat.index}" href="#" th:onclick="'deleteItem(' + ${item.itemId} + ')'">
+                                <i th:id="itemRemoveIcon + ${itemStat.index}"
+                                   class="fa-regular fa-trash-can"></i>
                             </a>
                         </li>
                     </ul>
@@ -95,6 +97,24 @@
 
     <script th:inline="javascript">
 
+        const count = [[${cartList.size()}]];
+        const cartList = [[${cartList}]];
+        cartList.forEach((item, i) => {
+            const itemContainer = document.querySelector('#cartItemContainer' + i);
+            itemContainer.addEventListener('click', (e) => {
+                const targetId = e.target.id;
+                if (targetId === 'itemQuantityInput' + i ||
+                    targetId === 'itemQuantityButton' + i ||
+                    targetId === 'itemRemoveButton' + i ||
+                    targetId === 'itemRemoveLink' + i ||
+                    targetId === 'itemRemoveIcon' + i ||
+                    targetId === 'itemRemoveUl' + i) {
+                    return;
+                }
+                window.location.href = '/items/' + item.itemId;
+            });
+        })
+
         function validateCount(inputBoxIndex) {
             const input = document.querySelector('#itemQuantityInput' + inputBoxIndex);
             if (input.value * 1 <= 0) {
@@ -106,17 +126,18 @@
         function changeCount(inputBoxIndex, itemId) {
             let flag = false;
             const quantity = document.querySelector('#itemQuantityInput' + inputBoxIndex).value;
+            const obj = {
+                itemId: itemId,
+                quantity: quantity
+            }
             $.ajax({
                 url: "/cart",
+                headers: {'Content-Type': 'application/json'},
                 type: 'put',
                 async: false,
-                data: {
-                    itemId: itemId,
-                    quantity: quantity
-                },
+                data: JSON.stringify(obj),
                 success: function (result) {
                     if (result.status == 'success') {
-                        alert([[#{message.cart.changeCountSuccess}]]);
                         flag = true;
                     } else if(result.status == 'fail') {
                         alert('error!!!')
@@ -133,16 +154,17 @@
 
         function deleteItem(itemId) {
             let flag = false;
+            const obj = {
+                itemId: itemId
+            }
             $.ajax({
                 url: "/cart",
+                headers: {'Content-Type': 'application/json'},
                 type: 'delete',
                 async: false,
-                data: {
-                    itemId: itemId
-                },
+                data: JSON.stringify(obj),
                 success: function (result) {
                     if (result.status == 'success') {
-                        alert([[#{message.cart.deleteItem}]]);
                         flag = true;
                     } else if(result.status == 'fail') {
                         alert('error!!!')
