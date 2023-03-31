@@ -6,18 +6,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import prettypop.shop.configuration.annotation.Login;
-import prettypop.shop.configuration.jwt.JwtTokenUtils;
-import prettypop.shop.configuration.security.SecurityContextUtils;
-import prettypop.shop.service.MemberService;
+import prettypop.shop.service.ItemService;
 
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 public class HomeController {
 
-    private final SecurityContextUtils securityContextUtils;
-    private final JwtTokenUtils jwtTokenUtils;
-    private final MemberService memberService;
+    private final ItemService itemService;
 
     @GetMapping({"/", "/home"})
     public String home(@Login Long id) {
@@ -35,13 +31,15 @@ public class HomeController {
     public String wish(@Login Long id,
                        Model model) {
         log.info("찜 목록 컨트롤러 id={}", id);
-        model.addAttribute("wishList", memberService.getWishList(id));
+        model.addAttribute("wishList", itemService.getWishList(id));
         return "member/item/wishList";
     }
 
     @GetMapping("/cart")
-    public String cart(@Login Long id) {
+    public String cart(@Login Long id,
+                       Model model) {
         log.info("장바구니 컨트롤러 id={}", id);
+        model.addAttribute("cartList", itemService.getCartList(id));
         return "member/item/shoppingCart";
     }
 }

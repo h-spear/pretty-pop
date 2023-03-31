@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
-      th:replace="fragment/layout :: html(#{title.wishList}, ~{::main})">
+      th:replace="fragment/layout :: html(#{title.shoppingCart}, ~{::main})">
 
 
 <main class="w-100 d-flex justify-content-center my-3">
@@ -9,16 +9,16 @@
             max-width: 700px;
         }
 
-        .wishMenu-item > a{
+        .cartMenu-item > a{
             color: dimgrey;
         }
 
-        .wishMenu-item:hover a {
+        .cartMenu-item:hover a {
             transition: 0.2s;
             color: #eb6864;
         }
 
-        .wishItem:hover {
+        .cartItem:hover {
             cursor: pointer;
             -webkit-box-shadow: 0px 3px 13px -1px rgba(0,0,0,0.35);
             box-shadow: 0px 3px 13px -1px rgba(0,0,0,0.35);
@@ -28,23 +28,23 @@
 
     <div class="max-width-1000 w-100 d-flex flex-column justify-content-center align-items-center">
         <div class="border-bottom border-secondary small pb-1 w-100">
-            <span th:text="#{label.wishList}">Wish List</span>
+            <span th:text="#{label.shoppingCart}">Shopping Cart</span>
         </div>
 
-        <!-- 찜 목록에 상품이 있다면 -->
-        <section th:if="${wishList.size() > 0}" class="max-width-700 py-3 w-100">
-            <div th:each="item: ${wishList}" class="wishItem mb-2 p-4 d-flex align-items-center" style="font-size: 14px">
+        <!-- 장바구니에 상품이 있다면 -->
+        <section th:if="${cartList.size() > 0}" class="max-width-700 py-3 w-100">
+            <div th:each="item: ${cartList}" class="cartItem mb-2 p-4 d-flex align-items-center" style="font-size: 14px">
                 <div style="width: 125px; height: 125px;">
                     <img class="rounded-2"
                          style="width: 125px; height: 125px;"
                          src="https://dummyimage.com/300x300/d4d4d4/454545.jpg&text=Not+Image"
-                         th:if="*{item.thumbnailImageUrl == null}"
+                         th:if="*{item.getThumbnailImageUrl() == null}"
                          alt="Not Image" />
                     <img class="rounded-2"
                          style="width: 125px; height: 125px;"
                          src=""
-                         th:src="*{item.thumbnailImageUrl}"
-                         th:if="*{item.thumbnailImageUrl != null}"
+                         th:src="*{item.getThumbnailImageUrl()}"
+                         th:if="*{item.getThumbnailImageUrl() != null}"
                          alt="Not Image" />
                 </div>
                 <div class="ms-4 w-100">
@@ -57,17 +57,25 @@
                     </div>
                     <p th:text="|${item.purchasePrice}#{unit.money}|"
                        style="font-size: 18px" class="fw-bold text-dark m-0">$18.00</p>
+
+                    <div class="input-group mt-2 d-flex align-items-center">
+                        <input class="form-control text-center" style="max-width: 80px"
+                               type="number"
+                               th:onchange="'validateCount(' + ${itemStat.index} + ')'"
+                               th:id="itemQuantityInput + ${itemStat.index}"
+                               th:value="${item.count}">
+                        <button class="btn btn-primary" type="button"
+                                th:text="#{label.change}" th:onclick="'changeCount(' + ${itemStat.index} + ',' + ${item.itemId} + ')'">
+                            Change
+                        </button>
+                    </div>
                 </div>
                 <div class="ms-5">
+
                     <ul class="m-0 p-0 d-flex justify-content-center fs-3">
-                        <li class="wishMenu-item mx-4">
-                            <a href="#" th:onclick="'deleteWishItem(' + ${item.itemId} + ')'">
+                        <li class="cartMenu-item mx-4">
+                            <a href="#" th:onclick="'deleteItem(' + ${item.itemId} + ')'">
                                 <i class="fa-regular fa-trash-can"></i>
-                            </a>
-                        </li>
-                        <li class="wishMenu-item ms-2">
-                            <a href="#" th:onclick="'addCart(' + ${item.itemId} + ')'">
-                                <i class="fa-solid fa-cart-shopping"></i>
                             </a>
                         </li>
                     </ul>
@@ -75,10 +83,11 @@
             </div>
         </section>
 
-        <!-- 찜 목록이 비었다면 -->
-        <section th:if="${wishList.size() <= 0}" class="max-width-700 py-3 w-100">
+        <!-- 장바구니가 비었다면 -->
+        <section th:if="${cartList.size() <= 0}" class="max-width-700 py-3 w-100">
             <div class="mt-5 pt-4 d-flex flex-column justify-content-center align-items-center">
-                <h1 class="display-4" th:text="#{message.emptyWishList}">NO ITEM IN WISH LIST</h1>
+                <h1 class="display-4" th:text="#{message.emptyShoppingCart}">NO ITEM IN SHOPPING CART</h1>
+                <h3 class="ft-5" th:text="#{message.emptyShoppingCart2}"></h3>
                 <a class="mt-3" href="#" th:text="#{button.goShopping}">Go Shopping</a>
             </div>
         </section>
@@ -86,19 +95,29 @@
 
     <script th:inline="javascript">
 
-        function addCart(itemId) {
-            event.preventDefault();
+        function validateCount(inputBoxIndex) {
+            const input = document.querySelector('#itemQuantityInput' + inputBoxIndex);
+            if (input.value * 1 <= 0) {
+                alert([[#{message.doNotUnderZero}]]);
+                input.value = 1;
+            }
+        }
+
+        function changeCount(inputBoxIndex, itemId) {
+            let flag = false;
+            const quantity = document.querySelector('#itemQuantityInput' + inputBoxIndex).value;
             $.ajax({
                 url: "/cart",
-                type: 'post',
+                type: 'put',
                 async: false,
                 data: {
                     itemId: itemId,
-                    quantity: 1
+                    quantity: quantity
                 },
                 success: function (result) {
                     if (result.status == 'success') {
-                        alert([[#{message.addTheCartOne}]]);
+                        alert([[#{message.cart.changeCountSuccess}]]);
+                        flag = true;
                     } else if(result.status == 'fail') {
                         alert('error!!!')
                     } else {
@@ -109,20 +128,22 @@
                     alert("error!!!");
                 }
             });
+            flag && location.reload();
         }
 
-        function deleteWishItem(itemId) {
+        function deleteItem(itemId) {
+            let flag = false;
             $.ajax({
-                url: "/wish",
+                url: "/cart",
                 type: 'delete',
                 async: false,
                 data: {
-                    itemId: itemId,
-                    quantity: 1
+                    itemId: itemId
                 },
                 success: function (result) {
                     if (result.status == 'success') {
-                        alert([[#{message.deleteWishItem}]]);
+                        alert([[#{message.cart.deleteItem}]]);
+                        flag = true;
                     } else if(result.status == 'fail') {
                         alert('error!!!')
                     } else {
@@ -133,6 +154,7 @@
                     alert("error!!!");
                 }
             });
+            flag && location.reload();
         }
 
     </script>
