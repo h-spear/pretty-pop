@@ -68,10 +68,8 @@ public class MemberService {
     @Transactional
     public void addCart(Long memberId, Long itemId, int count) {
         log.info("카트 아이템 추가 로직 실행");
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(IllegalArgumentException::new);
-        Item item = itemRepository.findById(itemId).
-                orElseThrow(IllegalArgumentException::new);
+        Member member = findMember(memberId);
+        Item item = findItem(itemId);
 
         Optional<CartItem> optional = cartItemRepository.findByMemberItem(member, item);
         if (optional.isEmpty()) {
@@ -86,23 +84,39 @@ public class MemberService {
     @Transactional
     public void addWish(Long memberId, Long itemId) {
         log.info("찜 목록 아이템 추가 로직 실행");
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(IllegalArgumentException::new);
-        Item item = itemRepository.findById(itemId).
-                orElseThrow(IllegalArgumentException::new);
+        Member member = findMember(memberId);
+        Item item = findItem(itemId);
 
         try {
-            wishItemRepository.findByMemberItem(member, item).orElseThrow();
+            wishItemRepository.findByMemberItem(memberId, itemId).orElseThrow();
         } catch (NoSuchElementException e) {
             WishItem wishItem = wishItemRepository.save(new WishItem(member, item));
             member.addWishItem(wishItem);
         }
     }
 
+    @Transactional
+    public void deleteWish(Long memberId, Long itemId) {
+        log.info("찜 목록 아이템 삭제 로직 실행");
+        WishItem wishItem = wishItemRepository.findByMemberItem(memberId, itemId)
+                .orElseThrow(IllegalArgumentException::new);
+        wishItemRepository.delete(wishItem);
+    }
+
     public List<WishItemDto> getWishList(Long id) {
         return memberRepository.findWishList(id).stream()
                 .map(wishItem -> WishItemDto.of(wishItem.getItem()))
                 .collect(Collectors.toList());
+    }
+
+    private Item findItem(Long itemId) {
+        return itemRepository.findById(itemId).
+                orElseThrow(IllegalArgumentException::new);
+    }
+
+    private Member findMember(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     private void validateDuplicateUsername(String username) {
@@ -115,5 +129,4 @@ public class MemberService {
     private String generateRandomNickname() {
         return RandomString.make(10);
     }
-
 }

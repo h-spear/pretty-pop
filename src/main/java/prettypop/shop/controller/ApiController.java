@@ -2,6 +2,7 @@ package prettypop.shop.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -47,6 +48,19 @@ public class ApiController {
             return ApiResponse.ofError("존재하지 않는 아이템이거나 회원 오류가 발생했습니다.");
         } finally {
             log.info("찜 목록에 아이템 추가 memberId={}, itemId={}", memberId, itemId);
+        }
+        return ApiResponse.ofSuccess();
+    }
+
+    @DeleteMapping("/wish")
+    public ApiResponse deleteWish(@Login Long memberId,
+                                  Long itemId) {
+        try {
+            memberService.deleteWish(memberId, itemId);
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.ofError("존재하지 않는 아이템이거나 회원 오류가 발생했습니다.");
+        } finally {
+            log.info("찜 목록의 아이템 삭제 memberId={}, itemId={}", memberId, itemId);
         }
         return ApiResponse.ofSuccess();
     }

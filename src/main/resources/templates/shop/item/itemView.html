@@ -139,7 +139,7 @@
                 },
                 success: function (result) {
                     if (result.status == 'success') {
-                        alert(message.addTheWishList);
+                        alert([[#{message.addTheWishList}]]);
                     } else if(result.status == 'fail') {
                         alert('error!!!')
                     } else {
