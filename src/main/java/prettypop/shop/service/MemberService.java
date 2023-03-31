@@ -7,6 +7,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import prettypop.shop.dto.MemberRegisterParam;
+import prettypop.shop.dto.WishItemDto;
 import prettypop.shop.entity.CartItem;
 import prettypop.shop.entity.Item;
 import prettypop.shop.entity.Member;
@@ -17,8 +18,10 @@ import prettypop.shop.repository.ItemRepository;
 import prettypop.shop.repository.MemberRepository;
 import prettypop.shop.repository.WishItemRepository;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -94,6 +97,12 @@ public class MemberService {
             WishItem wishItem = wishItemRepository.save(new WishItem(member, item));
             member.addWishItem(wishItem);
         }
+    }
+
+    public List<WishItemDto> getWishList(Long id) {
+        return memberRepository.findWishList(id).stream()
+                .map(wishItem -> WishItemDto.of(wishItem.getItem()))
+                .collect(Collectors.toList());
     }
 
     private void validateDuplicateUsername(String username) {
