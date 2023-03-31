@@ -58,15 +58,13 @@
                                 <input class="form-control text-center me-3 p-1" id="inputQuantity"
                                        type="num" value="1" style="max-width: 3rem" />
                                 <button class="btn btn-outline-primary flex-shrink-0" type="button">
-                                    <i class="bi-cart-fill me-1"></i>
                                     <span th:text="#{item.view.buy}">buy</span>
                                 </button>
-                                <button class="btn btn-outline-dark flex-shrink-0 ms-3" type="button">
-                                    <i class="bi-cart-fill me-1"></i>
+                                <button class="btn btn-outline-dark flex-shrink-0 ms-3" type="button"
+                                        onclick="addCart()">
                                     <span th:text="#{item.view.cart}">cart</span>
                                 </button>
                                 <button class="btn btn-outline-dark flex-shrink-0 ms-3" type="button">
-                                    <i class="bi-cart-fill me-1"></i>
                                     <span th:text="#{item.view.wish}">wish</span>
                                 </button>
                             </div>
@@ -75,7 +73,6 @@
                 </div>
             </div>
         </section>
-
 
         <!-- Review section -->
         <section class="w-100">
@@ -100,8 +97,35 @@
                 <p class="ms-4 mt-1 ft-5" th:text="${review.content}"></p>
             </div>
         </section>
-
     </div>
+
+    <script th:inline="javascript">
+        const itemId = [[${item.id}]];
+
+        function addCart() {
+            const quantity = document.querySelector('#inputQuantity').value;
+
+            $.ajax({
+                url: "/cart",
+                type: 'post',
+                async: false,
+                data: {
+                    itemId: itemId,
+                    quantity: quantity
+                },
+                success: function (result) {
+                    if (result.status == 'success') {
+                        alert('상품이 카트에 추가되었습니다.');
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert("error!!!");
+                }
+            });
+        }
+    </script>
 </main>
 
 </html>

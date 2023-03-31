@@ -7,9 +7,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import prettypop.shop.dto.MemberRegisterParam;
+import prettypop.shop.entity.CartItem;
+import prettypop.shop.entity.Item;
 import prettypop.shop.entity.Member;
 import prettypop.shop.exception.MemberUsernameDuplicateException;
+import prettypop.shop.repository.CartItemRepository;
+import prettypop.shop.repository.ItemRepository;
 import prettypop.shop.repository.MemberRepository;
+
+import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -21,6 +27,8 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ItemRepository itemRepository;
+    private final CartItemRepository cartItemRepository;
 
     @Transactional
     public Long join(MemberRegisterParam param) {
@@ -48,6 +56,24 @@ public class MemberService {
 
         Member savedMember = memberRepository.save(member);
         return savedMember.getId();
+    }
+
+    @Transactional
+    public void addCart(Long memberId, Long itemId, int count) {
+        log.info("카트 아이템 추가 로직 실행");
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(IllegalArgumentException::new);
+        Item item = itemRepository.findById(itemId).
+                orElseThrow(IllegalArgumentException::new);
+
+        Optional<CartItem> optional = cartItemRepository.findByMemberItem(member, item);
+        if (optional.isEmpty()) {
+            CartItem cartItem = cartItemRepository.save(new CartItem(member, item, count));
+            member.addCartItem(cartItem);
+        } else {
+            CartItem cartItem = optional.get();
+            cartItem.addCount(count);
+        }
     }
 
     private void validateDuplicateUsername(String username) {

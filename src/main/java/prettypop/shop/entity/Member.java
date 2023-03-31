@@ -97,8 +97,8 @@ public class Member extends BaseEntity {
         this.roles.add("ROLE_USER");
     }
 
-    public void addCartItem(Item item, int count) {
-        shoppingCart.add(new CartItem(this, item, count));
+    public void addCartItem(CartItem cartItem) {
+        shoppingCart.add(cartItem);
     }
 
     public void addWishItem(Item item) {
