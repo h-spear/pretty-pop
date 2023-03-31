@@ -10,11 +10,14 @@ import prettypop.shop.dto.MemberRegisterParam;
 import prettypop.shop.entity.CartItem;
 import prettypop.shop.entity.Item;
 import prettypop.shop.entity.Member;
+import prettypop.shop.entity.WishItem;
 import prettypop.shop.exception.MemberUsernameDuplicateException;
 import prettypop.shop.repository.CartItemRepository;
 import prettypop.shop.repository.ItemRepository;
 import prettypop.shop.repository.MemberRepository;
+import prettypop.shop.repository.WishItemRepository;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Slf4j
@@ -29,6 +32,7 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     private final ItemRepository itemRepository;
     private final CartItemRepository cartItemRepository;
+    private final WishItemRepository wishItemRepository;
 
     @Transactional
     public Long join(MemberRegisterParam param) {
@@ -76,6 +80,22 @@ public class MemberService {
         }
     }
 
+    @Transactional
+    public void addWish(Long memberId, Long itemId) {
+        log.info("찜 목록 아이템 추가 로직 실행");
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(IllegalArgumentException::new);
+        Item item = itemRepository.findById(itemId).
+                orElseThrow(IllegalArgumentException::new);
+
+        try {
+            wishItemRepository.findByMemberItem(member, item).orElseThrow();
+        } catch (NoSuchElementException e) {
+            WishItem wishItem = wishItemRepository.save(new WishItem(member, item));
+            member.addWishItem(wishItem);
+        }
+    }
+
     private void validateDuplicateUsername(String username) {
         memberRepository.findByUsername(username)
                 .ifPresent(m -> {
@@ -86,4 +106,5 @@ public class MemberService {
     private String generateRandomNickname() {
         return RandomString.make(10);
     }
+
 }

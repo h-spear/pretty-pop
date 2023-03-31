@@ -64,7 +64,8 @@
                                         onclick="addCart()">
                                     <span th:text="#{item.view.cart}">cart</span>
                                 </button>
-                                <button class="btn btn-outline-dark flex-shrink-0 ms-3" type="button">
+                                <button class="btn btn-outline-dark flex-shrink-0 ms-3" type="button"
+                                        onclick="addWishList()">
                                     <span th:text="#{item.view.wish}">wish</span>
                                 </button>
                             </div>
@@ -116,6 +117,31 @@
                 success: function (result) {
                     if (result.status == 'success') {
                         alert('상품이 카트에 추가되었습니다.');
+                    } else if(result.status == 'fail') {
+                        alert('error!!!')
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert("error!!!");
+                }
+            });
+        }
+
+        function addWishList() {
+            const quantity = document.querySelector('#inputQuantity').value;
+
+            $.ajax({
+                url: "/wish",
+                type: 'post',
+                async: false,
+                data: {
+                    itemId: itemId
+                },
+                success: function (result) {
+                    if (result.status == 'success') {
+                        alert('상품이 찜 목록에 추가되었습니다.');
                     } else if(result.status == 'fail') {
                         alert('error!!!')
                     } else {

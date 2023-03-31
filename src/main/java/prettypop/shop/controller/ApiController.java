@@ -2,13 +2,11 @@ package prettypop.shop.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import prettypop.shop.configuration.annotation.Login;
 import prettypop.shop.configuration.security.SecurityContextUtils;
-import prettypop.shop.configuration.security.User;
 import prettypop.shop.controller.api.AddCartRequest;
 import prettypop.shop.controller.api.ApiResponse;
 import prettypop.shop.service.MemberService;
@@ -18,7 +16,6 @@ import prettypop.shop.service.MemberService;
 @RestController
 public class ApiController {
 
-    private final SecurityContextUtils securityContextUtils;
     private final MemberService memberService;
 
     @PostMapping("/cart")
@@ -37,6 +34,19 @@ public class ApiController {
             return ApiResponse.ofError("존재하지 않는 아이템이거나 회원 오류가 발생했습니다.");
         } finally {
             log.info("카트에 아이템 추가 memberId={}, itemId={}, quantity={}", memberId, itemId, quantity);
+        }
+        return ApiResponse.ofSuccess();
+    }
+
+    @PostMapping("/wish")
+    public ApiResponse addWish(@Login Long memberId,
+                               Long itemId) {
+        try {
+            memberService.addWish(memberId, itemId);
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.ofError("존재하지 않는 아이템이거나 회원 오류가 발생했습니다.");
+        } finally {
+            log.info("찜 목록에 아이템 추가 memberId={}, itemId={}", memberId, itemId);
         }
         return ApiResponse.ofSuccess();
     }

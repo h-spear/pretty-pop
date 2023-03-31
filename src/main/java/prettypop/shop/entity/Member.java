@@ -101,7 +101,7 @@ public class Member extends BaseEntity {
         shoppingCart.add(cartItem);
     }
 
-    public void addWishItem(Item item) {
-        wishList.add(new WishItem(this, item));
+    public void addWishItem(WishItem wishItem) {
+        wishList.add(wishItem);
     }
 }
