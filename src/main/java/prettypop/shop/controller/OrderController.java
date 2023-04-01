@@ -65,7 +65,7 @@ public class OrderController {
                            Model model) {
         OrderDto orderDto = orderService.getOrder(orderId);
         if (orderDto.getOrdererId() != id) {
-            return "redirect:home";
+            return "redirect:/home";
         }
         model.addAttribute("order", orderDto);
         return "shop/order/order";
@@ -92,14 +92,14 @@ public class OrderController {
 
     private void fillOrderItemInfo(OrderCreateForm orderCreateForm, List<OrderItemDto> orderItemDtos) {
         int earnedPoint = 0;
-        int allItemPrice = 0;
+        int totalItemPrice = 0;
         for (OrderItemDto orderItemDto: orderItemDtos) {
             earnedPoint += orderItemDto.getEarnedPoint() * orderItemDto.getQuantity();
-            allItemPrice += orderItemDto.getPurchasePrice() * orderItemDto.getQuantity();
+            totalItemPrice += orderItemDto.getPurchasePrice() * orderItemDto.getQuantity();
         }
         orderCreateForm.setOrderItemDtos(orderItemDtos);
         orderCreateForm.setEarnedPoint(earnedPoint);
-        orderCreateForm.setAllItemPrice(allItemPrice);
+        orderCreateForm.setTotalItemPrice(totalItemPrice);
     }
 
     private void fillOrderRecipientInfo(OrderCreateForm orderCreateForm, Member member) {

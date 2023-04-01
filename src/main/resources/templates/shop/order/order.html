@@ -9,7 +9,174 @@
             max-width: 700px;
         }
     </style>
+    <form class="w-100 max-width-1000 d-flex justify-content-center my-3 flex-column align-items-center">
 
+        <!-- 상품 내역 -->
+        <div class="border-bottom border-secondary small pb-1 w-100">
+            <span th:text="#{label.orderHistory}">Order History</span>
+        </div>
+
+        <div class="border-bottom border-secondary pb-1 w-100 mt-5">
+            <h4 th:text="#{label.orderInfo}">Order Info</h4>
+        </div>
+        <section class="max-width-700 py-3 w-100 mt-5">
+            <div class="d-flex align-items-center mb-2 p-2 justify-content-center" style="font-size: 14px">
+                <div class="me-2 d-flex flex-column align-items-end">
+                    <h4 th:text="#{label.orderStatus}">
+                        orderStatus</h4>
+                    <h4 th:text="#{label.deliveryStatus}">
+                        deliveryStatus</h4>
+                    <h4 th:text="#{label.orderDate}">
+                        orderDate</h4>
+                </div>
+                <div>
+                    <h4 th:text="${order.orderStatus}">
+                        order</h4>
+                    <h4 th:text="${order.deliveryStatus}">
+                        order</h4>
+                    <h4 th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm:ss')}">
+                        order</h4>
+                </div>
+            </div>
+        </section>
+
+        <div class="border-bottom border-secondary pb-1 w-100 mt-5">
+            <h4 th:text="#{label.itemList}">Order Items</h4>
+        </div>
+        <section class="max-width-700 py-3 w-100">
+            <div class="orderItem d-flex flex-column align-items-center mb-2 p-4" style="font-size: 14px">
+                <div th:each="item: ${order.orderItemDtos}"
+                     class="m-3 w-100 justify-content-center align-items-center max-width-700 d-flex flex-row">
+                    <div style="width: 125px; height: 125px;">
+                        <img class="rounded-2"
+                             style="width: 125px; height: 125px;"
+                             src="https://dummyimage.com/300x300/d4d4d4/454545.jpg&text=Not+Image"
+                             th:if="${item.thumbnailImageUrl == null}"
+                             alt="Not Image" />
+                        <img class="rounded-2"
+                             style="width: 125px; height: 125px;"
+                             src=""
+                             th:src="${item.thumbnailImageUrl}"
+                             th:if="${item.thumbnailImageUrl != null}"
+                             alt="Not Image" />
+                    </div>
+                    <div class="ms-4 w-100">
+                        <h1 class="fs-2 fw-bolder"
+                            th:text="${item.itemName}">Item Name</h1>
+                        <div th:if="${item.purchasePrice < item.originalPrice}">
+                            <span class="badge bg-danger" th:text="#{label.discount(${item.discountRate})}">Danger</span>
+                            <span th:text="|${item.originalPrice * item.quantity}#{unit.money}|"
+                                  class="text-muted text-decoration-line-through">$20.00</span>
+                        </div>
+                        <span th:text="|${item.purchasePrice * item.quantity}#{unit.money}|"
+                              style="font-size: 18px" class="fw-bold text-dark m-0">$18.00</span>
+                        <span th:text="|(+${item.earnedPoint * item.quantity}#{unit.point})|"
+                              style="font-size: 12px" class="fw-bold text-info m-0">2P</span>
+
+                        <div class="input-group mt-2 d-flex align-items-center">
+                            <input class="form-control text-center px-1" style="max-width: 80px"
+                                   th:id="itemQuantityInput + ${itemStat.index}"
+                                   th:value="${item.quantity}"
+                                   th:disabled="true">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- 받는 사람 정보 -->
+        <div class="border-bottom border-secondary pb-1 w-100">
+            <h4 th:text="#{label.deliveryInfo}">Delivery</h4>
+        </div>
+
+        <section class="max-width-700  pt-3 w-100">
+            <div class="d-flex flex-column align-items-center mb-2 p-4 fw-bold" style="font-size: 16px; color: black">
+                <div class="form-group d-flex m-2 w-75 align-items-center">
+                    <label for="recipientName" class="form-label m-0 me-3" style="width: 200px"
+                           th:text="#{form.recipientName}">Name</label>
+                    <input type="text" class="form-control"
+                           id="recipientName" th:field="${order.recipientName}"
+                           th:disabled="true">
+                </div>
+
+                <!-- Phone Number -->
+                <div class="form-group d-flex m-2 w-75 align-items-center">
+                    <label for="recipientContact" class="form-label m-0 me-3" style="width: 200px"
+                           th:text="#{form.recipientContact}">Phone Number</label>
+                    <input type="text" class="form-control"
+                           id="recipientContact" th:field="${order.recipientContact}" maxlength="13"
+                           th:disabled="true">
+                </div>
+
+                <!-- Address -->
+                <fieldset class="form-group w-75" th:object="${order.recipientAddress}">
+                    <label for="address" class="form-label mt-3"
+                           th:text="#{form.recipientAddress}">Address</label>
+
+                    <div class="form-group mb-2">
+                        <input type="text" class="form-control" readonly
+                               id="zipcode" th:field="*{zipcode}" th:disabled="true">
+                    </div>
+                    <div style="display: flex">
+                        <input type="text" class="form-control" th:disabled="true"
+                               id="address" th:field="*{address}" style="width: 70%">
+                        <input type="text" class="form-control ms-sm-2" th:disabled="true"
+                               id="detailAddress" th:field="*{detailAddress}" style="width: 30%">
+                    </div>
+                    <input id="jibunAddress" th:field="*{jibunAddress}" th:disabled="true"
+                           th:placeholder="#{form.address.defaultMessage}"
+                           style="width:100%; border:none; background: transparent; cursor: default;" class="form-text text-muted ms-sm-1 mb-2">
+                </fieldset>
+                <div class="form-group w-75">
+                    <label for="deliveryMemo" class="form-label mt-4" th:text="#{form.deliveryMemo}">Example textarea</label>
+                    <textarea class="form-control" id="deliveryMemo" rows="8" th:disabled="true"
+                              style="resize: none"></textarea>
+                </div>
+            </div>
+        </section>
+
+
+
+        <!-- 결제 -->
+        <div class="border-bottom border-secondary mt-3 pb-1 w-100">
+            <h4 th:text="#{label.payment}">Payment</h4>
+        </div>
+
+        <section class="max-width-700 pt-3 w-100 mb-4">
+            <div class="d-flex flex-column align-items-center mb-2 p-4 fw-bold" style="font-size: 16px; color: black">
+                <div class="form-group d-flex m-2 w-75 align-items-center">
+                    <label for="totalItemPrice" class="form-label m-0 me-3" style="width: 200px"
+                           th:text="#{form.order.totalItemPrice}"></label>
+                    <div class="w-100">
+                        <input type="number" class="form-control w-100" id="totalItemPrice"
+                               th:field="${order.totalItemPrice}" disabled="disabled">
+                    </div>
+                </div>
+                <div class="form-group d-flex m-2 w-75 align-items-center">
+                    <label for="deliveryFee" class="form-label m-0 me-3" style="width: 200px"
+                           th:text="#{form.order.deliveryFee}"></label>
+                    <div class="w-100">
+                        <input type="number" class="form-control w-100" id="deliveryFee" th:value="3000" disabled="disabled">
+                    </div>
+                </div>
+                <div class="form-group d-flex m-2 w-75 align-items-center">
+                    <label for="userPoint" class="form-label m-0 me-3" style="width: 200px"
+                           th:text="#{form.order.usedPoint}"></label>
+                    <div class="w-100">
+                        <input type="number" class="form-control w-100" id="userPoint" th:field="${order.usedPoint}" disabled="disabled">
+                    </div>
+                </div>
+                <div class="form-group d-flex m-2 w-75 align-items-center">
+                    <label for="paymentAmount" class="form-label m-0 me-3 text-info" style="width: 200px"
+                           th:text="#{form.order.paymentAmount}"></label>
+                    <div class="w-100">
+                        <input type="number" class="form-control w-100" id="paymentAmount" th:value="${order.paymentAmount}" disabled="disabled">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </form>
 </main>
 
 </html>

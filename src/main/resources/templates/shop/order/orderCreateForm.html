@@ -71,7 +71,7 @@
 
         <section class="max-width-700  pt-3 w-100">
             <div class="d-flex flex-column align-items-center mb-2 p-4 fw-bold" style="font-size: 16px; color: black">
-                <div class="form-group d-flex m-4 w-75 align-items-center">
+                <div class="form-group d-flex m-2 w-75 align-items-center">
                     <label for="recipientName" class="form-label m-0 me-3" style="width: 200px"
                            th:text="#{form.recipientName}">Name</label>
                     <input type="text" class="form-control"
@@ -80,7 +80,7 @@
                 </div>
 
                 <!-- Phone Number -->
-                <div class="form-group d-flex m-4 w-75 align-items-center">
+                <div class="form-group d-flex m-2 w-75 align-items-center">
                     <label for="recipientContact" class="form-label m-0 me-3" style="width: 200px"
                            th:text="#{form.recipientContact}">Phone Number</label>
                     <input type="text" class="form-control"
@@ -90,7 +90,7 @@
 
                 <!-- Address -->
                 <fieldset class="form-group w-75" th:object="${orderCreateForm.recipientAddress}">
-                    <label for="address" class="form-label mt-4"
+                    <label for="address" class="form-label mt-3"
                            th:text="#{form.recipientAddress}">Address</label>
 
                     <div class="input-group mb-2">
@@ -120,8 +120,8 @@
 
 
         <!-- 결제 -->
-        <div class="border-bottom border-secondary mt-5 pb-1 w-100">
-            <h4 th:text="#{label.deliveryInfo}">Delivery</h4>
+        <div class="border-bottom border-secondary mt-3 pb-1 w-100">
+            <h4 th:text="#{label.payment}">Payment</h4>
         </div>
 
         <section class="max-width-700 pt-3 w-100">
@@ -132,19 +132,33 @@
                         <span th:text="#{message.order2}"> </span>
                     </p>
                 </div>
-                <div class="form-group d-flex m-4 w-75 align-items-center">
-                    <label for="recipientName" class="form-label m-0 me-3" style="width: 200px"
-                           th:text="#{form.order.userPoint}"></label>
+                <div class="form-group d-flex m-2 w-75 align-items-center">
+                    <label for="totalItemPrice" class="form-label m-0 me-3" style="width: 200px"
+                           th:text="#{form.order.totalItemPrice}"></label>
                     <div class="w-100">
-                        <input type="number" class="form-control w-100" th:field="${orderCreateForm.userPoint}" readonly>
+                        <input type="number" class="form-control w-100" id="totalItemPrice"
+                               th:field="${orderCreateForm.totalItemPrice}" readonly>
                     </div>
                 </div>
                 <div class="form-group d-flex m-2 w-75 align-items-center">
-                    <label for="recipientName" class="form-label m-0 me-3" style="width: 200px"
+                    <label for="deliveryFee" class="form-label m-0 me-3" style="width: 200px"
+                           th:text="#{form.order.deliveryFee}"></label>
+                    <div class="w-100">
+                        <input type="number" class="form-control w-100" id="deliveryFee" th:value="3000" disabled>
+                    </div>
+                </div>
+                <div class="form-group d-flex m-2 w-75 align-items-center">
+                    <label for="paymentAmount" class="form-label m-0 me-3 text-info" style="width: 200px"
+                           th:text="#{form.order.paymentAmount}"></label>
+                    <div class="w-100">
+                        <input type="number" class="form-control w-100" id="paymentAmount" th:value="${orderCreateForm.totalItemPrice + 3000}" readonly>
+                    </div>
+                </div>
+                <div class="form-group d-flex m-2 mt-5 w-75 align-items-center">
+                    <label for="usedPoint" class="form-label m-0 me-3" style="width: 200px"
                            th:text="#{form.order.usePoint}"></label>
-
                     <div class="input-group w-100 d-flex">
-                        <input type="number" class="form-control" th:id="usedPoint"
+                        <input type="number" class="form-control" id="usedPoint"
                                th:onchange="calculatePay()"
                                value="0">
                         <button class="btn btn-primary" type="button" th:text="#{button.pointAllUse}"
@@ -152,18 +166,11 @@
                                 id="button-allUse">Button</button>
                     </div>
                 </div>
-                <div class="form-group d-flex m-4 w-75 align-items-center">
-                    <label for="recipientName" class="form-label m-0 me-3" style="width: 200px"
-                           th:text="#{form.order.deliveryFee}"></label>
+                <div class="form-group d-flex m-2 w-75 align-items-center">
+                    <label for="userPoint" class="form-label m-0 me-3" style="width: 200px"
+                           th:text="#{form.order.userPoint}"></label>
                     <div class="w-100">
-                        <input type="number" class="form-control w-100" id="deliveryFee" th:value="0" readonly>
-                    </div>
-                </div>
-                <div class="form-group d-flex m-4 mt-5 w-75 align-items-center">
-                    <label for="recipientName" class="form-label m-0 me-3 text-info" style="width: 200px"
-                           th:text="#{form.order.paymentAmount}"></label>
-                    <div class="w-100">
-                        <input type="number" class="form-control w-100" id="paymentAmount" th:value="${orderCreateForm.allItemPrice}" readonly>
+                        <input type="number" class="form-control w-100" id="userPoint" th:field="${orderCreateForm.userPoint}" disabled="true">
                     </div>
                 </div>
             </div>
@@ -179,23 +186,28 @@
     </form>
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script th:inline="javascript">
+        const deliveryFee = 3000;
+
         function pointAllUse() {
-            const allItemPrice = [[${orderCreateForm.allItemPrice}]];
-            const havingPoint = [[${orderCreateForm.userPoint}]];
-            document.querySelector('#usedPoint').value = Math.min(havingPoint, allItemPrice);
+            const totalItemPrice = [[${orderCreateForm.totalItemPrice}]] + deliveryFee;
+            const havingPoint = [[${orderCreateForm.userPoint}]] * 1;
+            document.querySelector('#usedPoint').value = Math.min(havingPoint, totalItemPrice);
             calculatePay();
         }
 
         function calculatePay() {
-            const allItemPrice = [[${orderCreateForm.allItemPrice}]];
+            const totalItemPrice = [[${orderCreateForm.totalItemPrice}]];
+            const orgUserPoint = [[${orderCreateForm.userPoint}]];
             const usedPoint = document.querySelector('#usedPoint');
+            const userPoint = document.querySelector('#userPoint');
             const paymentAmount = document.querySelector('#paymentAmount');
             if (usedPoint.value * 1 < 0) {
                 usedPoint.value = 0;
-            } else if (usedPoint.value * 1 > allItemPrice) {
-                usedPoint.value = allItemPrice;
+            } else if (usedPoint.value * 1 > totalItemPrice + deliveryFee) {
+                usedPoint.value = totalItemPrice + deliveryFee;
             }
-            paymentAmount.value = allItemPrice - usedPoint.value;
+            userPoint.value = orgUserPoint - usedPoint.value;
+            paymentAmount.value = totalItemPrice + deliveryFee - usedPoint.value;
         }
 
         function order() {
@@ -211,17 +223,18 @@
                 detailAddress: document.querySelector('#detailAddress').value,
             }
             const deliveryMemo = document.querySelector('#deliveryMemo').value;
-            let paymentAmount = [[${orderCreateForm.allItemPrice}]];
+            let paymentAmount = [[${orderCreateForm.totalItemPrice}]];
             let earnedPoint = [[${orderCreateForm.earnedPoint}]];
             const orderItemRequests = [];
             orderItems.forEach(oi => {
                 orderItemRequests.push({itemId: oi.itemId, quantity: oi.quantity})
             });
+            paymentAmount += deliveryFee;
             paymentAmount -= usedPoint;
             const obj = {
                 orderItemRequests: orderItemRequests,
                 paymentAmount: paymentAmount,
-                deliveryFee: 0,
+                deliveryFee: 3000,
                 earnedPoint: earnedPoint,
                 usedPoint: usedPoint,
                 recipientName: recipientName,

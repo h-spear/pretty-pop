@@ -11,7 +11,7 @@ public class OrderCreateForm {
     private List<OrderItemDto> orderItemDtos;
     private int earnedPoint;
     private int userPoint;
-    private int allItemPrice;
+    private int totalItemPrice;
 
     private String recipientName;
     private String recipientContact;
