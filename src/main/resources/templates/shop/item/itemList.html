@@ -63,7 +63,7 @@
     <div class="max-width-1000 w-100 d-flex justify-content-between">
         <section id="item-sideMenu" class="p-2">
             <div id="item-categoryBox" class="d-flex align-items-center justify-content-center">
-                <span>CATEGORY</span>
+                <span id="item-category">CATEGORY</span>
             </div>
             <div id="item-searchConditionBox" class="mt-3 p-2">
 
@@ -373,6 +373,21 @@
     </div>
 
     <script th:inline="javascript">
+        setCategoryBox();
+
+        function setCategoryBox() {
+            console.log(1);
+            const category = document.querySelector('#item-category');
+            console.log()
+            const urlParams = getUrlParams();
+            const categoryParam = urlParams.get('category');
+            if (urlParams.has("keyword")) {
+                category.innerText = 'Search';
+            } else {
+                category.innerText = categoryParam;
+            }
+        }
+
         function paging(pageNumber) {
             const urlParams = getUrlParams();
             if (pageNumber === undefined || pageNumber === null) {
