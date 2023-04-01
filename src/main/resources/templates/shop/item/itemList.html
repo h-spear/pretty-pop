@@ -364,7 +364,7 @@
         </section>
 
         <!-- 결과가 없을 때 -->
-        <section th:if="${itemQueryResults.content.size() <= 1}"
+        <section th:if="${itemQueryResults.content.size() <= 0}"
                  class="w-100 d-flex justify-content-center align-items-center">
             <h1 class="display-4" th:text="#{message.emptyItemView}">
                 NO ITEM IN SHOPPING CART
@@ -387,12 +387,6 @@
             setSearchParam(urlParams, param1, value1);
             setSearchParam(urlParams, param2, value2);
             setSearchParam(urlParams, "page", 0);
-            refreshUrl(urlParams);
-        }
-
-        function changeUrlOrderParam(orderValue) {
-            const urlParams = getUrlParams();
-            setSearchParam(urlParams, 'order', orderValue);
             refreshUrl(urlParams);
         }
 
