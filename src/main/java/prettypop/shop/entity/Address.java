@@ -1,9 +1,6 @@
 package prettypop.shop.entity;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.Embeddable;
 
