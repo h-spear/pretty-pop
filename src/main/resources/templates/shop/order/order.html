@@ -29,13 +29,32 @@
                     <h4 th:text="#{label.orderDate}">
                         orderDate</h4>
                 </div>
+
                 <div>
-                    <h4 th:text="${order.orderStatus}">
-                        order</h4>
-                    <h4 th:text="${order.deliveryStatus}">
-                        order</h4>
+                    <div th:switch="${order.orderStatus}">
+                        <h4 th:case="${T(prettypop.shop.entity.OrderStatus).ORDER}"
+                            th:text="#{orderStatus.order}"
+                            class="text-info">ORDER</h4>
+                        <h4 th:case="${T(prettypop.shop.entity.OrderStatus).COMPLETED}"
+                            th:text="#{orderStatus.completed}"
+                            class="text-success">COMPLETED</h4>
+                        <h4 th:case="${T(prettypop.shop.entity.OrderStatus).CANCEL}"
+                            th:text="#{orderStatus.cancel}"
+                            style="color: red;">CANCEL</h4>
+                    </div>
+                    <div th:switch="${order.deliveryStatus}">
+                        <h4 th:case="${T(prettypop.shop.entity.DeliveryStatus).STARTED}"
+                            th:text="#{deliveryStatus.started}"
+                            class="text-info">STARTED</h4>
+                        <h4 th:case="${T(prettypop.shop.entity.DeliveryStatus).PROGRESS}"
+                            th:text="#{deliveryStatus.progress}"
+                            class="text-primary">PROGRESS</h4>
+                        <h4 th:case="${T(prettypop.shop.entity.DeliveryStatus).COMPLETED}"
+                            th:text="#{deliveryStatus.completed}"
+                            class="text-success">COMPLETED</h4>
+                    </div>
                     <h4 th:text="${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm:ss')}">
-                        order</h4>
+                        TIME</h4>
                 </div>
             </div>
         </section>
