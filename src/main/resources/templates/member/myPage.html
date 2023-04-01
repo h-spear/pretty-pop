@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="fragment/layout :: html(#{title.order}, ~{::main})">
 
 
@@ -30,7 +31,6 @@
     </style>
     <form class="w-100 max-width-1000 d-flex justify-content-center my-3 flex-column align-items-center"
           th:object="${memberInfo}">
-
         <div class="border-bottom border-secondary small pb-1 w-100">
             <span th:text="#{label.myPage}">My Page</span>
         </div>
@@ -38,7 +38,8 @@
         <div class="max-width-700 py-1 w-100">
             <!-- 활동내역 -->
             <section class="max-width-700 pt-3 w-100 my-4 d-flex justify-content-center flex-column align-items-center">
-                <h5 class="mb-3 text-danger" th:text="#{message.thisIsAdmin}"></h5>
+                <h5 sec:authorize="hasAnyRole('ROLE_ADMIN')"
+                    class="mb-3 text-danger" th:text="#{message.thisIsAdmin}"></h5>
                 <h5 th:text="|#{message.myActivity(${memberInfo.orderCount}, ${memberInfo.reviewCount})}|"></h5>
                 <div class="mt-4 d-flex justify-content-center align-items-center">
                     <a href="#" th:href="@{/items}" class="myPageButton p-2 mx-2">
