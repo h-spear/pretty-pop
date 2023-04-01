@@ -25,6 +25,14 @@
             margin-top: 2px;
         }
 
+        #item-searchConditionBox ul > li > button {
+            border: transparent;
+            background: transparent;
+            margin: 0;
+            padding: 0;
+            color: var(--bs-link-color);
+        }
+
         #itemDetails {
             font-size: 12px;
         }
@@ -60,41 +68,54 @@
             <div id="item-searchConditionBox" class="mt-3 p-2">
 
                 <!-- Sort -->
-                <div>
-                    <ul class="p-0 ps-3 mt-1">
-                        <li class="list-unstyled">
-                            <a href="#" class="text-decoration-none">
-                                <span class="text-info fw-bold" th:text="#{item.search.notSort}"></span>
-                            </a>
-                        </li>
-                        <li class="list-unstyled">
-                            <a href="#" class="text-decoration-none">
-                                <span th:text="#{item.search.itemName}">
-                                    sort1
-                                </span>
-                                <i class="fas fa-caret-square-up text-secondary"></i>
-                                <i class="fas fa-caret-square-down text-secondary"></i>
-                            </a>
-                        </li>
-                        <li class="list-unstyled">
-                            <a href="#" class="text-decoration-none">
-                                <span th:text="#{item.search.price}">
-                                    sort1
-                                </span>
-                                <i class="fas fa-caret-square-up text-secondary"></i>
-                                <i class="fas fa-caret-square-down text-secondary"></i>
-                            </a>
-                        </li>
-                        <li class="list-unstyled">
-                            <a href="#" class="text-decoration-none">
-                                <span th:text="#{item.search.rating}">
-                                    sort1
-                                </span>
-                                <i class="fas fa-caret-square-up text-secondary"></i>
-                                <i class="fas fa-caret-square-down text-secondary"></i>
-                            </a>
-                        </li>
-                    </ul>
+                <div class="mt">
+                    <span style="font-size: 15px; font-weight: 700" th:text="#{item.search.sorting}">Sorting</span>
+                    <div class="p-0 ps-3 mt-1">
+                        <ul class="m-0 p-0">
+                            <li class="list-unstyled">
+                                <button class="text-decoration-none"
+                                   th:onclick="|changeUrlParams('order', '')|">
+                                    <span class="text-info fw-bold" th:text="#{item.search.notSort}"></span>
+                                </button>
+                            </li>
+                            <li class="list-unstyled">
+                                <button class="text-decoration-none"
+                                        th:onclick="|changeUrlParams('order', 'PRICE_ASC')|">
+                                    <span th:text="#{item.search.priceAsc}">sort</span>
+                                </button>
+                            </li>
+                            <li class="list-unstyled">
+                                <button class="text-decoration-none"
+                                        th:onclick="|changeUrlParams('order', 'PRICE_DESC')|">
+                                    <span th:text="#{item.search.priceDesc}">sort</span>
+                                </button>
+                            </li>
+                            <li class="list-unstyled">
+                                <button class="text-decoration-none"
+                                        th:onclick="|changeUrlParams('order', 'REVIEWS_DESC')|">
+                                    <span th:text="#{item.search.reviewDesc}">sort</span>
+                                </button>
+                            </li>
+                            <li class="list-unstyled">
+                                <button class="text-decoration-none"
+                                        th:onclick="|changeUrlParams('order', 'RATING_DESC')|">
+                                    <span th:text="#{item.search.ratingDesc}">sort</span>
+                                </button>
+                            </li>
+                            <li class="list-unstyled">
+                                <button class="text-decoration-none"
+                                        th:onclick="|changeUrlParams('order', 'NEWEST')|">
+                                    <span th:text="#{item.search.newest}">sort</span>
+                                </button>
+                            </li>
+                            <li class="list-unstyled">
+                                <button class="text-decoration-none"
+                                        th:onclick="|changeUrlParams('order', 'SALES_VOLUME')|">
+                                    <span th:text="#{item.search.salesVolume}">sort</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
                 <!-- Rating -->
@@ -102,12 +123,14 @@
                     <span style="font-size: 15px; font-weight: 700" th:text="#{item.search.rating}">Rating</span>
                     <ul class="p-0 ps-3 mt-1">
                         <li class="list-unstyled">
-                            <a href="#" class="text-decoration-none">
+                            <button class="text-decoration-none"
+                               th:onclick="|changeUrlParams('ratingGe', '')|">
                                 <span class="text-info fw-bold" th:text="#{item.search.ratingAll}">overall</span>
-                            </a>
+                            </button>
                         </li>
                         <li class="list-unstyled">
-                            <a href="#" class="text-decoration-none">
+                            <button class="text-decoration-none"
+                               th:onclick="|changeUrlParams('ratingGe', 4)|">
                                 <span style="font-size: 14px; letter-spacing: -5px" class="me-1">
                                     <i class="fa-solid fa-star text-warning"></i>
                                     <i class="fa-solid fa-star text-warning"></i>
@@ -116,10 +139,11 @@
                                     <i class="fa-solid fa-star text-secondary"></i>
                                 </span>
                                 <span th:text="#{item.search.ratingOrMore('4')}">4 or more</span>
-                            </a>
+                            </button>
                         </li>
                         <li class="list-unstyled">
-                            <a href="#" class="text-decoration-none">
+                            <button class="text-decoration-none"
+                               th:onclick="|changeUrlParams('ratingGe', 3)|">
                                 <span style="font-size: 14px; letter-spacing: -5px" class="me-1">
                                     <i class="fa-solid fa-star text-warning"></i>
                                     <i class="fa-solid fa-star text-warning"></i>
@@ -128,10 +152,11 @@
                                     <i class="fa-solid fa-star text-secondary"></i>
                                 </span>
                                 <span th:text="#{item.search.ratingOrMore('3')}">4 or more</span>
-                            </a>
+                            </button>
                         </li>
                         <li class="list-unstyled">
-                            <a href="#" class="text-decoration-none">
+                            <button class="text-decoration-none"
+                               th:onclick="|changeUrlParams('ratingGe', 2)|">
                                 <span style="font-size: 14px; letter-spacing: -5px" class="me-1">
                                     <i class="fa-solid fa-star text-warning"></i>
                                     <i class="fa-solid fa-star text-warning"></i>
@@ -140,10 +165,11 @@
                                     <i class="fa-solid fa-star text-secondary"></i>
                                 </span>
                                 <span th:text="#{item.search.ratingOrMore('2')}">4 or more</span>
-                            </a>
+                            </button>
                         </li>
                         <li class="list-unstyled">
-                            <a href="#" class="text-decoration-none">
+                            <button class="text-decoration-none"
+                               th:onclick="|changeUrlParams('ratingGe', 1)|">
                                 <span style="font-size: 14px; letter-spacing: -5px" class="me-1">
                                     <i class="fa-solid fa-star text-warning"></i>
                                     <i class="fa-solid fa-star text-secondary"></i>
@@ -152,7 +178,7 @@
                                     <i class="fa-solid fa-star text-secondary"></i>
                                 </span>
                                 <span th:text="#{item.search.ratingOrMore('1')}">4 or more</span>
-                            </a>
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -162,45 +188,55 @@
                     <span style="font-size: 15px; font-weight: 700" th:text="#{item.search.price}">Price</span>
                     <ul class="p-0 ps-3 mt-1">
                         <li class="list-unstyled">
-                            <a href="#" class="text-decoration-none">
+                            <button class="text-decoration-none"
+                               th:onclick="|changeUrlParams('priceGe', '', 'priceLe', '')|">
                                 <span class="text-info fw-bold" th:text="#{item.search.priceAll}">overall</span>
-                            </a>
+                            </button>
                         </li>
                         <li class="list-unstyled">
-                            <a href="#" class="text-decoration-none">
+                            <button class="text-decoration-none"
+                               th:onclick="|changeUrlParams('priceGe', '', 'priceLe', 10000)|">
                                 <span th:text="#{item.search.priceOrLess('10,000')}">10,000 or less</span>
-                            </a>
+                            </button>
                         </li>
                         <li class="list-unstyled">
-                            <a href="#" class="text-decoration-none">
+                            <button class="text-decoration-none"
+                               th:onclick="|changeUrlParams('priceGe', 10000, 'priceLe', 20000)|">
                                 <span th:text="#{item.search.priceBetween('10,000', '20,000')}">10,000 ~ 20,000</span>
-                            </a>
+                            </button>
                         </li>
                         <li class="list-unstyled">
-                            <a href="#" class="text-decoration-none">
+                            <button class="text-decoration-none"
+                               th:onclick="|changeUrlParams('priceGe', 20000, 'priceLe', 30000)|">
                                 <span th:text="#{item.search.priceBetween('20,000', '30,000')}">20,000 ~ 30,000</span>
-                            </a>
+                            </button>
                         </li>
                         <li class="list-unstyled">
-                            <a href="#" class="text-decoration-none">
+                            <button class="text-decoration-none"
+                               th:onclick="|changeUrlParams('priceGe', 30000, 'priceLe', 40000)|">
                                 <span th:text="#{item.search.priceBetween('30,000', '40,000')}">30,000 ~ 40,000</span>
-                            </a>
+                            </button>
                         </li>
                         <li class="list-unstyled">
-                            <a href="#" class="text-decoration-none">
+                            <button class="text-decoration-none"
+                               th:onclick="|changeUrlParams('priceGe', 40000, 'priceLe', 50000)|">
                                 <span th:text="#{item.search.priceBetween('40,000', '50,000')}">40,000 ~ 50,000</span>
-                            </a>
+                            </button>
                         </li>
                         <li class="list-unstyled">
-                            <a href="#" class="text-decoration-none">
+                            <button class="text-decoration-none"
+                               th:onclick="|changeUrlParams('priceGe', 50000, 'priceLe', '')|">
                                 <span th:text="#{item.search.priceOrMore('50,000')}">50,000 or more</span>
-                            </a>
+                            </button>
                         </li>
                     </ul>
                 </div>
             </div>
         </section>
-        <section id="item-container" class="w-100 py-2 px-3">
+
+        <!-- 결과가 있을 때 -->
+        <section th:if="${itemQueryResults.content.size() > 0}"
+                 id="item-container" class="w-100 py-2 px-3">
             <div class="row gx-4 gx-lg-3 row-cols-2 row-cols-md-4 row-cols-xl-4 justify-content-center">
                 <!-- Product card -->
                 <a th:each="item: ${itemQueryResults}"
@@ -288,54 +324,90 @@
                 <ul class="pagination">
 
                     <li th:classappend="${startPage <= 1} ? 'disabled'" class="page-item">
-                        <a class="page-link" aria-label="Previous"
+                        <button class="page-link" aria-label="Previous"
                            th:onclick="'paging(' + ${pageNumber - pageLine} + ')'">
                             <span>&laquo;</span>
                             <span class="sr-only">10 Previous</span>
-                        </a>
+                        </button>
                     </li>
 
                     <li th:classappend="${!itemQueryResults.hasPrevious()} ? 'disabled'" class="page-item">
-                        <a class="page-link" aria-label="Previous"
+                        <button class="page-link" aria-label="Previous"
                            th:onclick="'paging(' + ${pageNumber - 1} + ')'">
                             <span aria-hidden="true">&lt;</span>
                             <span class="sr-only">Previous</span>
-                        </a>
+                        </button>
                     </li>
 
                     <li th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${page - 1 == pageNumber} ? 'active'" class="page-item">
-                        <a th:text="${page}" class="page-link"
-                           th:onclick="'paging(' + ${page - 1} + ')'"></a>
+                        <button th:text="${page}" class="page-link"
+                           th:onclick="'paging(' + ${page - 1} + ')'"></button>
                     </li>
 
                     <li th:classappend="${!itemQueryResults.hasNext()} ? 'disabled'" class="page-item">
-                        <a class="page-link" aria-label="Next"
+                        <button class="page-link" aria-label="Next"
                            th:onclick="'paging(' + ${pageNumber + 1} + ')'">
                             <span aria-hidden="true">&gt;</span>
                             <span class="sr-only">Next</span>
-                        </a>
+                        </button>
                     </li>
 
                     <li th:classappend="${endPage >= totalPages} ? 'disabled'" class="page-item">
-                        <a class="page-link" aria-label="Next"
+                        <button class="page-link" aria-label="Next"
                            th:onclick="'paging(' + ${pageNumber + pageLine >= totalPages ? totalPages - 1 : pageNumber + pageLine} + ')'">
                             <span>&raquo;</span>
                             <span class="sr-only">10 Next</span>
-                        </a>
+                        </button>
                     </li>
                 </ul>
             </div>
+        </section>
+
+        <!-- 결과가 없을 때 -->
+        <section th:if="${itemQueryResults.content.size() <= 1}"
+                 class="w-100 d-flex justify-content-center align-items-center">
+            <h1 class="display-4" th:text="#{message.emptyItemView}">
+                NO ITEM IN SHOPPING CART
+            </h1>
         </section>
     </div>
 
     <script th:inline="javascript">
         function paging(pageNumber) {
-            const url = new URL(window.location.href);
-            const urlParams = url.searchParams;
+            const urlParams = getUrlParams();
             if (pageNumber === undefined || pageNumber === null) {
                 pageNumber = 0;
             }
             urlParams.set("page", pageNumber);
+            refreshUrl(urlParams);
+        }
+
+        function changeUrlParams(param1, value1, param2, value2) {
+            const urlParams = getUrlParams();
+            setSearchParam(urlParams, param1, value1);
+            setSearchParam(urlParams, param2, value2);
+            setSearchParam(urlParams, "page", 0);
+            refreshUrl(urlParams);
+        }
+
+        function changeUrlOrderParam(orderValue) {
+            const urlParams = getUrlParams();
+            setSearchParam(urlParams, 'order', orderValue);
+            refreshUrl(urlParams);
+        }
+
+        function setSearchParam(urlParams, param, value) {
+            if (param != undefined && param != null) {
+                urlParams.set(param, value);
+            }
+        }
+
+        function getUrlParams() {
+            const url = new URL(window.location.href);
+            return url.searchParams;
+        }
+
+        function refreshUrl(urlParams) {
             location.href = '/items/?' + urlParams.toString();
         }
     </script>
