@@ -6,6 +6,7 @@ import net.bytebuddy.utility.RandomString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import prettypop.shop.dto.MemberBasicDto;
 import prettypop.shop.dto.MemberRegisterParam;
 import prettypop.shop.entity.Member;
 import prettypop.shop.exception.MemberUsernameDuplicateException;
@@ -48,6 +49,11 @@ public class MemberService {
 
         Member savedMember = memberRepository.save(member);
         return savedMember.getId();
+    }
+
+    public MemberBasicDto getMemberInfo(Long id) {
+        return memberRepository.findBasicInfoById(id)
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     private void validateDuplicateUsername(String username) {

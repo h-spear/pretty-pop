@@ -47,15 +47,10 @@ public class OrderController {
             return "redirect:/home";
         }
         List<OrderItemDto> orderItemDtos = itemService.getOrderItems(itemRequests);
-        List<ItemCountRequest> itemCountRequests = orderItemDtos.stream()
-                .map(oi -> new ItemCountRequest(oi.getItemId(), oi.getQuantity()))
-                .collect(Collectors.toList());
-        log.info("orderItems={}", orderItemDtos);
         OrderCreateForm orderCreateForm = new OrderCreateForm();
         fillOrderItemInfo(orderCreateForm, orderItemDtos);
         fillOrderRecipientInfo(orderCreateForm, optionalMember.get());
         model.addAttribute("orderCreateForm", orderCreateForm);
-        model.addAttribute("orderCreateParam", new OrderCreateParam());
         return "shop/order/orderCreateForm";
     }
 

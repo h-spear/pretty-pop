@@ -63,7 +63,7 @@
             <a href="#" th:text="#{header.button.login}" th:href="@{/login}">Login</a>
           </li>
           <li sec:authorize="isAnonymous()">
-            <a href="#" th:text="#{header.button.join}" th:href="@{/member/join}">Join</a>
+            <a href="#" th:text="#{header.button.join}" th:href="@{/join}">Join</a>
           </li>
           <li sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
             <a href="#" th:text="#{header.button.myPage}" th:href="@{/my-page}">My page</a>

@@ -376,15 +376,15 @@
         setCategoryBox();
 
         function setCategoryBox() {
-            console.log(1);
             const category = document.querySelector('#item-category');
-            console.log()
             const urlParams = getUrlParams();
             const categoryParam = urlParams.get('category');
-            if (urlParams.has("keyword")) {
+            if (urlParams.get("keyword")) {
                 category.innerText = 'Search';
-            } else {
+            } else if (urlParams.get("category")) {
                 category.innerText = categoryParam;
+            } else {
+                category.innerText = 'All';
             }
         }
 
@@ -417,7 +417,7 @@
         }
 
         function refreshUrl(urlParams) {
-            location.href = '/items/?' + urlParams.toString();
+            location.href = '/items?' + urlParams.toString();
         }
     </script>
 </main>

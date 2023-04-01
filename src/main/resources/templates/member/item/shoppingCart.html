@@ -90,7 +90,8 @@
             <div class="mt-5 pt-4 d-flex flex-column justify-content-center align-items-center">
                 <h1 class="display-4" th:text="#{message.emptyShoppingCart}">NO ITEM IN SHOPPING CART</h1>
                 <h3 class="ft-5" th:text="#{message.emptyShoppingCart2}"></h3>
-                <a class="mt-3" href="#" th:text="#{button.goShopping}">Go Shopping</a>
+                <a class="mt-3" href="#" th:href="@{/items}"
+                   th:text="#{button.goShopping}">Go Shopping</a>
             </div>
         </section>
     </div>

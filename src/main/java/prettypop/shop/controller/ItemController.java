@@ -3,6 +3,7 @@ package prettypop.shop.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +23,11 @@ public class ItemController {
 
     @GetMapping
     public String items(@ModelAttribute ItemQueryCondition condition,
-                        Pageable pageable,
+                        @PageableDefault(size = 12) Pageable pageable,
                         Model model) {
 
+        log.info("condition={}", condition);
+        log.info("pageable={}", pageable);
         model.addAttribute("itemQueryResults", itemService.query(condition, pageable));
         return "shop/item/itemList";
     }

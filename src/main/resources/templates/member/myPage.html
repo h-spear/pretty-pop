@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      th:replace="fragment/layout :: html(#{title.order}, ~{::main})">
+
+
+<main class="w-100 d-flex justify-content-center">
+    <style>
+        .max-width-700 {
+            max-width: 700px;
+        }
+        .myPageButton {
+            background: transparent;
+            border: none;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border: var(--bs-primary) solid 1px;
+            border-radius: 10px;
+            color: var(--bs-primary);
+        }
+
+        .myPageButton:hover{
+            transition: 0.3s;
+            background: var(--bs-primary);
+            color: white;
+        }
+    </style>
+    <form class="w-100 max-width-1000 d-flex justify-content-center my-3 flex-column align-items-center"
+          th:object="${memberInfo}">
+
+        <div class="border-bottom border-secondary small pb-1 w-100">
+            <span th:text="#{label.myPage}">My Page</span>
+        </div>
+
+        <div class="max-width-700 py-1 w-100">
+            <!-- 활동내역 -->
+            <section class="max-width-700 pt-3 w-100 my-4 d-flex justify-content-center flex-column align-items-center">
+                <h5 class="mb-3 text-danger" th:text="#{message.thisIsAdmin}"></h5>
+                <h5 th:text="|#{message.myActivity(${memberInfo.orderCount}, ${memberInfo.reviewCount})}|"></h5>
+                <div class="mt-4 d-flex justify-content-center align-items-center">
+                    <a href="#" th:href="@{/items}" class="myPageButton p-2 mx-2">
+                        <i class="fa-solid fa-bag-shopping fs-4"></i>
+                        <small class="fw-bold mt-1" th:text="#{button.myPage.shopping}">
+                            Shopping
+                        </small>
+                    </a>
+                    <a href="#" th:href="@{/order}" class="myPageButton p-2 mx-2">
+                        <i class="fa-regular fa-file-lines fs-4"></i>
+                        <small class="fw-bold mt-1" th:text="#{button.myPage.orders}">
+                            Orders
+                        </small>
+                    </a>
+                    <a href="#" th:href="@{/review}" class="myPageButton p-2 mx-2">
+                        <i class="fa-solid fa-comments fs-4"></i>
+                        <small class="fw-bold mt-1" th:text="#{button.myPage.reviews}">
+                            Reviews
+                        </small>
+                    </a>
+                    <a href="#" th:href="@{/cart}"  class="myPageButton p-2 mx-2">
+                        <i class="fa-solid fa-cart-shopping fs-4"></i>
+                        <small class="fw-bold mt-1" th:text="#{button.myPage.shoppingCart}">
+                            cart
+                        </small>
+                    </a>
+                    <a href="#" th:href="@{/wish}"  class="myPageButton p-2 mx-2">
+                        <i class="fa-solid fa-heart fs-4"></i>
+                        <small class="fw-bold mt-1" th:text="#{button.myPage.wishList}">
+                            wish
+                        </small>
+                    </a>
+                    <a href="#" th:href="@{/member/modify}"  class="myPageButton p-2 mx-2">
+                        <i class="fa-solid fa-user-pen fs-4"></i>
+                        <small class="fw-bold mt-1" th:text="#{button.myPage.modify}">
+                            modify
+                        </small>
+                    </a>
+                </div>
+            </section>
+
+            <div class="bg-secondary border-top my-5"></div>
+
+            <!-- 개인정보 -->
+            <section class="max-width-700 w-100">
+                <div class="d-flex flex-column align-items-center justify-content-center w-100 mb-2 pb-4 fw-bold" style="font-size: 16px; color: black">
+                    <!-- Name -->
+                    <div class="form-group d-flex mt-2 w-75 align-items-center">
+                        <label for="name" class="form-label m-0 me-3" style="width: 200px"
+                               th:text="#{form.username}">Username</label>
+                        <input type="text" class="form-control"
+                               id="username" th:field="${memberInfo.username}"
+                               disabled="disabled">
+                    </div>
+
+                    <!-- Nickname -->
+                    <div class="form-group d-flex mt-2 w-75 align-items-center">
+                        <label for="name" class="form-label m-0 me-3" style="width: 194px"
+                               th:text="#{form.nickname}">Nickname</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control"
+                                   id="nickname" th:field="${memberInfo.nickname}" disabled="disabled">
+                            <button class="btn btn-primary" type="button" id="button-zipcode"
+                                    th:text="#{button.change}" onclick="func()">Change</button>
+                        </div>
+                    </div>
+
+                    <div class="my-4"></div>
+
+                    <!-- Name -->
+                    <div class="form-group d-flex mt-2 w-75 align-items-center">
+                        <label for="name" class="form-label m-0 me-3" style="width: 200px"
+                               th:text="#{form.name}">Name</label>
+                        <input type="text" class="form-control"
+                               id="name" th:field="${memberInfo.name}"
+                               disabled="disabled">
+                    </div>
+
+                    <!-- Gender -->
+                    <fieldset class="form-group mt-3 w-75 d-flex justify-content-center align-items-center">
+                        <label class="form-label me-3" style="width: 200px"
+                               th:text="#{form.gender}">Gender</label>
+                        <div class="form-check form-check-inline w-100 ms-5">
+                            <div class="form-check form-check-inline">
+                                <input type="radio" value="MALE" class="form-check-input" id="genderMale" name="gender" th:checked="true">
+                                <label for="genderMale" class="form-check-label" th:text="#{form.gender.male}" disabled="disabled">Male</label>
+                            </div>
+                            <div class="form-check form-check-inline ms-5">
+                                <input type="radio" value="FEMALE" class="form-check-input" id="genderFemale" name="gender">
+                                <label for="genderFemale" class="form-check-label" th:text="#{form.gender.female}" disabled="disabled">Female</label>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Birthday -->
+                    <div class="form-group d-flex mt-2 w-75 align-items-center">
+                        <label for="birthDate" class="form-label me-3" style="width: 200px"
+                               th:text="#{form.birthDate}">Birthday</label>
+                        <input type="date" class="form-control w-100"
+                               id="birthDate" th:field="*{birthDate}"
+                               disabled="disabled">
+                    </div>
+
+                    <div class="my-3"></div>
+
+                    <!-- Phone Number -->
+                    <div class="form-group d-flex mt-4 w-75 align-items-center">
+                        <label for="phoneNumber" class="form-label m-0 me-3" style="width: 200px"
+                               th:text="#{form.phoneNumber}">Phone Number</label>
+                        <input type="text" class="form-control"
+                               id="phoneNumber" th:field="${memberInfo.phoneNumber}" maxlength="13"
+                               disabled="disabled">
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group d-flex mt-4 w-75 align-items-center">
+                        <label for="email" class="form-label m-0 me-3" style="width: 200px"
+                               th:text="#{form.email}">Email</label>
+                        <input type="text" class="form-control"
+                               id="email" th:field="*{email}"
+                               disabled="disabled">
+                    </div>
+
+                    <!-- Address -->
+                    <fieldset class="form-group w-75 mt-2" th:object="${memberInfo.address}">
+                        <label for="address" class="form-label mt-3"
+                               th:text="#{form.address}">Address</label>
+
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" th:placeholder="#{form.zipcode.placeholder}" readonly
+                                   id="zipcode" th:field="*{zipcode}"
+                                   disabled="disabled">
+<!--                            <button class="btn btn-primary" type="button" id="button-zipcode"-->
+<!--                                    th:text="#{button.zipcode}" onclick="getPostcode()">Find postal code</button>-->
+                        </div>
+                        <div style="display: flex">
+                            <input type="text" class="form-control" readonly
+                                   id="address" th:field="*{address}" style="width: 70%"
+                                   th:placeholder="#{form.roadAddress.placeholder}"
+                                   disabled="disabled">
+                            <input type="text" class="form-control ms-sm-2"
+                                   id="detailAddress" th:field="*{detailAddress}" style="width: 30%"
+                                   th:placeholder="#{form.detailAddress.placeholder}"
+                                   disabled="disabled">
+                        </div>
+                        <input id="jibunAddress" th:field="*{jibunAddress}" readonly
+                               th:placeholder="#{form.address.defaultMessage}"
+                               style="width:100%; border:none; background: transparent; cursor: default;" class="form-text text-muted ms-sm-1 mb-2">
+                    </fieldset>
+                </div>
+
+            </section>
+        </div>
+    </form>
+</main>
+
+</html>

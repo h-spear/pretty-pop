@@ -84,7 +84,8 @@
         <section th:if="${wishList.size() <= 0}" class="max-width-700 py-3 w-100">
             <div class="mt-5 pt-4 d-flex flex-column justify-content-center align-items-center">
                 <h1 class="display-4" th:text="#{message.emptyWishList}">NO ITEM IN WISH LIST</h1>
-                <a class="mt-3" href="#" th:text="#{button.goShopping}">Go Shopping</a>
+                <a class="mt-3" href="#" th:href="@{/items}"
+                   th:text="#{button.goShopping}">Go Shopping</a>
             </div>
         </section>
     </div>
