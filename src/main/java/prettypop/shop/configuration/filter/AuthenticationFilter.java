@@ -19,7 +19,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthenticationFilter extends GenericFilterBean {
 
-    private static final String[] whiteList = {"/", "/home", "/member/join", "/login", "/logout", "/refresh",
+    private static final String[] whiteList = {"/", "/home", "/join", "/login", "/logout", "/refresh",
                                                 "/css/*", "/js/*", "/*.ico", "/error", "/assets/*",
                                                 "/items", "/items/*"};
 
