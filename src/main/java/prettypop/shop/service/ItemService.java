@@ -13,10 +13,9 @@ import prettypop.shop.entity.Member;
 import prettypop.shop.entity.WishItem;
 import prettypop.shop.repository.*;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -37,6 +36,25 @@ public class ItemService {
     public ItemDto findOne(Long id) {
         return ItemDto.of(itemRepository.findByIdWithReviews(id)
                 .orElseThrow(IllegalArgumentException::new));
+    }
+
+    public List<OrderItemDto> getOrderItems(List<ItemCountRequest> itemRequests) {
+        Map<Long, Integer> itemQuantityMap = new HashMap<>();
+        List<Long> itemIds = new ArrayList<>();
+        extractItemRequest(itemRequests, itemQuantityMap, itemIds);
+
+        return itemRepository.findAllById(itemIds).stream()
+                .map(item -> OrderItemDto.of(item, itemQuantityMap.get(item.getId())))
+                .collect(Collectors.toList());
+    }
+
+    private void extractItemRequest(List<ItemCountRequest> itemRequests, Map<Long, Integer> itemQuantityMap, List<Long> itemIds) {
+        for (ItemCountRequest itemRequest: itemRequests) {
+            Long itemId = itemRequest.getItemId();
+            int quantity = itemRequest.getQuantity();
+            itemIds.add(itemId);
+            itemQuantityMap.put(itemId, quantity);
+        }
     }
 
     @Transactional

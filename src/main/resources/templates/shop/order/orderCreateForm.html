@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      th:replace="fragment/layout :: html(#{title.order}, ~{::main})">
+
+
+<main class="w-100 d-flex justify-content-center">
+    <style>
+        .max-width-700 {
+            max-width: 700px;
+        }
+    </style>
+
+    <form class="w-100 max-width-1000 d-flex justify-content-center my-3 flex-column align-items-center">
+
+        <!-- 상품 내역 -->
+        <div class="border-bottom border-secondary small pb-1 w-100">
+            <span th:text="#{label.order}">Order</span>
+        </div>
+
+        <div class="border-bottom border-secondary pb-1 w-100 mt-5">
+            <h4 th:text="#{label.itemList}">Order Items</h4>
+        </div>
+        <section class="max-width-700 py-3 w-100">
+            <div class="orderItem d-flex flex-column align-items-center mb-2 p-4" style="font-size: 14px">
+                <div th:each="item: ${orderCreateForm.orderItemDtos}"
+                     class="m-3 w-100 justify-content-center align-items-center max-width-700 d-flex flex-row">
+                    <div style="width: 125px; height: 125px;">
+                        <img class="rounded-2"
+                             style="width: 125px; height: 125px;"
+                             src="https://dummyimage.com/300x300/d4d4d4/454545.jpg&text=Not+Image"
+                             th:if="${item.thumbnailImageUrl == null}"
+                             alt="Not Image" />
+                        <img class="rounded-2"
+                             style="width: 125px; height: 125px;"
+                             src=""
+                             th:src="${item.thumbnailImageUrl}"
+                             th:if="${item.thumbnailImageUrl != null}"
+                             alt="Not Image" />
+                    </div>
+                    <div class="ms-4 w-100">
+                        <h1 class="fs-2 fw-bolder"
+                            th:text="${item.itemName}">Item Name</h1>
+                        <div th:if="${item.purchasePrice < item.originalPrice}">
+                            <span class="badge bg-danger" th:text="#{label.discount(${item.discountRate})}">Danger</span>
+                            <span th:text="|${item.originalPrice * item.quantity}#{unit.money}|"
+                                  class="text-muted text-decoration-line-through">$20.00</span>
+                        </div>
+                        <span th:text="|${item.purchasePrice * item.quantity}#{unit.money}|"
+                           style="font-size: 18px" class="fw-bold text-dark m-0">$18.00</span>
+                        <span th:text="|(+${item.earnedPoint * item.quantity}#{unit.point})|"
+                           style="font-size: 12px" class="fw-bold text-info m-0">2P</span>
+
+                        <div class="input-group mt-2 d-flex align-items-center">
+                            <input class="form-control text-center px-1" style="max-width: 80px"
+                                   th:id="itemQuantityInput + ${itemStat.index}"
+                                   th:value="${item.quantity}"
+                                   readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="mt-4 fs-6" th:text="#{message.earnedPoint(${orderCreateForm.getEarnedPoint()})}">
+                </p>
+            </div>
+        </section>
+
+        <!-- 받는 사람 정보 -->
+        <div class="border-bottom border-secondary pb-1 w-100">
+            <h4 th:text="#{label.deliveryInfo}">Delivery</h4>
+        </div>
+
+        <section class="max-width-700  pt-3 w-100">
+            <div class="d-flex flex-column align-items-center mb-2 p-4 fw-bold" style="font-size: 16px; color: black">
+                <div class="form-group d-flex m-4 w-75 align-items-center">
+                    <label for="recipientName" class="form-label m-0 me-3" style="width: 200px"
+                           th:text="#{form.recipientName}">Name</label>
+                    <input type="text" class="form-control"
+                           id="recipientName" th:field="${orderCreateForm.recipientName}"
+                           placeholder="Name" th:placeholder="#{form.recipientName.placeholder}">
+                </div>
+
+                <!-- Phone Number -->
+                <div class="form-group d-flex m-4 w-75 align-items-center">
+                    <label for="recipientContact" class="form-label m-0 me-3" style="width: 200px"
+                           th:text="#{form.recipientContact}">Phone Number</label>
+                    <input type="text" class="form-control"
+                           placeholder="Phone Number" th:placeholder="#{form.recipientContact.placeholder}"
+                           id="recipientContact" th:field="${orderCreateForm.recipientContact}" maxlength="13">
+                </div>
+
+                <!-- Address -->
+                <fieldset class="form-group w-75" th:object="${orderCreateForm.recipientAddress}">
+                    <label for="address" class="form-label mt-4"
+                           th:text="#{form.recipientAddress}">Address</label>
+
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control" th:placeholder="#{form.zipcode.placeholder}" readonly
+                               id="zipcode" th:field="*{zipcode}">
+                        <button class="btn btn-primary" type="button" id="button-zipcode"
+                                th:text="#{button.zipcode}" onclick="getPostcode()">Find postal code</button>
+                    </div>
+                    <div style="display: flex">
+                        <input type="text" class="form-control" readonly
+                               id="address" th:field="*{address}" style="width: 70%"
+                               th:placeholder="#{form.roadAddress.placeholder}">
+                        <input type="text" class="form-control ms-sm-2"
+                               id="detailAddress" th:field="*{detailAddress}" style="width: 30%"
+                               th:placeholder="#{form.detailAddress.placeholder}">
+                    </div>
+                    <input id="jibunAddress" th:field="*{jibunAddress}" readonly
+                           th:placeholder="#{form.address.defaultMessage}"
+                           style="width:100%; border:none; background: transparent; cursor: default;" class="form-text text-muted ms-sm-1 mb-2">
+                </fieldset>
+                <div class="form-group w-75">
+                    <label for="deliveryMemo" class="form-label mt-4" th:text="#{form.deliveryMemo}">Example textarea</label>
+                    <textarea class="form-control" id="deliveryMemo" rows="3"></textarea>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- 결제 -->
+        <div class="border-bottom border-secondary mt-5 pb-1 w-100">
+            <h4 th:text="#{label.deliveryInfo}">Delivery</h4>
+        </div>
+
+        <section class="max-width-700 pt-3 w-100">
+            <div class="d-flex flex-column align-items-center mb-2 p-4 fw-bold" style="font-size: 16px; color: black">
+                <div class="form-group d-flex m-4 w-75 justify-content-center align-items-center">
+                    <p class="text-center text-danger">
+                        <span th:text="#{message.order}"> </span><br>
+                        <span th:text="#{message.order2}"> </span>
+                    </p>
+                </div>
+                <div class="form-group d-flex m-4 w-75 align-items-center">
+                    <label for="recipientName" class="form-label m-0 me-3" style="width: 200px"
+                           th:text="#{form.order.userPoint}"></label>
+                    <div class="w-100">
+                        <input type="number" class="form-control w-100" th:field="${orderCreateForm.userPoint}" readonly>
+                    </div>
+                </div>
+                <div class="form-group d-flex m-2 w-75 align-items-center">
+                    <label for="recipientName" class="form-label m-0 me-3" style="width: 200px"
+                           th:text="#{form.order.usePoint}"></label>
+
+                    <div class="input-group w-100 d-flex">
+                        <input type="number" class="form-control" th:id="usedPoint"
+                               th:onchange="calculatePay()"
+                               value="0">
+                        <button class="btn btn-primary" type="button" th:text="#{button.pointAllUse}"
+                                th:onclick="pointAllUse()"
+                                id="button-allUse">Button</button>
+                    </div>
+                </div>
+                <div class="form-group d-flex m-4 w-75 align-items-center">
+                    <label for="recipientName" class="form-label m-0 me-3" style="width: 200px"
+                           th:text="#{form.order.deliveryFee}"></label>
+                    <div class="w-100">
+                        <input type="number" class="form-control w-100" id="deliveryFee" th:value="0" readonly>
+                    </div>
+                </div>
+                <div class="form-group d-flex m-4 mt-5 w-75 align-items-center">
+                    <label for="recipientName" class="form-label m-0 me-3 text-info" style="width: 200px"
+                           th:text="#{form.order.paymentAmount}"></label>
+                    <div class="w-100">
+                        <input type="number" class="form-control w-100" id="paymentAmount" th:value="${orderCreateForm.allItemPrice}" readonly>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Button -->
+        <section class="mb-5">
+            <div class="mt-5 mb-2" style="display: flex; justify-content: center">
+                <button th:onclick="order()" class="btn btn-primary fs-4" style="width: 100%" th:text="#{button.order}">Order</button>
+            </div>
+        </section>
+
+    </form>
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script th:inline="javascript">
+        function pointAllUse() {
+            const allItemPrice = [[${orderCreateForm.allItemPrice}]];
+            const havingPoint = [[${orderCreateForm.userPoint}]];
+            document.querySelector('#usedPoint').value = Math.min(havingPoint, allItemPrice);
+            calculatePay();
+        }
+
+        function calculatePay() {
+            const allItemPrice = [[${orderCreateForm.allItemPrice}]];
+            const usedPoint = document.querySelector('#usedPoint');
+            const paymentAmount = document.querySelector('#paymentAmount');
+            if (usedPoint.value * 1 < 0) {
+                usedPoint.value = 0;
+            } else if (usedPoint.value * 1 > allItemPrice) {
+                usedPoint.value = allItemPrice;
+            }
+            paymentAmount.value = allItemPrice - usedPoint.value;
+        }
+
+        function order() {
+            event.preventDefault();
+            const usedPoint = document.querySelector('#usedPoint').value;
+            const orderItems = [[${orderCreateForm.orderItemDtos}]];
+            const recipientName = document.querySelector('#recipientName').value;
+            const recipientContact =document.querySelector('#recipientContact').value;
+            const recipientAddress = {
+                zipcode: document.querySelector('#zipcode').value,
+                address: document.querySelector('#address').value,
+                jibunAddress: document.querySelector('#jibunAddress').value,
+                detailAddress: document.querySelector('#detailAddress').value,
+            }
+            const deliveryMemo = document.querySelector('#deliveryMemo').value;
+            let paymentAmount = [[${orderCreateForm.allItemPrice}]];
+            let earnedPoint = [[${orderCreateForm.earnedPoint}]];
+            const orderItemRequests = [];
+            orderItems.forEach(oi => {
+                orderItemRequests.push({itemId: oi.itemId, quantity: oi.quantity})
+            });
+            paymentAmount -= usedPoint;
+            const obj = {
+                orderItemRequests: orderItemRequests,
+                paymentAmount: paymentAmount,
+                deliveryFee: 0,
+                earnedPoint: earnedPoint,
+                usedPoint: usedPoint,
+                recipientName: recipientName,
+                recipientContact: recipientContact,
+                recipientAddress: recipientAddress,
+                memo: deliveryMemo
+            };
+
+            let flag = false;
+            let orderId;
+            $.ajax({
+                url: "/order",
+                headers: {'Content-Type': 'application/json'},
+                type: 'post',
+                async: false,
+                data: JSON.stringify(obj),
+                success: function (result) {
+                    if (result.status == 'success') {
+                        flag = true;
+                        orderId = result.data;
+                    } else if(result.status == 'fail') {
+                        alert('error!!!')
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert("error!!!");
+                }
+            });
+
+            const link = "/order/" + orderId
+            flag && location.replace(link);
+        }
+    </script>
+
+    <script>
+        // 우편 번호 다움 API
+        function getPostcode() {
+            event.preventDefault();
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    document.getElementById('zipcode').value = data.zonecode;
+                    document.getElementById("address").value = data.roadAddress;
+                    document.getElementById("jibunAddress").value = data.jibunAddress;
+                    document.getElementById("detailAddress").value = '';
+                }
+            }).open();
+        }
+
+        // 휴대폰 번호 자동 하이픈 처리
+        function autoHypenPhone(str){
+            str = str.replace(/[^0-9]/g, '');
+            let tmp = '';
+            if (str.length < 4) {
+                return str;
+            } else if (str.length < 7) {
+                tmp += str.substr(0, 3);
+                tmp += '-';
+                tmp += str.substr(3);
+                return tmp;
+            } else if(str.length < 11) {
+                tmp += str.substr(0, 3);
+                tmp += '-';
+                tmp += str.substr(3, 3);
+                tmp += '-';
+                tmp += str.substr(6);
+                return tmp;
+            } else {
+                tmp += str.substr(0, 3);
+                tmp += '-';
+                tmp += str.substr(3, 4);
+                tmp += '-';
+                tmp += str.substr(7);
+                return tmp;
+            }
+            return str;
+        }
+
+        let cellPhone = document.getElementById('recipientContact');
+        cellPhone.onkeyup = function(event){
+            event = event || window.event;
+            let _val = this.value.trim();
+            this.value = autoHypenPhone(_val) ;
+        }
+    </script>
+</main>
+
+</html>

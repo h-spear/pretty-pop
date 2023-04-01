@@ -1,4 +1,4 @@
-package prettypop.shop.controller.request;
+package prettypop.shop.dto;
 
 import lombok.*;
 
@@ -6,7 +6,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class CartItemRequest {
+public class ItemCountRequest {
 
     private Long itemId;
     private int quantity;

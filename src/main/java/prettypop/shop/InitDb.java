@@ -38,7 +38,7 @@ public class InitDb {
         public void dbInit() {
             int memberCount = 10;
             int itemCount = 20;
-            int reviewCountPerItem = 5;
+            int reviewCountPerItem = 0;
 
             List<Member> members = new ArrayList<>();
             Random random = new Random();
@@ -49,8 +49,10 @@ public class InitDb {
                                 .username("member" + i)
                                 .name("name" + i)
                                 .nickname("nick" + i)
-                                .point(i)
+                                .point(1000000)
                                 .password(passwordEncoder.encode("password"))
+                                .address(new Address("1234", "도로", "지번", "디테일"))
+                                .phoneNumber("010-1234-5677")
                                 .build()
                 );
                 members.add(member);
@@ -70,7 +72,7 @@ public class InitDb {
                                 .itemStatus(ItemStatus.NEW)
                                 .build()
                 );
-                int reviewCount = random.nextInt(reviewCountPerItem);
+                int reviewCount = random.nextInt(reviewCountPerItem + 1);
 
                 // review 등록
                 for (int r = 1; r <= reviewCount; ++r) {

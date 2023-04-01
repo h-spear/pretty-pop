@@ -1,5 +1,6 @@
 package prettypop.shop.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -38,20 +39,21 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "DELIVERY_ID")
     private Delivery delivery;
 
+    protected Order() {
+    }
 
-    public void createOrder(Member member, Delivery delivery, int usedPoint, int deliveryFee, OrderItem... orderItems) {
+    @Builder
+    public Order(Member member, List<OrderItem> orderItems, int earnedPoint, int usedPoint, int deliveryFee, int paymentAmount, Delivery delivery) {
         setMember(member);
-        setDelivery(delivery);
-        this.deliveryFee = deliveryFee;
-        this.usedPoint = usedPoint;
+        orderItems.stream().forEach(orderItem -> orderItem.setOrder(this));
         this.orderDate = LocalDateTime.now();
+        this.orderItems = orderItems;
+        this.earnedPoint = earnedPoint;
+        this.usedPoint = usedPoint;
+        this.deliveryFee = deliveryFee;
+        this.paymentAmount = paymentAmount;
         this.orderStatus = OrderStatus.ORDER;
-        for (OrderItem orderItem: orderItems) {
-            addOrderItem(orderItem);
-            this.paymentAmount += orderItem.getTotalPrice();
-        }
-        this.paymentAmount += deliveryFee;
-        this.paymentAmount -= usedPoint;
+        setDelivery(delivery);
     }
 
     public void completeOrder() {
@@ -63,12 +65,6 @@ public class Order extends BaseEntity {
             orderItem.cancel();
         }
         orderStatus = OrderStatus.CANCEL;
-    }
-
-    private void addOrderItem(OrderItem orderItem) {
-        orderItems.add(orderItem);
-        orderItem.setOrder(this);
-        earnedPoint += orderItem.getItem().getEarnedPoint();
     }
 
     private void setDelivery(Delivery delivery) {

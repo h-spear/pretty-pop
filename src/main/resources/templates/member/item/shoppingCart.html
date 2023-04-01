@@ -53,10 +53,10 @@
                         th:text="${item.itemName}">Item Name</h1>
                     <div th:if="${item.purchasePrice < item.originalPrice}">
                         <span class="badge bg-danger" th:text="#{label.discount(${item.discountRate})}">Danger</span>
-                        <span th:text="|${item.originalPrice}#{unit.money}|"
+                        <span th:text="|${item.originalPrice * item.count}#{unit.money}|"
                               class="text-muted text-decoration-line-through">$20.00</span>
                     </div>
-                    <p th:text="|${item.purchasePrice}#{unit.money}|"
+                    <p th:text="|${item.purchasePrice * item.count}#{unit.money}|"
                        style="font-size: 18px" class="fw-bold text-dark m-0">$18.00</p>
 
                     <div class="input-group mt-2 d-flex align-items-center">
