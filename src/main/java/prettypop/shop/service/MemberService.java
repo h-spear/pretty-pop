@@ -6,7 +6,7 @@ import net.bytebuddy.utility.RandomString;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import prettypop.shop.dto.MemberBasicDto;
+import prettypop.shop.dto.MemberDto;
 import prettypop.shop.dto.MemberRegisterParam;
 import prettypop.shop.dto.MemberUpdateParam;
 import prettypop.shop.entity.Member;
@@ -74,7 +74,7 @@ public class MemberService {
         return member.getId();
     }
 
-    public MemberBasicDto getMemberInfo(Long id) {
+    public MemberDto getMemberInfo(Long id) {
         return memberRepository.findBasicInfoById(id)
                 .orElseThrow(IllegalArgumentException::new);
     }

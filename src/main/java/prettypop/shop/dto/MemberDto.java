@@ -9,7 +9,7 @@ import prettypop.shop.entity.Gender;
 import java.time.LocalDate;
 
 @Data
-public class MemberBasicDto {
+public class MemberDto {
 
     private String username;
     private String name;
@@ -27,7 +27,7 @@ public class MemberBasicDto {
     private int reviewCount;
 
     @QueryProjection
-    public MemberBasicDto(String username, String name, Gender gender, LocalDate birthDate, String nickname, Address address, String phoneNumber, String email, int point, int orderCount, int reviewCount) {
+    public MemberDto(String username, String name, Gender gender, LocalDate birthDate, String nickname, Address address, String phoneNumber, String email, int point, int orderCount, int reviewCount) {
         this.username = username;
         this.name = name;
         this.gender = gender;

@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import prettypop.shop.configuration.annotation.Login;
 import prettypop.shop.controller.request.MemberNicknameChangeRequest;
 import prettypop.shop.controller.response.ApiResponse;
-import prettypop.shop.dto.MemberBasicDto;
+import prettypop.shop.dto.MemberDto;
 import prettypop.shop.dto.MemberRegisterParam;
 import prettypop.shop.dto.MemberUpdateParam;
 import prettypop.shop.exception.MemberNicknameDuplicateException;
@@ -91,7 +91,7 @@ public class MemberController {
     }
 
     private MemberUpdateParam getUpdateForm(Long id) {
-        MemberBasicDto memberInfo = memberService.getMemberInfo(id);
+        MemberDto memberInfo = memberService.getMemberInfo(id);
         MemberUpdateParam memberUpdateParam = new MemberUpdateParam();
         memberUpdateParam.setName(memberInfo.getName());
         memberUpdateParam.setAddress(memberInfo.getAddress());

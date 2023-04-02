@@ -1,9 +1,8 @@
 package prettypop.shop.repository.custom;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import prettypop.shop.dto.MemberBasicDto;
-import prettypop.shop.dto.QMemberBasicDto;
-import prettypop.shop.entity.Member;
+import prettypop.shop.dto.MemberDto;
+import prettypop.shop.dto.QMemberDto;
 
 import javax.persistence.EntityManager;
 
@@ -22,9 +21,9 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
     }
 
     @Override
-    public Optional<MemberBasicDto> findBasicInfoById(Long id) {
-        MemberBasicDto memberBasicDto = query
-                .select(new QMemberBasicDto(
+    public Optional<MemberDto> findBasicInfoById(Long id) {
+        MemberDto memberDto = query
+                .select(new QMemberDto(
                         member.username,
                         member.name,
                         member.gender,
@@ -43,6 +42,6 @@ public class MemberRepositoryCustomImpl implements MemberRepositoryCustom {
                 .where(member.id.eq(id))
                 .groupBy(member.id)
                 .fetchOne();
-        return Optional.of(memberBasicDto);
+        return Optional.of(memberDto);
     }
 }

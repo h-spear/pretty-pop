@@ -1,11 +1,10 @@
 package prettypop.shop.repository.custom;
 
-import prettypop.shop.dto.MemberBasicDto;
-import prettypop.shop.entity.Member;
+import prettypop.shop.dto.MemberDto;
 
 import java.util.Optional;
 
 public interface MemberRepositoryCustom {
 
-    Optional<MemberBasicDto> findBasicInfoById(Long id);
+    Optional<MemberDto> findBasicInfoById(Long id);
 }
