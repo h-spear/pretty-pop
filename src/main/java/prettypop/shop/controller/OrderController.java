@@ -6,6 +6,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import prettypop.shop.configuration.annotation.Login;
+import prettypop.shop.controller.request.DateRequest;
 import prettypop.shop.controller.request.OrderFormCreateRequest;
 import prettypop.shop.controller.response.ApiResponse;
 import prettypop.shop.dto.*;
@@ -14,10 +15,10 @@ import prettypop.shop.repository.MemberRepository;
 import prettypop.shop.service.ItemService;
 import prettypop.shop.service.OrderService;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,10 +35,13 @@ public class OrderController {
     @GetMapping("/form")
     public String createOrderForm(@Login Long id,
                                   Model model) {
+        // 임시 데이터
         List<ItemCountRequest> list = new ArrayList<>();
-        for (long i = 12; i <= 15; ++i) {
-            list.add(new ItemCountRequest(i, 4));
-        }
+        list.add(new ItemCountRequest(101L, 4));
+        list.add(new ItemCountRequest(113L, 4));
+        list.add(new ItemCountRequest(127L, 4));
+        list.add(new ItemCountRequest(134L, 4));
+        list.add(new ItemCountRequest(138L, 4));
         OrderFormCreateRequest request = new OrderFormCreateRequest(list);
         List<ItemCountRequest> itemRequests = request.getOrderItems();
 
@@ -64,6 +68,21 @@ public class OrderController {
         }
         model.addAttribute("order", orderDto);
         return "shop/order/order";
+    }
+
+    @GetMapping
+    public String getOrderList(@Login Long id,
+                               @RequestParam(required = false) Integer year,
+                               @RequestParam(required = false) Integer month,
+                               Model model) {
+        log.info("year={}, month={}", year, month);
+        if (year == null || month == null) {
+            year = LocalDate.now().getYear();
+            month = LocalDate.now().getMonthValue();
+        }
+        model.addAttribute("orders", orderService.getOrdersByMemberAndDate(id, year, month));
+        model.addAttribute("dateRequest", new DateRequest(year, month));
+        return "member/order/orders";
     }
 
     @PostMapping

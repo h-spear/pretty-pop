@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import prettypop.shop.dto.ItemCountRequest;
 import prettypop.shop.dto.OrderCreateParam;
 import prettypop.shop.dto.OrderDto;
+import prettypop.shop.dto.OrderSimpleDto;
 import prettypop.shop.entity.Delivery;
 import prettypop.shop.entity.Member;
 import prettypop.shop.entity.Order;
@@ -73,6 +74,12 @@ public class OrderService {
         Order order = orderRepository.findByIdWithFetchJoin(orderId)
                 .orElseThrow(IllegalArgumentException::new);
         return OrderDto.of(order);
+    }
+
+    public List<OrderSimpleDto> getOrdersByMemberAndDate(Long memberId, int year, int month) {
+        return orderRepository.findAllByMemberAndOrderDate(memberId, year, month).stream()
+                .map(order -> OrderSimpleDto.of(order))
+                .collect(Collectors.toList());
     }
 
     private static List<Long> generateIds(OrderCreateParam orderCreateParam) {

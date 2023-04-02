@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      th:replace="fragment/layout :: html(#{title.orders}, ~{::main})">
+
+
+<main class="w-100 d-flex justify-content-center my-3">
+    <style>
+        .max-width-700 {
+            max-width: 700px;
+        }
+
+        .wishMenu-item > a{
+            color: dimgrey;
+        }
+
+        .wishMenu-item:hover a {
+            transition: 0.2s;
+            color: #eb6864;
+        }
+
+        .wishItem:hover {
+            cursor: pointer;
+            -webkit-box-shadow: 0px 3px 13px -1px rgba(0,0,0,0.35);
+            box-shadow: 0px 3px 13px -1px rgba(0,0,0,0.35);
+            transition: 0.2s;
+        }
+    </style>
+
+    <div class="max-width-1000 w-100 d-flex flex-column justify-content-center align-items-center">
+        <div class="border-bottom border-secondary small pb-1 w-100">
+            <span th:text="#{label.myOrder}">My Order</span>
+        </div>
+
+        <!-- Filter -->
+        <section class="d-flex mt-4">
+
+            <div class="d-flex align-items-center me-5">
+                <label for="year" class="form-label mb-0 me-2" th:text="#{label.year}">Year</label>
+                <select name="job" class="form-select" id="year" style="width: 100px"
+                        onchange="yearChange()"
+                        th:field="${dateRequest.year}">
+                    <option value="2021">2020</option>
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                </select>
+            </div>
+            <div class="d-flex align-items-center">
+                <label for="month" class="form-label mb-0 me-2" th:text="#{label.month}">Month</label>
+                <select name="job" class="form-select" id="month" style="width: 100px"
+                        th:field="${dateRequest.month}"
+                        onchange="monthChange()">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                </select>
+            </div>
+        </section>
+
+        <div class="mt-4 border-bottom border-secondary w-50"></div>
+
+        <section th:if="${orders.size() > 0}" class="max-width-700 py-3 w-100">
+            <div th:each="order: ${orders}" class="mb-2 p-2 d-flex align-items-start flex-column" style="font-size: 14px">
+                <div class="px-4 w-100">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <div th:switch="${order.orderStatus}" class="me-3">
+                                <h5 th:case="${T(prettypop.shop.entity.OrderStatus).ORDER}"
+                                    th:text="#{orderStatus.order}"
+                                    class="badge bg-info fs-6">ORDER</h5>
+                                <h5 th:case="${T(prettypop.shop.entity.OrderStatus).COMPLETED}"
+                                    th:text="#{orderStatus.completed}"
+                                    class="badge bg-success fs-6">COMPLETED</h5>
+                                <h5 th:case="${T(prettypop.shop.entity.OrderStatus).CANCEL}"
+                                    th:text="#{orderStatus.cancel}"
+                                    class="badge bg-danger fs-6">CANCEL</h5>
+                            </div>
+                                <h6 th:text="|#{label.orderDate} ${#temporals.format(order.orderDate, 'yyyy-MM-dd HH:mm:ss')}|">
+                                    TIME</h6>
+                        </div>
+                        <div>
+                            <a href="#" th:href="@{/order/{orderId}(orderId=${order.id})}" th:text="#{button.order.detail}"
+                               class="btn btn-outline-primary">Primary</a>
+                        </div>
+                    </div>
+                    <div th:each="item: ${order.orderItems}" class="d-flex align-items-center">
+                        <a href="#" th:href="@{/items/{itemId}(itemId=${item.itemId})}"
+                           class="text-dark d-flex mt-2 px-4 w-100 justify-content-center align-items-center my-1">
+                            <div>
+                                <img class="rounded-2"
+                                     style="width: 50px; height: 50px;"
+                                     src="https://dummyimage.com/300x300/d4d4d4/454545.jpg&text=Not+Image"
+                                     th:if="*{item.thumbnailImageUrl == null}"
+                                     alt="Not Image" />
+                                <img class="rounded-2"
+                                     style="width: 50px; height: 50px;"
+                                     src=""
+                                     th:src="*{item.thumbnailImageUrl}"
+                                     th:if="*{item.thumbnailImageUrl != null}"
+                                     alt="Not Image" />
+                            </div>
+                            <div class="ms-4 w-75">
+                                <h1 class="fs-5 fw-bolder"
+                                    th:text="${item.itemName}">Item Name
+                                </h1>
+                                <div>
+                                    <span th:text="|${item.purchasePrice}#{unit.money}|" class="text-dark m-0">$18.00</span>
+                                    ·
+                                    <span th:text="|${item.quantity}#{unit.count}|" class="text-dark m-0">$18.00</span>
+                                </div>
+                            </div>
+                        </a>
+
+                        <!-- button -->
+                        <div>
+                            <ul class="m-0 p-0 d-flex justify-content-center fs-5">
+                                <li class="wishMenu-item mx-3">
+                                    <a href="#" th:onclick="'addCart(' + ${item.itemId} + ')'">
+                                        <i class="fa-solid fa-cart-shopping"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3 border-bottom border-secondary w-100"></div>
+            </div>
+        </section>
+    </div>
+
+    <script th:inline="javascript">
+
+        function monthChange() {
+            const year = [[${dateRequest.year}]];
+            const month = document.querySelector('#month').value;
+            const url = new URL(window.location.href);
+            const urlParams = url.searchParams;
+            urlParams.set('year', year.toString());
+            urlParams.set('month', month);
+            location.href = '/order?' + urlParams.toString();
+        }
+
+        function yearChange() {
+            const year = document.querySelector('#year').value;
+            const month = [[${dateRequest.month}]];
+            const url = new URL(window.location.href);
+            const urlParams = url.searchParams;
+            urlParams.set('year', year);
+            urlParams.set('month', month.toString());
+            location.href = '/order?' + urlParams.toString();
+        }
+
+        function addCart(itemId) {
+            const obj = {
+                itemId: itemId,
+                quantity: 1
+            }
+            event.preventDefault();
+            $.ajax({
+                url: "/cart",
+                headers: {'Content-Type': 'application/json'},
+                type: 'post',
+                async: false,
+                data: JSON.stringify(obj),
+                success: function (result) {
+                    if (result.status == 'success') {
+                        alert([[#{message.addTheCartOne}]]);
+                    } else if(result.status == 'fail') {
+                        alert('error!!!')
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert("error!!!");
+                }
+            });
+        }
+    </script>
+</main>
+
+</html>
