@@ -66,7 +66,7 @@
             <a href="#" th:text="#{header.button.join}" th:href="@{/join}">Join</a>
           </li>
           <li sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
-            <a href="#" th:text="#{header.button.myPage}" th:href="@{/my-page}">My page</a>
+            <a href="#" th:text="#{header.button.myPage}" th:href="@{/member}">My page</a>
           </li>
           <li sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
             <a href="#" th:text="#{header.button.logout}" th:onclick="logout()">Logout</a>
@@ -101,7 +101,7 @@
       <div id="userMenu">
         <ul class="m-0 p-0 d-flex justify-content-center">
           <li class="userMenu-item">
-            <a href="#" th:href="@{/my-page}">
+            <a href="#" th:href="@{/member}">
               <i class="fa-solid fa-user"></i>
             </a>
           </li>

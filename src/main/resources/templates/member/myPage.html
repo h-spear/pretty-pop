@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
-      th:replace="fragment/layout :: html(#{title.order}, ~{::main})">
+      th:replace="fragment/layout :: html(#{title.myPage}, ~{::main})">
 
 
 <main class="w-100 d-flex justify-content-center">
@@ -29,6 +29,34 @@
             color: white;
         }
     </style>
+    <!-- 모달 -->
+    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true"
+         style="top: 25%">
+        <form class="modal-dialog" role="dialog">
+            <input type="hidden" id="parent-id">
+            <div class="modal-content" style="width: 400px">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="updateModalLabel"
+                        th:text="#{label.change}">Change</h4>
+                </div>
+                <div class="modal-body">
+                    <label for="nickname-input" th:text="#{label.modal.change.nickname}"></label>
+                    <input id="nickname-input" class="form-control" name="nickname-change">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary btn-block"
+                            id="info-update"
+                            th:text="#{button.change}"
+                            onclick="nicknameUpdate()">Change</button>
+                    <a class="btn btn-dark btn-block"
+                       onclick="hideUpdateModal()"
+                       type="button" data-dismiss="modal"
+                       th:text="#{button.close}">Cancel</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
     <form class="w-100 max-width-1000 d-flex justify-content-center my-3 flex-column align-items-center"
           th:object="${memberInfo}">
         <div class="border-bottom border-secondary small pb-1 w-100">
@@ -86,7 +114,7 @@
             <!-- 개인정보 -->
             <section class="max-width-700 w-100">
                 <div class="d-flex flex-column align-items-center justify-content-center w-100 mb-2 pb-4 fw-bold" style="font-size: 16px; color: black">
-                    <!-- Name -->
+                    <!-- ID -->
                     <div class="form-group d-flex mt-2 w-75 align-items-center">
                         <label for="name" class="form-label m-0 me-3" style="width: 200px"
                                th:text="#{form.username}">Username</label>
@@ -102,8 +130,8 @@
                         <div class="input-group">
                             <input type="text" class="form-control"
                                    id="nickname" th:field="${memberInfo.nickname}" disabled="disabled">
-                            <button class="btn btn-primary" type="button" id="button-zipcode"
-                                    th:text="#{button.change}" onclick="func()">Change</button>
+                            <button class="btn btn-primary" type="button" id="button-nickname-change"
+                                    th:text="#{button.change}" onclick="showUpdateModal()">Change</button>
                         </div>
                     </div>
 
@@ -124,11 +152,13 @@
                                th:text="#{form.gender}">Gender</label>
                         <div class="form-check form-check-inline w-100 ms-5">
                             <div class="form-check form-check-inline">
-                                <input type="radio" value="MALE" class="form-check-input" id="genderMale" name="gender" th:checked="true">
+                                <input type="radio" value="MALE" class="form-check-input" id="genderMale" name="gender" th:checked="true"
+                                       th:attr="checked=${memberInfo.gender.toString() == 'FEMALE' ? 'true' : 'false'}">
                                 <label for="genderMale" class="form-check-label" th:text="#{form.gender.male}" disabled="disabled">Male</label>
                             </div>
                             <div class="form-check form-check-inline ms-5">
-                                <input type="radio" value="FEMALE" class="form-check-input" id="genderFemale" name="gender">
+                                <input type="radio" value="FEMALE" class="form-check-input" id="genderFemale" name="gender"
+                                       th:attr="checked=${memberInfo.gender.toString() == 'FEMALE' ? 'true' : 'false'}">
                                 <label for="genderFemale" class="form-check-label" th:text="#{form.gender.female}" disabled="disabled">Female</label>
                             </div>
                         </div>
@@ -190,10 +220,60 @@
                                style="width:100%; border:none; background: transparent; cursor: default;" class="form-text text-muted ms-sm-1 mb-2">
                     </fieldset>
                 </div>
-
             </section>
         </div>
     </form>
+
+    <script th:inline="javascript">
+        function showUpdateModal() {
+            const nickname = [[${memberInfo.nickname}]];
+            $('#updateModal').modal("show");
+            $('#nickname-input').val(nickname);
+        }
+
+        function hideUpdateModal() {
+            $('#updateModal').modal("hide");
+            $('#nickname-input').val('');
+        }
+
+        function nicknameUpdate() {
+            event.preventDefault();
+            const orgNickname = [[${memberInfo.nickname}]];
+            const changeNickname = $('#nickname-input').val();
+            let flag = false;
+
+            if (orgNickname === changeNickname) {
+                alert([[#{message.success.sameOrgNickname}]]);
+                return;
+            }
+
+            const obj = {
+                nickname: changeNickname
+            }
+            $.ajax({
+                url: "/member/nickname",
+                type: 'put',
+                headers: {'Content-Type': 'application/json'},
+                async: false,
+                data: JSON.stringify(obj),
+                success: function (result) {
+                    console.log(result);
+                    if (result.status == 'success') {
+                        alert([[#{message.success.nicknameChange}]]);
+                        flag = true;
+                    } else if(result.status == 'fail') {
+                        alert('error!!!');
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert('error!!!');
+                }
+            });
+            flag && window.location.reload();
+        }
+    </script>
 </main>
 
 </html>

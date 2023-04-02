@@ -7,8 +7,16 @@ spring:
     driver-class-name: org.h2.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     properties:
       hibernate:
         show_sql: true
         format_sql: true
+  
+  thymeleaf:
+    cache: false  # 타임리프 실시간 리로드
+
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 10MB

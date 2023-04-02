@@ -8,7 +8,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import prettypop.shop.dto.MemberBasicDto;
 import prettypop.shop.dto.MemberRegisterParam;
+import prettypop.shop.dto.MemberUpdateParam;
 import prettypop.shop.entity.Member;
+import prettypop.shop.exception.MemberNicknameDuplicateException;
 import prettypop.shop.exception.MemberUsernameDuplicateException;
 import prettypop.shop.repository.MemberRepository;
 
@@ -51,6 +53,27 @@ public class MemberService {
         return savedMember.getId();
     }
 
+    @Transactional
+    public Long update(Long id, MemberUpdateParam param) {
+        Member member = memberRepository.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
+        member.changePersonalInfo(param.getName(), param.getGender(), param.getBirthDate(),
+                                  param.getAddress(), param.getPhoneNumber(), param.getEmail());
+        return member.getId();
+    }
+
+    @Transactional
+    public Long updateNickname(Long id, String nickname) {
+        memberRepository.findByNickname(nickname)
+                .ifPresent(m -> {
+                    throw new MemberNicknameDuplicateException("이미 존재하는 닉네임입니다. " + nickname);
+                });
+        Member member = memberRepository.findById(id)
+                .orElseThrow(IllegalArgumentException::new);
+        member.changeNickname(nickname);
+        return member.getId();
+    }
+
     public MemberBasicDto getMemberInfo(Long id) {
         return memberRepository.findBasicInfoById(id)
                 .orElseThrow(IllegalArgumentException::new);
@@ -66,4 +89,5 @@ public class MemberService {
     private String generateRandomNickname() {
         return RandomString.make(10);
     }
+
 }

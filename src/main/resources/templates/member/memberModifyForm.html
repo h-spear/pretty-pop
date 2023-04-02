@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="fragment/layout :: html(#{title.myPage}, ~{::main})">
+
+
+<main class="w-100 d-flex justify-content-center">
+    <style>
+        .max-width-700 {
+            max-width: 700px;
+        }
+    </style>
+    <form class="w-100 max-width-1000 d-flex justify-content-center my-3 flex-column align-items-center"
+          th:object="${memberUpdateParam}"
+          role="form" action="/member" method="put" th:method="put">
+        <div class="border-bottom border-secondary small pb-1 w-100">
+            <span th:text="#{label.myPage}">My Page</span>
+        </div>
+
+        <div class="max-width-700 py-5 w-100">
+            <!-- 개인정보 -->
+            <section class="max-width-700 w-100">
+                <div class="d-flex flex-column align-items-center justify-content-center w-100 mb-2 pb-4 fw-bold" style="font-size: 16px; color: black">
+                    <!-- Name -->
+                    <div class="form-group d-flex mt-2 w-75 align-items-center">
+                        <label for="name" class="form-label m-0 me-3" style="width: 200px"
+                               th:text="#{form.name}">Name</label>
+                        <input type="text" class="form-control"
+                               id="name" th:field="*{name}">
+                    </div>
+
+                    <!-- Gender -->
+                    <fieldset class="form-group mt-3 w-75 d-flex justify-content-center align-items-center">
+                        <label class="form-label me-3" style="width: 200px"
+                               th:text="#{form.gender}">Gender</label>
+                        <div class="form-check form-check-inline w-100 ms-5">
+                            <div class="form-check form-check-inline">
+                                <input type="radio" value="MALE" class="form-check-input" id="genderMale" name="gender"
+                                       th:attr="checked=${memberUpdateParam.gender.toString() == 'MALE' ? 'true' : 'false'}">
+                                <label for="genderMale" class="form-check-label" th:text="#{form.gender.male}" disabled="disabled">Male</label>
+                            </div>
+                            <div class="form-check form-check-inline ms-5">
+                                <input type="radio" value="FEMALE" class="form-check-input" id="genderFemale" name="gender"
+                                       th:attr="checked=${memberUpdateParam.gender.toString() == 'FEMALE' ? 'true' : 'false'}">
+                                <label for="genderFemale" class="form-check-label" th:text="#{form.gender.female}" disabled="disabled">Female</label>
+                            </div>
+                        </div>
+                    </fieldset>
+
+                    <!-- Birthday -->
+                    <div class="form-group d-flex mt-2 w-75 align-items-center">
+                        <label for="birthDate" class="form-label me-3" style="width: 200px"
+                               th:text="#{form.birthDate}">Birthday</label>
+                        <input type="date" class="form-control w-100"
+                               id="birthDate" th:field="*{birthDate}">
+                    </div>
+
+                    <div class="my-3"></div>
+
+                    <!-- Phone Number -->
+                    <div class="form-group d-flex mt-4 w-75 align-items-center">
+                        <label for="phoneNumber" class="form-label m-0 me-3" style="width: 200px"
+                               th:text="#{form.phoneNumber}">Phone Number</label>
+                        <input type="text" class="form-control"
+                               id="phoneNumber" th:field="*{phoneNumber}" maxlength="13">
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-group d-flex mt-4 w-75 align-items-center">
+                        <label for="email" class="form-label m-0 me-3" style="width: 194px"
+                               th:text="#{form.email}">Email</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control"
+                                   id="email" th:field="*{email}">
+                            <button class="btn btn-primary" type="button"
+                                    th:text="#{button.emailCheck}" onclick="func()">Check</button>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <fieldset class="form-group w-75 mt-2" th:object="${memberUpdateParam.address}">
+                        <label for="address" class="form-label mt-3"
+                               th:text="#{form.address}">Address</label>
+
+                        <div class="input-group mb-2">
+                            <input type="text" class="form-control" th:placeholder="#{form.zipcode.placeholder}" readonly
+                                   id="zipcode" th:field="*{zipcode}">
+                            <button class="btn btn-primary" type="button" id="button-zipcode"
+                                    th:text="#{button.zipcode}" onclick="getPostcode()">Find postal code</button>
+                        </div>
+                        <div style="display: flex">
+                            <input type="text" class="form-control" readonly
+                                   id="address" th:field="*{address}" style="width: 70%"
+                                   th:placeholder="#{form.roadAddress.placeholder}">
+                            <input type="text" class="form-control ms-sm-2"
+                                   id="detailAddress" th:field="*{detailAddress}" style="width: 30%"
+                                   th:placeholder="#{form.detailAddress.placeholder}">
+                        </div>
+                        <input id="jibunAddress" th:field="*{jibunAddress}" readonly
+                               th:placeholder="#{form.address.defaultMessage}"
+                               style="width:100%; border:none; background: transparent; cursor: default;" class="form-text text-muted ms-sm-1 mb-2">
+                    </fieldset>
+                </div>
+            </section>
+
+            <!-- Button -->
+            <section class="mb-5 mt-3">
+                <div class="mb-2" style="display: flex; justify-content: center">
+                    <button type="submit" class="btn btn-primary fs-4 w-75" th:text="#{button.modify}">submit</button>
+                </div>
+            </section>
+        </div>
+    </form>
+
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <script>
+        // 이메일 체크
+        function idCheck() {
+            console.log('email check logic');
+        }
+
+        // 우편 번호 다움 API
+        function getPostcode() {
+            event.preventDefault();
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    document.getElementById('zipcode').value = data.zonecode;
+                    document.getElementById("address").value = data.roadAddress;
+                    document.getElementById("jibunAddress").value = data.jibunAddress;
+                    document.getElementById("detailAddress").value = '';
+                }
+            }).open();
+        }
+
+        // 휴대폰 번호 자동 하이픈 처리
+        function autoHypenPhone(str){
+            str = str.replace(/[^0-9]/g, '');
+            let tmp = '';
+            if (str.length < 4) {
+                return str;
+            } else if (str.length < 7) {
+                tmp += str.substr(0, 3);
+                tmp += '-';
+                tmp += str.substr(3);
+                return tmp;
+            } else if(str.length < 11) {
+                tmp += str.substr(0, 3);
+                tmp += '-';
+                tmp += str.substr(3, 3);
+                tmp += '-';
+                tmp += str.substr(6);
+                return tmp;
+            } else {
+                tmp += str.substr(0, 3);
+                tmp += '-';
+                tmp += str.substr(3, 4);
+                tmp += '-';
+                tmp += str.substr(7);
+                return tmp;
+            }
+            return str;
+        }
+
+        let cellPhone = document.getElementById('phoneNumber');
+        cellPhone.onkeyup = function(event){
+            event = event || window.event;
+            let _val = this.value.trim();
+            this.value = autoHypenPhone(_val) ;
+        }
+    </script>
+</main>
+
+</html>

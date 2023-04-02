@@ -2,6 +2,7 @@ package prettypop.shop.dto;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 import prettypop.shop.entity.Address;
 import prettypop.shop.entity.Gender;
 
@@ -13,6 +14,8 @@ public class MemberBasicDto {
     private String username;
     private String name;
     private Gender gender;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
     private String nickname;
     private Address address;

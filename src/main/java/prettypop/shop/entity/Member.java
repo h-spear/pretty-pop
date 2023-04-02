@@ -61,11 +61,10 @@ public class Member extends BaseEntity {
         this.nickname = nickname;
     }
 
-    public void changePersonalInfo(String name, Gender gender, LocalDate birthDate, String nickname, Address address, String phoneNumber, String email) {
+    public void changePersonalInfo(String name, Gender gender, LocalDate birthDate, Address address, String phoneNumber, String email) {
         this.name = name;
         this.gender = gender;
         this.birthDate = birthDate;
-        this.nickname = nickname;
         this.address = address;
         this.phoneNumber = phoneNumber;
         this.email = email;
