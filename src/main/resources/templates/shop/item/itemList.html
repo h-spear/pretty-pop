@@ -278,7 +278,7 @@
                                           style="font-size: 14px" class="fw-bold text-danger">$18.00</span>
                                 </div>
                                 <div th:unless="${item.purchasePrice < item.originalPrice}">
-                                    <span th:text="*{item.originalPrice}"
+                                    <span th:text="|*{item.originalPrice}#{unit.money}|"
                                           style="font-size: 14px" class="fw-bold text-danger">$20.00</span>
                                 </div>
                                 <!-- Product Reviews -->
