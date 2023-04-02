@@ -15,7 +15,6 @@ import prettypop.shop.repository.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -33,7 +32,7 @@ public class ItemService {
         return itemQueryRepository.query(condition, pageable);
     }
 
-    public ItemDto findOne(Long id) {
+    public ItemDto findItemWithReviews(Long id) {
         return ItemDto.of(itemRepository.findByIdWithReviews(id)
                 .orElseThrow(IllegalArgumentException::new));
     }

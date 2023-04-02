@@ -36,7 +36,8 @@ public class ItemController {
     public String itemView(@PathVariable Long id,
                            Model model) {
         log.info("아이템 뷰 페이지 이동 id={}", id);
-        model.addAttribute("item", itemService.findOne(id));
+        model.addAttribute("item", itemService.findItemWithReviews(id));
+        model.addAttribute("nlString", System.getProperty("line.separator").toString());
         return "shop/item/itemView";
     }
 }

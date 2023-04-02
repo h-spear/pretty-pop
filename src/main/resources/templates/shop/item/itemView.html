@@ -9,6 +9,25 @@
             margin-top: 2px;
             margin-bottom: 0;
         }
+
+        .starR{
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            color: transparent;
+            text-shadow: 0 0 0 #f0f0f0;
+            font-size: 1.8em;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+
+        .starR:hover {
+            text-shadow: 0 0 0 #ccc;
+        }
+
+        .starR.on{
+            text-shadow: 0 0 0 #ffbc00;
+        }
     </style>
 
     <div class="max-width-1000 w-100 d-flex flex-column align-items-center" th:object="${item}">
@@ -77,13 +96,21 @@
 
         <!-- Review section -->
         <section class="w-100">
-            <div class="border-bottom border-secondary w-100 small pb-1">
-                <h4 th:text="#{label.review}" class="d-inline me-1">Review</h4>
-                <span th:text="|(*{reviewCount})|">123</span>
+            <div class="w-100 d-flex justify-content-end align-items-end mb-4 border-bottom border-secondary">
+                <div class="w-100 small pb-1">
+                    <h4 th:text="#{label.review}" class="d-inline me-1">Review</h4>
+                    <span th:text="|(*{reviewCount})|">123</span>
+                </div>
+                <div class="me-4 mb-1">
+                    <button type="button" class="btn btn-primary btn-sm"
+                            th:text="#{button.review}"
+                            th:onclick="openReviewForm()">Primary</button>
+                </div>
             </div>
 
+
             <div th:each="review: *{reviewDtos}" class="mt-4 mb-5 px-3">
-                <a class="text-decoration-none text-info fw-bold" href="#" style="font-size: 18px"
+                <a class="text-decoration-none text-info fw-bold" href="#" style="font-size: 15px"
                    th:href="@{/member/{reviewer}(reviewer=${review.reviewerId})}"
                    th:text="${review.reviewerNickname + '(' + review.reviewerUsername + ')'}"></a>
                 <div class="d-inline ms-2" style="font-size: 14px">
@@ -95,22 +122,84 @@
                     <span th:text="|#{label.registrationDate} : ${#temporals.format(review.registrationDate, 'yyyy-MM-dd HH:mm:ss')} / |"></span>
                     <span th:text="|#{label.lastModifiedDate} : ${#temporals.format(review.lastModifiedDate, 'yyyy-MM-dd HH:mm:ss')}|"></span>
                 </p>
-                <p class="ms-4 mt-1 ft-5" th:text="${review.content}"></p>
+                <button th:onclick="'toggleReview(' + ${reviewStat.index} + ')'"
+                        class="d-inline ms-4 fw-bold bg-transparent border-0 text-danger" style="font-size: 14px">
+                    <i th:id="reviewToggleIcon + ${reviewStat.index}"
+                       class="fa-solid fa-chevron-down"></i>
+                    <span th:id="reviewToggleMsg + ${reviewStat.index}" th:text="#{button.readReview}">Read Review</span>
+                </button>
+                <p class="ms-4 mt-1 ft-5 hidden" style="font-size: 12px;"
+                   th:id="reviewContent + ${reviewStat.index}"
+                   th:utext="${#strings.replace(review.content, nlString, '&lt;br /&gt;')}"></p>
             </div>
         </section>
+
+        <!-- 리뷰 모달 -->
+        <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true"
+             style="top: 25%">
+            <form class="modal-dialog" role="dialog">
+                <input type="hidden" id="parent-id">
+                <div class="modal-content" style="width: 400px">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="modalLabel"
+                            th:text="#{label.review}">Review</h4>
+                    </div>
+                    <div class="modal-body d-flex justify-content-center flex-column align-items-center">
+                        <div class="starRev mb-3">
+                            <span class="starR on">⭐</span>
+                            <span class="starR on">⭐</span>
+                            <span class="starR on">⭐</span>
+                            <span class="starR on">⭐</span>
+                            <span class="starR on">⭐</span>
+                        </div>
+                        <textarea id="review-input" class="form-control" rows="5"
+                                  name="review" placeholder="Enter your review." th:placeholder="#{form.review.placeholder}"
+                                  th:text="#{message.review.default}"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary btn-block"
+                                id="info-update"
+                                th:text="#{button.write}"
+                                onclick="writeReview()">Write</button>
+                        <a class="btn btn-dark btn-block"
+                           onclick="hideModal()"
+                           type="button" data-dismiss="modal"
+                           th:text="#{button.cancel}">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
+
 
     <script th:inline="javascript">
 
-        function validateCount(inputBoxIndex) {
+        const itemId = [[${item.id}]];
+
+        function toggleReview(index) {
+            const reviewContent = document.querySelector('#reviewContent' + index);
+            const reviewToggleIcon = document.querySelector('#reviewToggleIcon' + index);
+            const reviewToggleMsg = document.querySelector('#reviewToggleMsg' + index);
+            if (reviewContent.classList.contains('hidden')) {
+                reviewContent.classList.remove('hidden');
+                reviewToggleIcon.classList.remove('fa-chevron-down');
+                reviewToggleIcon.classList.add('fa-chevron-up');
+                reviewToggleMsg.innerText = [[#{button.foldReview}]];
+            } else {
+                reviewContent.classList.add('hidden');
+                reviewToggleIcon.classList.add('fa-chevron-down');
+                reviewToggleIcon.classList.remove('fa-chevron-up');
+                reviewToggleMsg.innerText = [[#{button.readReview}]];
+            }
+        }
+
+        function validateCount() {
             const input = document.querySelector('#inputQuantity');
             if (input.value * 1 <= 0) {
                 alert([[#{message.doNotUnderZero}]]);
                 input.value = 1;
             }
         }
-
-        const itemId = [[${item.id}]];
 
         function addCart() {
             const quantity = document.querySelector('#inputQuantity').value;
@@ -162,6 +251,81 @@
                     alert("error!!!");
                 }
             });
+        }
+    </script>
+    <!-- 리뷰 관련 -->
+    <script th:inline="javascript">
+        function hideModal() {
+            $('#modal').modal("hide");
+        }
+
+        $('.starRev span').click(function(){
+            $(this).parent().children('span').removeClass('on');
+            $(this).addClass('on').prevAll('span').addClass('on');
+            return false;
+        });
+
+        function getReviewRating() {
+            let rating = 0;
+            document.querySelectorAll(".starR").forEach(elem => {
+                if (elem.classList.contains('on')) {
+                    rating += 1;
+                }
+            });
+            return rating;
+        }
+
+        function writeReview() {
+            event.preventDefault();
+            const content = document.querySelector('#review-input').value.replaceAll('\n', '<br>');
+            const rating = getReviewRating();
+            let flag = true;
+
+            const obj = {
+                rating: rating,
+                content: content,
+            };
+            $.ajax({
+                url: "/items/" + itemId + "/review",
+                type: 'post',
+                headers: {'Content-Type': 'application/json'},
+                async: false,
+                data: JSON.stringify(obj),
+                success: function (result) {
+                    if (result.status == 'success') {
+                        alert([[#{message.success.review}]]);
+                        flag = true;
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert('error!!!');
+                }
+            });
+            flag && window.location.reload();
+        }
+
+        function openReviewForm() {
+            let flag = false;
+
+            $.ajax({
+                url: "/items/" + itemId + "/review",
+                type: 'get',
+                headers: {'Content-Type': 'application/json'},
+                async: false,
+                success: function (result) {
+                    if (result.status == 'success') {
+                        flag = true;
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert('error!!!');
+                }
+            });
+            flag && $('#modal').modal("show");
         }
     </script>
 </main>

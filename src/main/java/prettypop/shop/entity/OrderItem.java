@@ -23,6 +23,8 @@ public class OrderItem extends BaseEntity {
     @JoinColumn(name = "ORDER_ID")
     private Order order;
 
+    private boolean hasReview;
+
     public void setOrder(Order order) {
         this.order = order;
     }
@@ -32,6 +34,7 @@ public class OrderItem extends BaseEntity {
         item.removeStock(count);
         orderItem.item = item;
         orderItem.count = count;
+        orderItem.hasReview = false;
         return orderItem;
     }
 
@@ -39,7 +42,4 @@ public class OrderItem extends BaseEntity {
         this.item.addStock(this.count);
     }
 
-    public int getTotalPrice() {
-        return (item.getPurchasePrice()) * this.count;
-    }
 }
