@@ -12,7 +12,13 @@ spring:
       hibernate:
         show_sql: true
         format_sql: true
-  
+
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+
+
   thymeleaf:
     cache: false  # 타임리프 실시간 리로드
 
@@ -20,3 +26,7 @@ spring:
     multipart:
       max-file-size: 1MB
       max-request-size: 10MB
+
+  messages:
+    basename: messages, errors
+

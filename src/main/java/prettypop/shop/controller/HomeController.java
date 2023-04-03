@@ -15,8 +15,7 @@ import prettypop.shop.service.MemberService;
 public class HomeController {
 
     @GetMapping({"/", "/home"})
-    public String home(@Login Long id) {
-        log.info("login user id={}", id);
+    public String home() {
         return "home";
     }
 

@@ -85,7 +85,6 @@ public class OrderController {
     @ResponseBody
     public ApiResponse createOrder(@Login Long id,
                                    @RequestBody OrderCreateParam orderCreateParam) {
-
         // 결제를 구현하지 않기 때문에 모든 포인트를 사용해야만 결제가 되도록 함
         if (orderCreateParam.getPaymentAmount() != 0) {
             return ApiResponse.ofError("결제가 완료되지 않았습니다.");

@@ -4,16 +4,22 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import prettypop.shop.configuration.annotation.Login;
-import prettypop.shop.controller.request.MemberNicknameChangeRequest;
+import prettypop.shop.controller.request.MemberNicknameRequest;
 import prettypop.shop.controller.response.ApiResponse;
 import prettypop.shop.dto.member.MemberDto;
 import prettypop.shop.dto.member.MemberRegisterParam;
 import prettypop.shop.dto.member.MemberUpdateParam;
+import prettypop.shop.exception.MemberEmailDuplicateException;
 import prettypop.shop.exception.MemberNicknameDuplicateException;
+import prettypop.shop.exception.MemberUsernameDuplicateException;
+import prettypop.shop.exception.PasswordConfirmNotMatchException;
 import prettypop.shop.service.ItemService;
 import prettypop.shop.service.MemberService;
+import prettypop.shop.validation.ValidationSequence;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -25,22 +31,34 @@ public class MemberController {
 
     @GetMapping("/join")
     public String joinForm(Model model) {
-        log.info("회원가입 폼 페이지 이동");
         model.addAttribute("joinForm", new MemberRegisterParam());
         return "member/registerForm";
     }
 
     @PostMapping("/join")
-    public String join(@ModelAttribute("joinForm") MemberRegisterParam memberRegisterParam) {
-        log.info("회원가입 컨트롤러 실행");
-        memberService.join(memberRegisterParam);
-        return "redirect:/home";
+    public String join(@Validated(ValidationSequence.class) @ModelAttribute("joinForm") MemberRegisterParam memberRegisterParam,
+                       BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "member/registerForm";
+        }
+
+        try {
+            memberService.join(memberRegisterParam);
+            return "redirect:/login";
+        } catch (PasswordConfirmNotMatchException e) {
+            bindingResult.rejectValue("passwordConfirm", "match");
+        } catch (MemberUsernameDuplicateException e) {
+            bindingResult.rejectValue("username", "duplicate");
+        } catch (MemberEmailDuplicateException e) {
+            bindingResult.rejectValue("email", "duplicate");
+        }
+        return "member/registerForm";
     }
 
     @GetMapping("/member")
     public String myPage(@Login Long id,
                          Model model) {
-        log.info("마이페이지 컨트롤러 id={}", id);
         model.addAttribute("memberInfo", memberService.getMemberInfo(id));
         return "member/myPage";
     }
@@ -48,7 +66,6 @@ public class MemberController {
     @GetMapping("/member/modify")
     public String modifyForm(@Login Long id,
                              Model model) {
-        log.info("개인 정보 수정 컨트롤러 id={}", id);
         model.addAttribute("memberUpdateParam", getUpdateForm(id));
         return "member/memberModifyForm";
     }
@@ -63,7 +80,7 @@ public class MemberController {
     @PutMapping("/member/nickname")
     @ResponseBody
     public ApiResponse modifyNickname(@Login Long id,
-                                              @RequestBody MemberNicknameChangeRequest changeRequest) {
+                                      @RequestBody MemberNicknameRequest changeRequest) {
         try {
             memberService.updateNickname(id, changeRequest.getNickname());
         } catch (IllegalArgumentException e) {

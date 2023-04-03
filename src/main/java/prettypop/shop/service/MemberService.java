@@ -10,8 +10,10 @@ import prettypop.shop.dto.member.MemberDto;
 import prettypop.shop.dto.member.MemberRegisterParam;
 import prettypop.shop.dto.member.MemberUpdateParam;
 import prettypop.shop.entity.Member;
+import prettypop.shop.exception.MemberEmailDuplicateException;
 import prettypop.shop.exception.MemberNicknameDuplicateException;
 import prettypop.shop.exception.MemberUsernameDuplicateException;
+import prettypop.shop.exception.PasswordConfirmNotMatchException;
 import prettypop.shop.repository.MemberRepository;
 
 @Slf4j
@@ -29,9 +31,10 @@ public class MemberService {
     public Long join(MemberRegisterParam param) {
         log.info("회원가입 서비스 실행");
         validateDuplicateUsername(param.getUsername());
+        validateDuplicateEmail(param.getEmail());
 
         if (!param.getPassword().equals(param.getPasswordConfirm())) {
-            throw new IllegalArgumentException("비밀번호와 비밀번호 확인이 일치하지 않습니다.");
+            throw new PasswordConfirmNotMatchException();
         }
 
         String encodedPassword = passwordEncoder.encode(param.getPassword());
@@ -66,7 +69,7 @@ public class MemberService {
     public Long updateNickname(Long id, String nickname) {
         memberRepository.findByNickname(nickname)
                 .ifPresent(m -> {
-                    throw new MemberNicknameDuplicateException("이미 존재하는 닉네임입니다. " + nickname);
+                    throw new MemberNicknameDuplicateException();
                 });
         Member member = memberRepository.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
@@ -79,10 +82,17 @@ public class MemberService {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    private void validateDuplicateUsername(String username) {
+    public void validateDuplicateUsername(String username) {
         memberRepository.findByUsername(username)
                 .ifPresent(m -> {
                     throw new MemberUsernameDuplicateException();
+                });
+    }
+
+    public void validateDuplicateEmail(String email) {
+        memberRepository.findByEmail(email)
+                .ifPresent(m -> {
+                    throw new MemberEmailDuplicateException();
                 });
     }
 

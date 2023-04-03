@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class MemberNicknameChangeRequest {
+public class MemberNicknameRequest {
     private String nickname;
 }

@@ -14,7 +14,7 @@ import prettypop.shop.service.ReviewService;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/items")
-public class ItemReviewController {
+public class ReviewApiController {
 
     private final ReviewService reviewService;
 

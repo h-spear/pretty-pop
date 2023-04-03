@@ -12,7 +12,7 @@ import prettypop.shop.service.ItemService;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-public class ApiController {
+public class ItemApiController {
 
     private final ItemService itemService;
 

@@ -21,7 +21,7 @@ public class AuthenticationFilter extends GenericFilterBean {
 
     private static final String[] whiteList = {"/", "/home", "/join", "/login", "/logout", "/refresh",
                                                 "/css/*", "/js/*", "/*.ico", "/error", "/assets/*",
-                                                "/items", "/notice", "/cs-center"};
+                                                "/items", "/notice", "/cs-center", "/member/username/*", "/member/email/*"};
 
     private final JwtTokenUtils jwtTokenUtils;
     private final SecurityContextUtils securityContextUtils;

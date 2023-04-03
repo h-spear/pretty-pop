@@ -3,12 +3,19 @@ package prettypop.shop.entity;
 import lombok.Data;
 
 import javax.persistence.Embeddable;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Embeddable
 @Data
 public class Address {
+
+    @NotBlank
     private String zipcode;
+
+    @NotBlank
     private String address;
+
     private String jibunAddress;
     private String detailAddress;
 
