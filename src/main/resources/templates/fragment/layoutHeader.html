@@ -54,7 +54,17 @@
 
   <div th:object="${#authentication.principal}">
     <div id="topMenu" class="m-0 w-100 d-flex justify-content-center py-1">
-      <div class="max-width-1000 w-100 d-flex justify-content-end">
+      <div class="max-width-1000 w-100 d-flex justify-content-between">
+        <ul class="m-0 p-0">
+          <li>
+            <a href="#" th:href="@{/home(lang=ko)}" class="me-2">
+              <img src="/assets/images/lang/lang_ko.png"/> <span id="lang-ko">한국어</span>
+            </a>
+            <a href="#" th:href="@{/home(lang=en)}">
+              <img src="/assets/images/lang/lang_en.png"/> <span id="lang-en">영어</span>
+            </a>
+          </li>
+        </ul>
         <ul class="m-0 p-0">
           <li sec:authorize="isAnonymous()">
             <a href="#" th:text="#{header.button.login}" th:href="@{/login}">Login</a>
@@ -147,6 +157,47 @@
       const urlParams = url.searchParams;
       return urlParams.get(param);
     }
+  </script>
+  <script>
+    const languageCookieName = 'lang';
+    const languageToggleText = document.querySelector('.language-toggle-text');
 
+    window.onload = function() {
+      const langKo = document.querySelector('#lang-ko');
+      const langEn = document.querySelector('#lang-en');
+      if (getCookie(languageCookieName) === 'en') {
+        langKo.innerHTML = 'Korean';
+        langEn.innerHTML = 'English';
+      } else {
+        langKo.innerHTML = '한국어';
+        langEn.innerHTML = '영어';
+      }
+    };
+
+    function expireCookie(cookieName) {
+      document.cookie = cookieName + '=value; max-age=0';
+    }
+
+    function setCookie(cookieName, value, days) {
+      let expireDate = new Date();
+      expireDate.setDate(expireDate.getDate() + days);
+
+      let cookieValue = escape(value) + ((days == null) ? '' : '; expires=' + expireDate.toUTCString());
+      document.cookie = cookieName + '=' + cookieValue;
+    }
+
+    function getCookie(cookieName) {
+      let x, y;
+      let val = document.cookie.split(';');
+
+      for (let i = 0; i < val.length; i++) {
+        x = val[i].substr(0, val[i].indexOf('='));
+        y = val[i].substr(val[i].indexOf('=') + 1);
+        x = x.replace(/^\s+|\s+$/g, '');
+        if (x == cookieName) {
+          return unescape(y);
+        }
+      }
+    }
   </script>
 </header>
