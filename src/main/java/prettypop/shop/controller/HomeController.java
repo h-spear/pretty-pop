@@ -19,5 +19,15 @@ public class HomeController {
         log.info("login user id={}", id);
         return "home";
     }
+
+    @GetMapping("/notice")
+    public String notice() {
+        return "notice";
+    }
+
+    @GetMapping("/cs-center")
+    public String csCenter() {
+        return "csCenter";
+    }
 }
 

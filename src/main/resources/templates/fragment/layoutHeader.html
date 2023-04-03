@@ -69,7 +69,7 @@
             <a href="#" th:text="#{header.button.logout}" th:onclick="logout()">Logout</a>
           </li>
           <li><a href="#" th:text="#{header.button.notice}" th:href="@{/notice}">Notice</a></li>
-          <li><a href="#" th:text="#{header.button.csCenter}" th:href="@{/cs-center}">CS Center</a></li>
+          <li><a href="#" th:text="#{button.csCenter}" th:href="@{/cs-center}">CS Center</a></li>
           <li sec:authorize="hasAnyRole('ROLE_ADMIN')">
             <a href="#" th:text="#{header.button.manage}" th:href="@{/manage}">Manage</a>
           </li>
@@ -139,7 +139,7 @@
       if (keyword != null && keyword != undefined) {
         urlParams.set('keyword', keyword);
       }
-      location.href = '/items/?' + urlParams.toString();
+      location.href = '/items?' + urlParams.toString();
     }
 
     function getUrlParam(param) {

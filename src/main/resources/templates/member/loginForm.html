@@ -38,16 +38,23 @@
                                             </div>
 
                                             <!-- Button -->
-                                            <div class="d-flex align-items-center justify-content-between mt-4 mb-0">
-                                                <a class="small" href="password.html" th:text="#{form.login.forgotPassword}">Forgot Password?</a>
-                                                <button type="submit" class="btn btn-primary" th:text="#{button.login}">Login</button>
+                                            <div class="d-flex align-items-center justify-content-center mt-4 mb-0">
+<!--                                                <a class="small" href="password.html" th:text="#{form.login.forgotPassword}">Forgot Password?</a>-->
+                                                <button type="submit" class="btn btn-primary w-100" th:text="#{button.login}">Login</button>
                                             </div>
                                         </fieldset>
                                     </form>
                                 </div>
                                 <div class="card-footer text-center py-3">
                                     <div class="small">
-                                        <a href="login.html" th:href="@{/member/join}" th:text="#{form.login.goJoinPage}">Need an account? Sign up!</a>
+                                        <a href="login.html" th:href="@{/join}" th:text="#{form.login.goJoinPage}">Need an account? Sign up!</a>
+                                    </div>
+                                    <br>
+                                    <div class="small">
+                                        <a href="../members/registerForm.html" th:href="@{/home}"
+                                           th:text="#{form.login.notLoginView}">
+                                            I want anonymous view.
+                                        </a>
                                     </div>
                                 </div>
                             </fieldset>

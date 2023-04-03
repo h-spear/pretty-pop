@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      th:replace="fragment/layout :: html(#{title.csCenter}, ~{::main})">
+
+
+<main class="w-100 d-flex justify-content-center my-3">
+    <style>
+        .max-width-700 {
+            max-width: 700px;
+        }
+    </style>
+
+    <div class="max-width-1000 w-100 d-flex flex-column justify-content-center align-items-center">
+        <h1 class="fs-1 my-3">
+            고객센터
+        </h1>
+        <div class="border-bottom border-secondary" style="width: 55%"></div>
+        <section class="max-width-700 p-3 px-5" style="width: 55%">
+            <p>
+                <span>TEL : 010-2929-8114 / 041-732-0406</span><br>
+                <span>FAX : 0504-046-8114</span><br>
+                <span>E-MAIL : lys67020@naver.com</span>
+            </p>
+            <p>
+                <span>평일 10:00 ~ 17:00</span><br>
+                <span>토요일 휴무</span><br>
+                <span>일요일 공휴일 휴무</span>
+            </p>
+            <p>
+                <span>계좌 : 농협(이영숙) 302-2929-8114-81</span>
+            </p>
+            <p>
+                <span>예쁜피오피 : <a class="text-info" target="_blank"
+                                 href="http://prettypop.co.kr">http://prettypop.co.kr</a></span><br>
+            </p>
+        </section>
+    </div>
+</main>
+
+</html>
