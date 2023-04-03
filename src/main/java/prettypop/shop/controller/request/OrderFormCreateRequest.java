@@ -1,7 +1,7 @@
 package prettypop.shop.controller.request;
 
 import lombok.*;
-import prettypop.shop.dto.ItemCountRequest;
+import prettypop.shop.dto.item.ItemCountRequest;
 
 import java.util.List;
 

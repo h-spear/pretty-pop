@@ -6,7 +6,6 @@ import prettypop.shop.entity.Order;
 import javax.persistence.EntityManager;
 import java.util.List;
 
-import static prettypop.shop.entity.QDelivery.delivery;
 import static prettypop.shop.entity.QItem.item;
 import static prettypop.shop.entity.QOrder.order;
 import static prettypop.shop.entity.QOrderItem.orderItem;

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import prettypop.shop.dto.ItemQueryCondition;
+import prettypop.shop.dto.item.ItemQueryCondition;
 import prettypop.shop.service.ItemService;
 
 @Slf4j

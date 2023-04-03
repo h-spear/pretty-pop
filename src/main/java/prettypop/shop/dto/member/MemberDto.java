@@ -1,4 +1,4 @@
-package prettypop.shop.dto;
+package prettypop.shop.dto.member;
 
 import com.querydsl.core.annotations.QueryProjection;
 import lombok.Data;

@@ -1,6 +1,6 @@
 package prettypop.shop.repository.custom;
 
-import prettypop.shop.dto.MemberDto;
+import prettypop.shop.dto.member.MemberDto;
 
 import java.util.Optional;
 

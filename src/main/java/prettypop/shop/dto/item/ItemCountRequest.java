@@ -1,4 +1,4 @@
-package prettypop.shop.dto;
+package prettypop.shop.dto.item;
 
 import lombok.*;
 

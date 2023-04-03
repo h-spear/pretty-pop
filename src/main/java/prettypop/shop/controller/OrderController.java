@@ -10,13 +10,16 @@ import org.springframework.web.bind.annotation.*;
 import prettypop.shop.configuration.annotation.Login;
 import prettypop.shop.controller.request.DateRequest;
 import prettypop.shop.controller.response.ApiResponse;
-import prettypop.shop.dto.*;
+import prettypop.shop.dto.item.ItemCountRequest;
+import prettypop.shop.dto.order.OrderCreateForm;
+import prettypop.shop.dto.order.OrderCreateParam;
+import prettypop.shop.dto.order.OrderDto;
+import prettypop.shop.dto.order.OrderItemDto;
 import prettypop.shop.entity.Member;
 import prettypop.shop.repository.MemberRepository;
 import prettypop.shop.service.ItemService;
 import prettypop.shop.service.OrderService;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +32,6 @@ import java.util.stream.Collectors;
 public class OrderController {
 
     private ObjectMapper objectMapper = new ObjectMapper();
-    private static final int DELIVERY_FEE = 3000;
 
     private final OrderService orderService;
     private final ItemService itemService;

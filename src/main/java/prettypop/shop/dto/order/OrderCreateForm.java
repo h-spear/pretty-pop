@@ -1,4 +1,4 @@
-package prettypop.shop.dto;
+package prettypop.shop.dto.order;
 
 import lombok.Data;
 import prettypop.shop.entity.Address;
@@ -6,13 +6,12 @@ import prettypop.shop.entity.Address;
 import java.util.List;
 
 @Data
-public class OrderCreateParam {
+public class OrderCreateForm {
 
-    private List<ItemCountRequest> orderItemRequests;
-    private int paymentAmount;
-    private int deliveryFee;
+    private List<OrderItemDto> orderItemDtos;
     private int earnedPoint;
-    private int usedPoint;
+    private int userPoint;
+    private int totalItemPrice;
 
     private String recipientName;
     private String recipientContact;

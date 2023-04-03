@@ -1,8 +1,8 @@
 package prettypop.shop.repository.custom;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import prettypop.shop.dto.MemberDto;
-import prettypop.shop.dto.QMemberDto;
+import prettypop.shop.dto.member.MemberDto;
+import prettypop.shop.dto.member.QMemberDto;
 
 import javax.persistence.EntityManager;
 

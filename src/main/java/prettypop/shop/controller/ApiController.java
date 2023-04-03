@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import prettypop.shop.configuration.annotation.Login;
 import prettypop.shop.controller.response.ApiResponse;
-import prettypop.shop.dto.ItemCountRequest;
+import prettypop.shop.dto.item.ItemCountRequest;
 import prettypop.shop.controller.request.ItemRequest;
 import prettypop.shop.service.ItemService;
 

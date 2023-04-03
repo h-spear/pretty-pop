@@ -1,4 +1,4 @@
-package prettypop.shop.dto;
+package prettypop.shop.dto.order;
 
 import lombok.Builder;
 import lombok.Data;

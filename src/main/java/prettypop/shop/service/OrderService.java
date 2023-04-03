@@ -4,10 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import prettypop.shop.dto.ItemCountRequest;
-import prettypop.shop.dto.OrderCreateParam;
-import prettypop.shop.dto.OrderDto;
-import prettypop.shop.dto.OrderSimpleDto;
+import prettypop.shop.dto.item.ItemCountRequest;
+import prettypop.shop.dto.order.OrderCreateParam;
+import prettypop.shop.dto.order.OrderDto;
+import prettypop.shop.dto.order.OrderSimpleDto;
 import prettypop.shop.entity.*;
 import prettypop.shop.repository.*;
 

@@ -1,11 +1,8 @@
 package prettypop.shop.repository;
 
 import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.core.types.dsl.StringExpression;
-import com.querydsl.core.types.dsl.StringPath;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
@@ -13,10 +10,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
-import prettypop.shop.dto.ItemQueryCondition;
-import prettypop.shop.dto.ItemQueryDto;
-import prettypop.shop.dto.ItemQueryOrder;
-import prettypop.shop.dto.QItemQueryDto;
+import prettypop.shop.dto.item.ItemQueryCondition;
+import prettypop.shop.dto.item.ItemQueryDto;
+import prettypop.shop.dto.item.ItemQueryOrder;
+import prettypop.shop.dto.item.QItemQueryDto;
 import prettypop.shop.entity.Category;
 import prettypop.shop.entity.Item;
 
@@ -24,7 +21,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 import static prettypop.shop.entity.QItem.item;
-import static prettypop.shop.entity.QReview.*;
+import static prettypop.shop.entity.QReview.review;
 
 @Repository
 public class ItemQueryRepository {
