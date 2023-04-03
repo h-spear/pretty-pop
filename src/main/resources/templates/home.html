@@ -2,11 +2,36 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
       th:replace="fragment/layout :: html('', ~{::main})">
 
-<main>
+<main class="w-100 d-flex justify-content-center my-3">
     <style>
-
+        .max-width-700 {
+            max-width: 700px;
+        }
     </style>
-    <p>Main Page</p>
+
+    <div class="max-width-1000 w-100 d-flex flex-column justify-content-center align-items-center">
+        <div class="my-3">
+            <img src="/assets/images/logo.png" class="header-logo"/>
+        </div>
+        <div class="border-bottom border-secondary" style="width: 55%"></div>
+        <section class="max-width-700 p-2 text-center" style="width: 55%" >
+            <p class="mt-2">
+                <span class="fs-4 fw-bold" style="color: burlywood">예쁜광고디자인 전문</span><br>
+                <span class="fs-4 fw-bold">POP에이전시입니다.</span>
+            </p>
+            <p style="font-size:14px">
+                <span>손글씨 POP의 아날로그 감성과</span><br>
+                <span>수익의 극대화를 이루는 디지털 출력의 만남.</span><br>
+                <span>예쁜피오피는</span><br>
+                <span>소량에서 대량작업까지 모두 가능!!</span>
+            </p>
+            <p class="fw-bolder" style="color: maroon">
+                <span>한장이라도 정성껏 작업합니다.</span><br>
+                <span>언제든지 전화주세요.</span><br>
+                <span>항상 친절하게 상담해드리겠습니다.</span>
+            </p>
+        </section>
+    </div>
 </main>
 
 </html>

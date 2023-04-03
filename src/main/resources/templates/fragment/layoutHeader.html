@@ -57,15 +57,18 @@
       <div class="max-width-1000 w-100 d-flex justify-content-between">
         <ul class="m-0 p-0">
           <li>
-            <a href="#" th:href="@{/home(lang=ko)}" class="me-2">
+            <a href="#" th:href="@{/language}" class="me-2">
               <img src="/assets/images/lang/lang_ko.png"/> <span id="lang-ko">한국어</span>
             </a>
-            <a href="#" th:href="@{/home(lang=en)}">
+            <a href="#" th:href="@{/language}">
               <img src="/assets/images/lang/lang_en.png"/> <span id="lang-en">영어</span>
             </a>
           </li>
         </ul>
-        <ul class="m-0 p-0">
+        <ul class="m-0 p-0 d-flex align-items-center">
+          <li sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')" class="me-3" style="font-size: 13px">
+            <span th:text="|#{login} : *{nickname}(*{username}) |"></span>
+          </li>
           <li sec:authorize="isAnonymous()">
             <a href="#" th:text="#{header.button.login}" th:href="@{/login}">Login</a>
           </li>
@@ -79,7 +82,8 @@
             <a href="#" th:text="#{header.button.logout}" th:onclick="logout()">Logout</a>
           </li>
           <li><a href="#" th:text="#{header.button.notice}" th:href="@{/notice}">Notice</a></li>
-          <li><a href="#" th:text="#{button.csCenter}" th:href="@{/cs-center}">CS Center</a></li>
+          <!--          <li><a href="#" th:text="#{button.csCenter}" th:href="@{/cs-center}">CS Center</a></li>-->
+          <li><a href="#" th:text="#{footer.button.use}" th:href="@{/use}">Use</a></li>
           <li sec:authorize="hasAnyRole('ROLE_ADMIN')">
             <a href="#" th:text="#{header.button.manage}" th:href="@{/manage}">Manage</a>
           </li>

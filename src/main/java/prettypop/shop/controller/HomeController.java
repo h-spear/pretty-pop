@@ -32,10 +32,16 @@ public class HomeController {
         return "csCenter";
     }
 
+    @GetMapping("/use")
+    public String use() {
+        return "use";
+    }
+
     @GetMapping("/language")
     public String languageChange(HttpServletRequest request,
                                  @CookieValue(value = "lang", defaultValue = "ko") String language) {
         String requestURI = request.getRequestURI();
+        log.info("requestURI={}", requestURI);
         if (language.equals("en")) {
             return "redirect:/home?lang=ko";
         }

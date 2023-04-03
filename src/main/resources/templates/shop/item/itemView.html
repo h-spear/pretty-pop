@@ -62,10 +62,15 @@
                                         <b><span class="text-danger" th:text="|*{purchasePrice}#{unit.money}|">9000</span></b>
                                     </p>
                                 </div>
-                                <p th:text="|#{label.item.point} : *{earnedPoint}P|">Point : 50</p>
-                                <p th:text="|#{label.item.status} : *{itemStatus}|">Status : New</p>
-                                <p th:text="|#{label.item.salesVolume} : *{salesVolume}|">Sales Volume : 123</p>
-                                <p th:text="|#{label.item.stock} : *{stockQuantity}|">Stock : 9999</p>
+                                <p th:text="|#{label.item.point} : *{earnedPoint}#{unit.point}|">Point : 50</p>
+                                <div th:switch="*{itemStatus}" class="me-3">
+                                    <p th:case="${T(prettypop.shop.entity.ItemStatus).NEW}"
+                                       th:text="|#{label.item.status} : #{itemStatus.new}|">status1</p>
+                                    <p th:case="${T(prettypop.shop.entity.ItemStatus).USED}"
+                                       th:text="|#{label.item.status} : #{itemStatus.used}|">status2</p>
+                                </div>
+                                <p th:text="|#{label.item.salesVolume} : *{salesVolume}#{unit.count}|">Sales Volume : 123</p>
+                                <p th:text="|#{label.item.stock} : *{stockQuantity}#{unit.count}|">Stock : 9999</p>
                             </div>
                             <p class="lead" th:if="*{description != null}" th:text="*{description}" style="font-size: 12px">
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit.

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      th:replace="fragment/layout :: html(#{title.Use}, ~{::main})">
+
+
+<main class="w-100 d-flex justify-content-center my-3">
+    <style>
+        .max-width-700 {
+            max-width: 700px;
+        }
+    </style>
+
+    <div class="max-width-1000 w-100 d-flex flex-column justify-content-center align-items-center">
+        <h1 class="fs-1 my-3">
+            이용안내
+        </h1>
+        <div class="border-bottom border-secondary" style="width: 55%"></div>
+        <section class="max-width-700 p-3 px-5" style="width: 55%">
+            <p>
+                이 홈페이지는 학습용 프로젝트로 제작된 홈페이지입니다.
+            </p>
+            <p>
+                <br>
+                <span>회원가입을 하면 1,000,000,000 포인트가 지급됩니다.</span><br><br>
+                <span>결제 시스템는 구현하지 않았기 때문에 회원가입 시 지급되는 포인트로만 상품 주문을 진행할 수 있습니다.</span><br><br>
+                <span>상품을 주문하면 바로 <b>배송 완료</b> 상태가 됩니다.</span><br><br>
+                <span>주문한 상품에 대해서만 리뷰 관련 기능을 사용할 수 있습니다.</span><br>
+            </p>
+        </section>
+    </div>
+</main>
+
+</html>

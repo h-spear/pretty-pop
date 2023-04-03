@@ -68,6 +68,7 @@
             <section class="max-width-700 pt-3 w-100 my-4 d-flex justify-content-center flex-column align-items-center">
                 <h5 sec:authorize="hasAnyRole('ROLE_ADMIN')"
                     class="mb-3 text-danger" th:text="#{message.thisIsAdmin}"></h5>
+                <h4 class="mb-3" th:text="|#{message.userPoint(${memberInfo.point})}|"></h4>
                 <h5 th:text="|#{message.myActivity(${memberInfo.orderCount}, ${memberInfo.reviewCount})}|"></h5>
                 <div class="mt-4 d-flex justify-content-center align-items-center">
                     <a href="#" th:href="@{/items}" class="myPageButton p-2 mx-2">

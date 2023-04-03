@@ -44,7 +44,7 @@ public class OrderController {
                            @PathVariable("orderId") Long orderId,
                            Model model) {
         OrderDto orderDto = orderService.getOrder(orderId);
-        if (orderDto.getOrdererId() != id) {
+        if (!orderDto.getOrdererId().equals(id)) {
             return "redirect:/home";
         }
         model.addAttribute("order", orderDto);

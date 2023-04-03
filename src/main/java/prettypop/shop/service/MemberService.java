@@ -22,7 +22,8 @@ import prettypop.shop.repository.MemberRepository;
 @Transactional(readOnly = true)
 public class MemberService {
 
-    private static final int BASE_POINT = 3000;
+    // 계정 생성 시 지급되는 포인트
+    private static final int BASE_POINT = 1000000000;
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;

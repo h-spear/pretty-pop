@@ -32,7 +32,7 @@ public class MemberRegisterParam {
     private String passwordConfirm;
 
     @NotBlank(groups = ValidationGroups.NotBlankGroup.class)
-    @Size(min=4, max=32, groups = ValidationGroups.SizeCheckGroup.class)
+    @Size(min=3, max=32, groups = ValidationGroups.SizeCheckGroup.class)
     private String name;
 
     @NotNull(groups = ValidationGroups.NotNullGroup.class)
