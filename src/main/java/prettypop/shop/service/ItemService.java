@@ -13,6 +13,7 @@ import prettypop.shop.entity.Item;
 import prettypop.shop.entity.Member;
 import prettypop.shop.entity.WishItem;
 import prettypop.shop.repository.*;
+import prettypop.shop.repository.query.ItemQueryRepository;
 
 import java.util.*;
 import java.util.stream.Collectors;

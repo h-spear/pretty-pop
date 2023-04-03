@@ -1,4 +1,4 @@
-package prettypop.shop.repository;
+package prettypop.shop.repository.query;
 
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.dsl.BooleanExpression;
