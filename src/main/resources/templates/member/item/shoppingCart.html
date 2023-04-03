@@ -46,29 +46,33 @@
                 </div>
                 <div class="cartItem mb-2 p-4 d-flex align-items-center w-100" style="font-size: 14px"
                      th:id="cartItemContainer + ${itemStat.index}">
-                    <div style="width: 125px; height: 125px;">
-                        <img class="rounded-2"
-                             style="width: 125px; height: 125px;"
-                             src="https://dummyimage.com/300x300/d4d4d4/454545.jpg&text=Not+Image"
-                             th:if="*{item.getThumbnailImageUrl() == null}"
-                             alt="Not Image" />
-                        <img class="rounded-2"
-                             style="width: 125px; height: 125px;"
-                             src=""
-                             th:src="*{item.getThumbnailImageUrl()}"
-                             th:if="*{item.getThumbnailImageUrl() != null}"
-                             alt="Not Image" />
-                    </div>
-                    <div class="ms-4 w-100">
-                        <h1 class="fs-2 fw-bolder"
-                            th:text="${item.itemName}">Item Name</h1>
-                        <div th:if="${item.purchasePrice < item.originalPrice}">
-                            <span class="badge bg-danger" th:text="#{label.discount(${item.discountRate})}">Danger</span>
-                            <span th:text="|${item.originalPrice * item.count}#{unit.money}|"
-                                  class="text-muted text-decoration-line-through">$20.00</span>
+                    <a href="#" th:href="@{items/{itemId}(itemId=${item.itemId})}">
+                        <div style="width: 125px; height: 125px;">
+                            <img class="rounded-2"
+                                 style="width: 125px; height: 125px;"
+                                 src="https://dummyimage.com/300x300/d4d4d4/454545.jpg&text=Not+Image"
+                                 th:if="*{item.getThumbnailImageUrl() == null}"
+                                 alt="Not Image" />
+                            <img class="rounded-2"
+                                 style="width: 125px; height: 125px;"
+                                 src=""
+                                 th:src="*{item.getThumbnailImageUrl()}"
+                                 th:if="*{item.getThumbnailImageUrl() != null}"
+                                 alt="Not Image" />
                         </div>
-                        <p th:text="|${item.purchasePrice * item.count}#{unit.money}|"
-                           style="font-size: 18px" class="fw-bold text-dark m-0">$18.00</p>
+                    </a>
+                    <div class="ms-4 w-100">
+                        <a href="#" th:href="@{items/{itemId}(itemId=${item.itemId})}" class="text-decoration-none text-dark">
+                            <h1 class="fs-2 fw-bolder"
+                                th:text="${item.itemName}">Item Name</h1>
+                            <div th:if="${item.purchasePrice < item.originalPrice}">
+                                <span class="badge bg-danger" th:text="#{label.discount(${item.discountRate})}">Danger</span>
+                                <span th:text="|${item.originalPrice * item.count}#{unit.money}|"
+                                      class="text-muted text-decoration-line-through">$20.00</span>
+                            </div>
+                            <p th:text="|${item.purchasePrice * item.count}#{unit.money}|"
+                               style="font-size: 18px" class="fw-bold text-dark m-0">$18.00</p>
+                        </a>
 
                         <div class="input-group mt-2 d-flex align-items-center">
                             <input class="form-control text-center px-1" style="max-width: 80px"
@@ -96,7 +100,7 @@
                 </div>
             </div>
 
-            <button type="button" class="btn btn-primary my-5"
+            <button type="button" class="btn btn-primary my-5 btn-lg"
                     th:text="#{button.createOrder}"
                     th:onclick="createOrder()">Primary</button>
         </section>
@@ -116,21 +120,6 @@
 
         const count = [[${cartList.size()}]];
         const cartList = [[${cartList}]];
-        cartList.forEach((item, i) => {
-            const itemContainer = document.querySelector('#cartItemContainer' + i);
-            itemContainer.addEventListener('click', (e) => {
-                const targetId = e.target.id;
-                if (targetId === 'itemQuantityInput' + i ||
-                    targetId === 'itemQuantityButton' + i ||
-                    targetId === 'itemRemoveButton' + i ||
-                    targetId === 'itemRemoveLink' + i ||
-                    targetId === 'itemRemoveIcon' + i ||
-                    targetId === 'itemRemoveUl' + i) {
-                    return;
-                }
-                window.location.href = '/items/' + item.itemId;
-            });
-        })
 
         function createOrder() {
             const selectedCartItems = [];
