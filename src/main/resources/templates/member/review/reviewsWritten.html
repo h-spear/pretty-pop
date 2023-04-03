@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      th:replace="fragment/layout :: html(#{title.reviews}, ~{::main})">
+
+
+<main class="w-100 d-flex justify-content-center my-3">
+    <style>
+        .max-width-700 {
+            max-width: 700px;
+        }
+
+        .review-menu {
+            color: var(--bs-primary);
+        }
+        .review-menu:hover{
+            color: #c85855
+        }
+        .starR{
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            color: transparent;
+            text-shadow: 0 0 0 #f0f0f0;
+            font-size: 1.8em;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+
+        .starR:hover {
+            text-shadow: 0 0 0 #ccc;
+        }
+
+        .starR.on{
+            text-shadow: 0 0 0 #ffbc00;
+        }
+    </style>
+
+    <div class="max-width-1000 w-100 d-flex flex-column justify-content-center align-items-center">
+        <div class="border-bottom border-secondary small pb-1 w-100">
+            <span th:text="#{label.review}">Review</span>
+        </div>
+
+        <!-- Filter -->
+        <section class="d-flex mt-4">
+            <a class="btn btn-lg btn-outline-primary" style="border-bottom-right-radius: 0; border-top-right-radius: 0;"
+               th:href="@{/review/can-write}" th:text="#{label.canWriteReview}">
+                Btn1
+            </a>
+            <a class="btn btn-lg text-white" style="border-bottom-left-radius: 0; border-top-left-radius: 0; border-left-width: 0; background: #c85855"
+               th:text="#{label.writtenReview}">
+                Btn2
+            </a>
+        </section>
+
+        <div class="mt-4 border-bottom border-secondary w-50"></div>
+
+        <section th:if="${reviews.size() > 0}" class="my-4 max-width-1000 w-100 d-flex flex-column justify-content-center align-items-center">
+            <div th:each="review: ${reviews}" class="w-75 d-flex align-items-center my-2">
+                <a href="#" th:href="@{/items/{itemId}(itemId=${review.itemId})}"
+                   class="text-dark d-flex mt-2 px-4 w-100 justify-content-center align-items-center my-1">
+                    <div>
+                        <img class="rounded-2"
+                             style="width: 50px; height: 50px;"
+                             src="https://dummyimage.com/300x300/d4d4d4/454545.jpg&text=Not+Image"
+                             th:if="${review.itemImageUrl == null}"
+                             alt="Not Image" />
+                        <img class="rounded-2"
+                             style="width: 50px; height: 50px;"
+                             src=""
+                             th:src="*{review.itemImageUrl}"
+                             th:if="${review.itemImageUrl != null}"
+                             alt="Not Image" />
+                    </div>
+                    <div class="ms-4 w-75">
+                        <h1 class="fs-5 fw-bolder"
+                            th:text="${review.itemName}">Item Name
+                        </h1>
+                        <div>
+                            <i th:each="num: ${#numbers.sequence(1, 5)}"
+                               class="fa-solid fa-star"
+                               th:classappend="*{num <= review.rating} ? 'text-warning' : 'text-secondary'"></i>
+                        </div>
+                    </div>
+                </a>
+                <div>
+                    <ul class="m-0 p-0 d-flex fs-3 align-items-center">
+                        <li>
+                            <button class="review-menu m-0 p-0 mx-3 border-0 bg-transparent"
+                               th:onclick="'openModifyModal(' + ${reviewStat.index} + ')'">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </li>
+                        <li>
+                            <button class="review-menu m-0 p-0 mx-3 border-0 bg-transparent"
+                               th:onclick="'openDeleteModal(' + ${reviewStat.index} + ')'">
+                                <i class="fa-regular fa-trash-can"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 장바구니가 비었다면 -->
+        <section th:if="${reviews.size() <= 0}" class="max-width-1000 py-3 w-100">
+            <div class="mt-5 pt-4 d-flex flex-column justify-content-center align-items-center">
+                <h1 class="display-4" th:text="#{message.emptyCanReviewItem}">NO ITEM IN SHOPPING CART</h1>
+                <a class="mt-3" href="#" th:href="@{/items}"
+                   th:text="#{button.goShopping}">Go Shopping</a>
+            </div>
+        </section>
+    </div>
+
+    <!-- 리뷰 모달 -->
+    <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true"
+         style="top: 25%">
+        <form class="modal-dialog" role="dialog">
+            <input type="hidden" id="parent-id">
+            <div class="modal-content" style="width: 400px">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="modalLabel"
+                        th:text="#{label.review}">Review</h4>
+                </div>
+                <div class="modal-body d-flex justify-content-center flex-column align-items-center">
+                    <div class="starRev mb-3">
+                        <span class="starR on">⭐</span>
+                        <span class="starR on">⭐</span>
+                        <span class="starR on">⭐</span>
+                        <span class="starR on">⭐</span>
+                        <span class="starR on">⭐</span>
+                    </div>
+                    <textarea id="review-input" class="form-control" rows="5"
+                              name="review" placeholder="Enter your review." th:placeholder="#{form.review.placeholder}"
+                              th:text="#{message.review.default}"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-info btn-block"
+                            id="modify-review"
+                            th:text="#{button.modify}"
+                            th:onclick="modifyReview()">Modify</button>
+                    <button class="btn btn-dark btn-block"
+                       onclick="hideModal()"
+                       type="button" data-dismiss="modal"
+                       th:text="#{button.cancel}">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true"
+         style="top: 25%">
+        <form class="modal-dialog" role="dialog">
+            <input type="hidden" id="delete-parent-id">
+            <div class="modal-content" style="width: 400px">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="deleteModalLabel"
+                        th:text="#{label.review}">Delete</h4>
+                </div>
+                <div class="modal-body" th:text="#{message.delete}">Are you sure?</div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger btn-block"
+                            id="delete-review"
+                            th:text="#{button.delete}"
+                            onclick="deleteReview()">Delete</button>
+                    <button class="btn btn-dark btn-block"
+                       onclick="hideDeleteModal()"
+                       type="button" data-dismiss="modal"
+                       th:text="#{button.cancel}">Cancel</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    </div>
+
+    <script th:inline="javascript">
+        let selectReviewIndex;
+        let selectDeleteReviewIndex;
+
+        function hideModal() {
+            $('#modal').modal("hide");
+            $('.starRev span').parent().children('span').removeClass('on');
+            $('.starRev span').addClass('on').prevAll('span').addClass('on');
+            $('#review-input').val([[#{message.review.default}]]);
+        }
+
+        function hideDeleteModal() {
+            $('#deleteModal').modal("hide");
+        }
+
+
+        $('.starRev span').click(function(){
+            $(this).parent().children('span').removeClass('on');
+            $(this).addClass('on').prevAll('span').addClass('on');
+            return false;
+        });
+
+        function getReviewRating() {
+            let rating = 0;
+            document.querySelectorAll(".starR").forEach(elem => {
+                if (elem.classList.contains('on')) {
+                    rating += 1;
+                }
+            });
+            return rating;
+        }
+
+        function openDeleteModal(index) {
+            selectDeleteReviewIndex = index;
+            $('#deleteModal').modal("show");
+        }
+
+        function openModifyModal(index) {
+            $('#modal').modal("show");
+            const reviews = [[${reviews}]];
+            const review = reviews[index];
+            const content = review.content.replaceAll("<br>", "\n");
+            let rating = review.rating;
+            console.log(review);
+            $('#review-input').val(content);
+            document.querySelectorAll(".starR").forEach(elem => {
+                if (rating > 0) {
+                    elem.classList.add('on');
+                    rating--;
+                } else {
+                    elem.classList.remove('on');
+                }
+            });
+            selectReviewIndex = index;
+            $('#modal').modal("show");
+        }
+
+        function deleteReview() {
+            event.preventDefault();
+            const reviews = [[${reviews}]];
+            const review = reviews[selectDeleteReviewIndex];
+            const itemId = review.itemId;
+            const reviewId = review.id;
+            let flag = true;
+            $.ajax({
+                url: "/items/" + itemId + "/review/" + reviewId,
+                type: 'delete',
+                headers: {'Content-Type': 'application/json'},
+                async: false,
+                success: function (result) {
+                    if (result.status == 'success') {
+                        alert([[#{message.success.deleteReview}]]);
+                        flag = true;
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert('error!!!');
+                }
+            });
+            flag && window.location.reload();
+        }
+
+        function modifyReview() {
+            event.preventDefault();
+            const reviews = [[${reviews}]];
+            const review = reviews[selectReviewIndex];
+            const itemId = review.itemId;
+            const reviewId = review.id;
+            const content = document.querySelector('#review-input').value.replaceAll('\n', '<br>');
+            const rating = getReviewRating();
+            let flag = true;
+
+            const obj = {
+                rating: rating,
+                content: content,
+            };
+            $.ajax({
+                url: "/items/" + itemId + "/review/" + reviewId,
+                type: 'put',
+                headers: {'Content-Type': 'application/json'},
+                async: false,
+                data: JSON.stringify(obj),
+                success: function (result) {
+                    if (result.status == 'success') {
+                        alert([[#{message.success.modifyReview}]]);
+                        flag = true;
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert('error!!!');
+                }
+            });
+            flag && window.location.reload();
+        }
+    </script>
+</main>
+
+</html>

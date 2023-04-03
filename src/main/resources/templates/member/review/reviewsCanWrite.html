@@ -34,6 +34,21 @@
         <div class="border-bottom border-secondary small pb-1 w-100">
             <span th:text="#{label.review}">Review</span>
         </div>
+
+        <!-- Filter -->
+        <section class="d-flex mt-4">
+            <a class="btn btn-lg text-white" style="border-bottom-right-radius: 0; border-top-right-radius: 0; background: #c85855"
+               th:text="#{label.canWriteReview}">
+                Btn1
+            </a>
+            <a class="btn btn-outline-primary btn-lg" style="border-bottom-left-radius: 0; border-top-left-radius: 0; border-left-width: 0"
+               th:href="@{/review/written}" th:text="#{label.writtenReview}">
+                Btn2
+            </a>
+        </section>
+
+        <div class="mt-4 border-bottom border-secondary w-50"></div>
+
         <section th:if="${items.size() > 0}" class="my-4 max-width-1000 w-100 d-flex flex-column justify-content-center align-items-center">
             <div th:each="item: ${items}" class="w-75 d-flex align-items-center my-2">
                 <a href="#" th:href="@{/items/{itemId}(itemId=${item.itemId})}"

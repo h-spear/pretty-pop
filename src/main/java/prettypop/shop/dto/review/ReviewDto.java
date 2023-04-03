@@ -13,6 +13,7 @@ public class ReviewDto {
     private Long id;
 
     private Long itemId;
+    private String itemName;
     private String itemImageUrl;
 
     private int rating;
@@ -24,6 +25,7 @@ public class ReviewDto {
         return ReviewDto.builder()
                 .id(review.getId())
                 .itemId(review.getItem().getId())
+                .itemName(review.getItem().getName())
                 .itemImageUrl(review.getItem().getThumbnailImageUrl())
                 .rating(review.getRating())
                 .content(review.getContent())
