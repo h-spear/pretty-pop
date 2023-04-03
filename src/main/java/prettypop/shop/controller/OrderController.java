@@ -1,5 +1,7 @@
 package prettypop.shop.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -7,7 +9,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import prettypop.shop.configuration.annotation.Login;
 import prettypop.shop.controller.request.DateRequest;
-import prettypop.shop.controller.request.OrderFormCreateRequest;
 import prettypop.shop.controller.response.ApiResponse;
 import prettypop.shop.dto.*;
 import prettypop.shop.entity.Member;
@@ -15,10 +16,11 @@ import prettypop.shop.repository.MemberRepository;
 import prettypop.shop.service.ItemService;
 import prettypop.shop.service.OrderService;
 
+import java.io.IOException;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -26,37 +28,12 @@ import java.util.Optional;
 @RequestMapping("/order")
 public class OrderController {
 
+    private ObjectMapper objectMapper = new ObjectMapper();
     private static final int DELIVERY_FEE = 3000;
 
     private final OrderService orderService;
     private final ItemService itemService;
     private final MemberRepository memberRepository;
-
-    @GetMapping("/form")
-    public String createOrderForm(@Login Long id,
-                                  Model model) {
-        // 임시 데이터
-        List<ItemCountRequest> list = new ArrayList<>();
-        list.add(new ItemCountRequest(101L, 4));
-        list.add(new ItemCountRequest(113L, 4));
-        list.add(new ItemCountRequest(127L, 4));
-        list.add(new ItemCountRequest(134L, 4));
-        list.add(new ItemCountRequest(138L, 4));
-        OrderFormCreateRequest request = new OrderFormCreateRequest(list);
-        List<ItemCountRequest> itemRequests = request.getOrderItems();
-
-        //
-        Optional<Member> optionalMember = memberRepository.findById(id);
-        if (optionalMember.isEmpty()) {
-            return "redirect:/home";
-        }
-        List<OrderItemDto> orderItemDtos = itemService.getOrderItems(itemRequests);
-        OrderCreateForm orderCreateForm = new OrderCreateForm();
-        fillOrderItemInfo(orderCreateForm, orderItemDtos);
-        fillOrderRecipientInfo(orderCreateForm, optionalMember.get());
-        model.addAttribute("orderCreateForm", orderCreateForm);
-        return "shop/order/orderCreateForm";
-    }
 
     @GetMapping("/{orderId}")
     public String getOrder(@Login Long id,
@@ -85,6 +62,23 @@ public class OrderController {
         return "member/order/orders";
     }
 
+    @GetMapping("/form")
+    public String createOrderForm(@Login Long id,
+                                  @RequestParam Map<String, String> paramMap,
+                                  Model model) {
+        Member member = memberRepository.findById(id).orElse(null);
+        if (member == null) {
+            return "redirect:/home";
+        }
+        List<ItemCountRequest> itemRequests = parseItemRequests(paramMap);
+        List<OrderItemDto> orderItemDtos = itemService.getOrderItems(itemRequests);
+        OrderCreateForm orderCreateForm = new OrderCreateForm();
+        fillOrderItemInfo(orderCreateForm, orderItemDtos);
+        fillOrderRecipientInfo(orderCreateForm, member);
+        model.addAttribute("orderCreateForm", orderCreateForm);
+        return "shop/order/orderCreateForm";
+    }
+
     @PostMapping
     @ResponseBody
     public ApiResponse createOrder(@Login Long id,
@@ -102,6 +96,18 @@ public class OrderController {
             return ApiResponse.ofError("결제 과정에서 오류가 발생했습니다.");
         }
         return ApiResponse.ofSuccess(orderId);
+    }
+
+    private List<ItemCountRequest> parseItemRequests(Map<String, String> paramMap) {
+        return paramMap.entrySet().stream()
+                .map(entry -> {
+                    try {
+                        return objectMapper.readValue(entry.getValue(), ItemCountRequest.class);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException(e);
+                    }
+                })
+                .collect(Collectors.toList());
     }
 
     private void fillOrderItemInfo(OrderCreateForm orderCreateForm, List<OrderItemDto> orderItemDtos) {

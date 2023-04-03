@@ -93,7 +93,7 @@ public class ItemService {
     }
 
     public List<CartItemDto> getCartList(Long memberId) {
-        return cartItemRepository.findByMemberId(memberId).stream()
+        return cartItemRepository.findAllByMemberId(memberId).stream()
                 .map(cartItem -> CartItemDto.of(cartItem))
                 .collect(Collectors.toList());
     }

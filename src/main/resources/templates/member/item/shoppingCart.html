@@ -32,57 +32,72 @@
         </div>
 
         <!-- 장바구니에 상품이 있다면 -->
-        <section th:if="${cartList.size() > 0}" class="max-width-700 py-3 w-100">
-            <div th:each="item: ${cartList}" class="cartItem mb-2 p-4 d-flex align-items-center" style="font-size: 14px"
-                 th:id="cartItemContainer + ${itemStat.index}">
-                <div style="width: 125px; height: 125px;">
-                    <img class="rounded-2"
-                         style="width: 125px; height: 125px;"
-                         src="https://dummyimage.com/300x300/d4d4d4/454545.jpg&text=Not+Image"
-                         th:if="*{item.getThumbnailImageUrl() == null}"
-                         alt="Not Image" />
-                    <img class="rounded-2"
-                         style="width: 125px; height: 125px;"
-                         src=""
-                         th:src="*{item.getThumbnailImageUrl()}"
-                         th:if="*{item.getThumbnailImageUrl() != null}"
-                         alt="Not Image" />
+        <section th:if="${cartList.size() > 0}" class="max-width-700 py-3 w-100 flex-column d-flex justify-content-center">
+            <div th:each="item: ${cartList}" class="d-flex align-items-center">
+                <div class="me-3">
+                    <input class="cart-item-check form-check-input"
+                           type="checkbox" value=""
+                           style="width: 30px; height: 30px"
+                           th:id="cartItemCheck + ${itemStat.index}"
+                           th:data-id="${item.itemId}"
+                           th:data-count="${item.count}"
+                           th:data-index="${itemStat.index}">
                 </div>
-                <div class="ms-4 w-100">
-                    <h1 class="fs-2 fw-bolder"
-                        th:text="${item.itemName}">Item Name</h1>
-                    <div th:if="${item.purchasePrice < item.originalPrice}">
-                        <span class="badge bg-danger" th:text="#{label.discount(${item.discountRate})}">Danger</span>
-                        <span th:text="|${item.originalPrice * item.count}#{unit.money}|"
-                              class="text-muted text-decoration-line-through">$20.00</span>
+                <div class="cartItem mb-2 p-4 d-flex align-items-center w-100" style="font-size: 14px"
+                     th:id="cartItemContainer + ${itemStat.index}">
+                    <div style="width: 125px; height: 125px;">
+                        <img class="rounded-2"
+                             style="width: 125px; height: 125px;"
+                             src="https://dummyimage.com/300x300/d4d4d4/454545.jpg&text=Not+Image"
+                             th:if="*{item.getThumbnailImageUrl() == null}"
+                             alt="Not Image" />
+                        <img class="rounded-2"
+                             style="width: 125px; height: 125px;"
+                             src=""
+                             th:src="*{item.getThumbnailImageUrl()}"
+                             th:if="*{item.getThumbnailImageUrl() != null}"
+                             alt="Not Image" />
                     </div>
-                    <p th:text="|${item.purchasePrice * item.count}#{unit.money}|"
-                       style="font-size: 18px" class="fw-bold text-dark m-0">$18.00</p>
+                    <div class="ms-4 w-100">
+                        <h1 class="fs-2 fw-bolder"
+                            th:text="${item.itemName}">Item Name</h1>
+                        <div th:if="${item.purchasePrice < item.originalPrice}">
+                            <span class="badge bg-danger" th:text="#{label.discount(${item.discountRate})}">Danger</span>
+                            <span th:text="|${item.originalPrice * item.count}#{unit.money}|"
+                                  class="text-muted text-decoration-line-through">$20.00</span>
+                        </div>
+                        <p th:text="|${item.purchasePrice * item.count}#{unit.money}|"
+                           style="font-size: 18px" class="fw-bold text-dark m-0">$18.00</p>
 
-                    <div class="input-group mt-2 d-flex align-items-center">
-                        <input class="form-control text-center px-1" style="max-width: 80px"
-                               type="number"
-                               th:onchange="'validateCount(' + ${itemStat.index} + ')'"
-                               th:id="itemQuantityInput + ${itemStat.index}"
-                               th:value="${item.count}">
-                        <button class="btn btn-primary" type="button"
-                                th:id="itemQuantityButton + ${itemStat.index}"
-                                th:text="#{label.change}" th:onclick="'changeCount(' + ${itemStat.index} + ',' + ${item.itemId} + ')'">
-                            Change
-                        </button>
+                        <div class="input-group mt-2 d-flex align-items-center">
+                            <input class="form-control text-center px-1" style="max-width: 80px"
+                                   type="number"
+                                   th:onchange="'validateCount(' + ${itemStat.index} + ')'"
+                                   th:id="itemQuantityInput + ${itemStat.index}"
+                                   th:value="${item.count}">
+                            <button class="btn btn-primary" type="button"
+                                    th:id="itemQuantityButton + ${itemStat.index}"
+                                    th:text="#{label.change}" th:onclick="'changeCount(' + ${itemStat.index} + ',' + ${item.itemId} + ')'">
+                                Change
+                            </button>
+                        </div>
                     </div>
-                </div>
-                <div class="ms-5">
-                    <ul th:id="itemRemoveUl + ${itemStat.index}" class="m-0 p-0 d-flex justify-content-center fs-3">
-                        <li th:id="itemRemoveButton + ${itemStat.index}" class="cartMenu-item mx-4">
-                            <a th:id="itemRemoveLink + ${itemStat.index}" href="#" th:onclick="'deleteItem(' + ${item.itemId} + ')'">
-                                <i th:id="itemRemoveIcon + ${itemStat.index}"
-                                   class="fa-regular fa-trash-can"></i>
-                            </a>
-                        </li>
-                    </ul>
+                    <div class="ms-5">
+                        <ul th:id="itemRemoveUl + ${itemStat.index}" class="m-0 p-0 d-flex justify-content-center fs-3">
+                            <li th:id="itemRemoveButton + ${itemStat.index}" class="cartMenu-item mx-4">
+                                <a th:id="itemRemoveLink + ${itemStat.index}" href="#" th:onclick="'deleteItem(' + ${item.itemId} + ')'">
+                                    <i th:id="itemRemoveIcon + ${itemStat.index}"
+                                       class="fa-regular fa-trash-can"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
+
+            <button type="button" class="btn btn-primary my-5"
+                    th:text="#{button.createOrder}"
+                    th:onclick="createOrder()">Primary</button>
         </section>
 
         <!-- 장바구니가 비었다면 -->
@@ -115,6 +130,42 @@
                 window.location.href = '/items/' + item.itemId;
             });
         })
+
+        function createOrder() {
+            const selectedCartItems = [];
+            document.querySelectorAll('.cart-item-check').forEach(elem => {
+                if (elem.checked == true) {
+                    console.log(elem, elem.dataset.index, elem.checked, elem.dataset.id, elem.dataset.count);
+                    selectedCartItems.push({
+                        itemId: elem.dataset.id,
+                        quantity: elem.dataset.count
+                    })
+                }
+            });
+
+            if (selectedCartItems.length <= 0) {
+                alert([[#{message.notSelectedCartItem}]]);
+                return;
+            }
+
+            const form = document.createElement("form");
+            const input = new Array();
+
+            form.setAttribute("charset", "UTF-8");
+            form.setAttribute("accept-charset", "UTF-8");
+            form.setAttribute("method", "GET");
+            form.setAttribute("action", "/order/form");
+
+            selectedCartItems.forEach(function(element, idx, array) {
+                input[idx] = document.createElement("input");
+                input[idx].setAttribute("type", "hidden");
+                input[idx].setAttribute("name", idx);
+                input[idx].setAttribute("value", JSON.stringify(selectedCartItems[idx]));
+                form.appendChild(input[idx]);
+            });
+            document.body.appendChild(form);
+            form.submit();
+        }
 
         function validateCount(inputBoxIndex) {
             const input = document.querySelector('#itemQuantityInput' + inputBoxIndex);

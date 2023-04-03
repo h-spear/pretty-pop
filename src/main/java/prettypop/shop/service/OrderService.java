@@ -8,12 +8,10 @@ import prettypop.shop.dto.ItemCountRequest;
 import prettypop.shop.dto.OrderCreateParam;
 import prettypop.shop.dto.OrderDto;
 import prettypop.shop.dto.OrderSimpleDto;
-import prettypop.shop.entity.Delivery;
-import prettypop.shop.entity.Member;
-import prettypop.shop.entity.Order;
-import prettypop.shop.entity.OrderItem;
+import prettypop.shop.entity.*;
 import prettypop.shop.repository.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -29,6 +27,7 @@ public class OrderService {
     private final DeliveryRepository deliveryRepository;
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
+    private final CartItemRepository cartItemRepository;
 
     @Transactional
     public Long createOrder(Long memberId, OrderCreateParam orderCreateParam) {
@@ -67,6 +66,19 @@ public class OrderService {
                 .build();
         Order savedOrder = orderRepository.save(order);
 
+        // 주문에 성공하면 장바구니에서 제거
+        List<Long> deleteIds = new ArrayList<>();
+        List<CartItem> cartItems = cartItemRepository.findAllByMemberIdWithItem(memberId);
+        cartItems.stream()
+                .filter(cartItem -> quantityMap.containsKey(cartItem.getItem().getId()))
+                .forEach(cartItem -> {
+                    cartItem.removeCount(quantityMap.get(cartItem.getItem().getId()));
+                    if (cartItem.getCount() <= 0) {
+                        deleteIds.add(cartItem.getId());
+                    }
+                });
+        cartItemRepository.deleteAllById(deleteIds);
+
         return savedOrder.getId();
     }
 
@@ -82,13 +94,13 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    private static List<Long> generateIds(OrderCreateParam orderCreateParam) {
+    private List<Long> generateIds(OrderCreateParam orderCreateParam) {
         return orderCreateParam.getOrderItemRequests().stream()
                 .map(ItemCountRequest::getItemId)
                 .collect(Collectors.toList());
     }
 
-    private static Map<Long, Integer> generateQuantityMap(OrderCreateParam orderCreateParam) {
+    private Map<Long, Integer> generateQuantityMap(OrderCreateParam orderCreateParam) {
         return orderCreateParam.getOrderItemRequests().stream()
                 .collect(Collectors.toMap(
                         ItemCountRequest::getItemId,
