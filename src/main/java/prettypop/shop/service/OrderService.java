@@ -77,7 +77,7 @@ public class OrderService {
                         deleteIds.add(cartItem.getId());
                     }
                 });
-        cartItemRepository.deleteAllById(deleteIds);
+        cartItemRepository.deleteBulkById(deleteIds);
 
         return savedOrder.getId();
     }

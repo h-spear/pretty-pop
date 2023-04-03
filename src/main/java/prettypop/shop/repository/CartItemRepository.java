@@ -1,6 +1,7 @@
 package prettypop.shop.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import prettypop.shop.entity.CartItem;
@@ -17,4 +18,8 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
     @Query("select ci from CartItem ci join fetch ci.item where ci.member.id = :memberId")
     List<CartItem> findAllByMemberIdWithItem(@Param("memberId") Long memberId);
+
+    @Modifying
+    @Query("delete from CartItem ci where ci.id in :ids")
+    int deleteBulkById(@Param("ids") List<Long> ids);
 }
