@@ -77,7 +77,8 @@
                                 <input class="form-control text-center me-3 p-1" id="inputQuantity"
                                        type="number" value="1" style="max-width: 5rem"
                                        th:onchange="validateCount()"/>
-                                <button class="btn btn-outline-primary flex-shrink-0" type="button">
+                                <button class="btn btn-outline-primary flex-shrink-0" type="button"
+                                        th:onclick="createOrder()">
                                     <span th:text="#{button.item.buy}">buy</span>
                                 </button>
                                 <button class="btn btn-outline-dark flex-shrink-0 ms-3" type="button"
@@ -237,6 +238,30 @@
                 alert([[#{message.doNotUnderZero}]]);
                 input.value = 1;
             }
+        }
+
+        function createOrder() {
+            const obj = {
+                itemId: itemId,
+                quantity: document.querySelector('#inputQuantity').value
+            };
+
+            console.log(obj);
+            const form = document.createElement("form");
+            const input = new Array();
+
+            form.setAttribute("charset", "UTF-8");
+            form.setAttribute("accept-charset", "UTF-8");
+            form.setAttribute("method", "GET");
+            form.setAttribute("action", "/order/form");
+
+            input[0] = document.createElement("input");
+            input[0].setAttribute("type", "hidden");
+            input[0].setAttribute("name", 0);
+            input[0].setAttribute("value", JSON.stringify(obj));
+            form.appendChild(input[0]);
+            document.body.appendChild(form);
+            form.submit();
         }
 
         function addCart() {
