@@ -37,7 +37,6 @@ public class OrderService {
         // 회원 포인트 사용
         Member member = memberRepository.findById(memberId).orElseThrow(IllegalArgumentException::new);
         member.decreasePoint(orderCreateParam.getUsedPoint());
-        member.increasePoint(orderCreateParam.getEarnedPoint());
 
         // 배송 정보
         Delivery delivery = Delivery.builder()
@@ -80,6 +79,13 @@ public class OrderService {
         cartItemRepository.deleteBulkById(deleteIds);
 
         return savedOrder.getId();
+    }
+
+    @Transactional
+    public void completeDelivery(Long orderId) {
+        Order order = orderRepository.findByIdWithFetchJoin(orderId)
+                .orElseThrow(IllegalArgumentException::new);
+        order.completeOrder();
     }
 
     public OrderDto getOrder(Long orderId) {

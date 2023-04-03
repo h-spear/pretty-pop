@@ -32,6 +32,7 @@ public class OrderItem extends BaseEntity {
     public static OrderItem createOrderItem(Item item, int count) {
         OrderItem orderItem = new OrderItem();
         item.removeStock(count);
+        item.addSalesVolume(count);
         orderItem.item = item;
         orderItem.count = count;
         orderItem.hasReview = false;

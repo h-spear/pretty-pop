@@ -71,4 +71,8 @@ public class Item extends BaseEntity {
         }
         this.stockQuantity -= quantity;
     }
+
+    public void addSalesVolume(int salesVolume) {
+        this.salesVolume += salesVolume;
+    }
 }

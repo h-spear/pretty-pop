@@ -58,6 +58,8 @@ public class Order extends BaseEntity {
 
     public void completeOrder() {
         orderStatus = OrderStatus.COMPLETED;
+        delivery.setDeliveryStatus(DeliveryStatus.COMPLETED);
+        member.increasePoint(earnedPoint);
     }
 
     public void cancelOrder() {

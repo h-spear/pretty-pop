@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import prettypop.shop.configuration.annotation.Login;
 import prettypop.shop.controller.request.DateRequest;
@@ -21,7 +20,6 @@ import prettypop.shop.entity.Member;
 import prettypop.shop.repository.MemberRepository;
 import prettypop.shop.service.ItemService;
 import prettypop.shop.service.OrderService;
-import prettypop.shop.validation.ValidationGroups;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -109,6 +107,9 @@ public class OrderController {
         Long orderId;
         try {
             orderId = orderService.createOrder(id, orderCreateParam);
+
+            // 학습용 홈페이지이므로 주문을 하자마자 배송완료 처리
+            orderService.completeDelivery(orderId);
         } catch (IllegalArgumentException e) {
             return ApiResponse.ofError("결제 과정에서 오류가 발생했습니다.");
         }
