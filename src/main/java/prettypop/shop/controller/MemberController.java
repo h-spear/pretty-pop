@@ -72,9 +72,20 @@ public class MemberController {
 
     @PutMapping("/member")
     public String modify(@Login Long id,
-                         MemberUpdateParam memberUpdateParam) {
-        memberService.update(id, memberUpdateParam);
-        return "redirect:/member";
+                         @Validated(ValidationSequence.class) MemberUpdateParam memberUpdateParam,
+                         BindingResult bindingResult) {
+
+        if (bindingResult.hasErrors()) {
+            return "member/memberModifyForm";
+        }
+
+        try {
+            memberService.update(id, memberUpdateParam);
+            return "redirect:/member";
+        } catch (IllegalArgumentException e) {
+            bindingResult.reject("error");
+        }
+        return "member/memberModifyForm";
     }
 
     @PutMapping("/member/nickname")

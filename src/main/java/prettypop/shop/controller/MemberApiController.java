@@ -2,12 +2,14 @@ package prettypop.shop.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import prettypop.shop.configuration.annotation.Login;
 import prettypop.shop.controller.request.MemberNicknameRequest;
 import prettypop.shop.controller.response.ApiResponse;
 import prettypop.shop.exception.MemberNicknameDuplicateException;
-import prettypop.shop.exception.MemberUsernameDuplicateException;
 import prettypop.shop.service.MemberService;
 
 @Slf4j

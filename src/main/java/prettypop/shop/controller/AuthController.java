@@ -2,15 +2,20 @@ package prettypop.shop.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import prettypop.shop.configuration.jwt.JwtTokenUtils;
 import prettypop.shop.configuration.jwt.TokenConst;
 import prettypop.shop.configuration.security.SecurityContextUtils;
 import prettypop.shop.dto.auth.LoginParam;
 import prettypop.shop.dto.auth.Token;
+import prettypop.shop.exception.LoginPasswordNotMatchException;
 import prettypop.shop.service.auth.AuthService;
+import prettypop.shop.validation.ValidationSequence;
 
 import javax.security.auth.RefreshFailedException;
 import javax.servlet.http.Cookie;
@@ -27,20 +32,32 @@ public class AuthController {
 
     @GetMapping("/login")
     public String loginForm(Model model) {
-        log.info("로그인 폼 페이지 이동");
         model.addAttribute("loginForm", new LoginParam());
         return "member/loginForm";
     }
 
     @PostMapping("/login")
-    public String login(@ModelAttribute("loginForm") LoginParam loginParam,
+    public String login(@Validated(ValidationSequence.class) @ModelAttribute("loginForm") LoginParam loginParam,
+                        BindingResult bindingResult,
                         HttpServletResponse response) {
-        log.info("로그인 컨트롤러 실행");
-        Token token = authService.login(loginParam);
-        jwtTokenUtils.setCookieAccessToken(response, token.getAccessToken());
-        jwtTokenUtils.setCookieRefreshToken(response, token.getRefreshToken());
-        securityContextUtils.setAuthentication(token.getAccessToken());
-        return "redirect:/home";
+
+        if (bindingResult.hasErrors()) {
+            return "member/loginForm";
+        }
+
+        try {
+            Token token = authService.login(loginParam);
+            jwtTokenUtils.setCookieAccessToken(response, token.getAccessToken());
+            jwtTokenUtils.setCookieRefreshToken(response, token.getRefreshToken());
+            securityContextUtils.setAuthentication(token.getAccessToken());
+            return "redirect:/home";
+        } catch (UsernameNotFoundException e) {
+            bindingResult.rejectValue("username", "notFound");
+        } catch (LoginPasswordNotMatchException e) {
+            bindingResult.rejectValue("password", "match");
+        }
+
+        return "member/loginForm";
     }
 
     @RequestMapping("/refresh")

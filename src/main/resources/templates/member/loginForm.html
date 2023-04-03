@@ -21,9 +21,10 @@
                                             <div class="form-group">
                                                 <div class="form-floating mb-3">
                                                     <input type="text" class="form-control"
-                                                           id="username" th:field="*{username}"
+                                                           id="username" th:field="*{username}" th:errorclass="is-invalid"
                                                            placeholder="Create a ID" th:placeholder="#{form.login.username.placeholder}">
                                                     <label for="username" th:text="#{form.username}">ID</label>
+                                                    <div class="invalid-feedback" th:errors="*{username}"></div>
                                                 </div>
                                             </div>
 
@@ -31,9 +32,10 @@
                                             <div class="form-group">
                                                 <div class="form-floating mb-3">
                                                     <input type="password" class="form-control"
-                                                           id="password" th:field="*{password}"
+                                                           id="password" th:field="*{password}" th:errorclass="is-invalid"
                                                            placeholder="Password" th:placeholder="#{form.password.placeholder}">
                                                     <label for="password" th:text="#{form.password}">Password</label>
+                                                    <div class="invalid-feedback" th:errors="*{password}"></div>
                                                 </div>
                                             </div>
 

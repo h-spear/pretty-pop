@@ -12,6 +12,7 @@ import prettypop.shop.dto.auth.LoginParam;
 import prettypop.shop.dto.auth.Token;
 import prettypop.shop.entity.Member;
 import prettypop.shop.entity.auth.Auth;
+import prettypop.shop.exception.LoginPasswordNotMatchException;
 import prettypop.shop.repository.MemberRepository;
 import prettypop.shop.repository.auth.AuthRepository;
 
@@ -42,7 +43,7 @@ public class AuthService {
         });
 
         if (!passwordEncoder.matches(param.getPassword(), member.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new LoginPasswordNotMatchException();
         }
 
         Token token = jwtTokenProvider.createToken(member.getId(), username);

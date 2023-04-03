@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import prettypop.shop.configuration.annotation.Login;
 import prettypop.shop.controller.request.DateRequest;
@@ -19,7 +21,9 @@ import prettypop.shop.entity.Member;
 import prettypop.shop.repository.MemberRepository;
 import prettypop.shop.service.ItemService;
 import prettypop.shop.service.OrderService;
+import prettypop.shop.validation.ValidationGroups;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -84,10 +88,22 @@ public class OrderController {
     @PostMapping
     @ResponseBody
     public ApiResponse createOrder(@Login Long id,
-                                   @RequestBody OrderCreateParam orderCreateParam) {
+                                   @Valid @RequestBody OrderCreateParam orderCreateParam,
+                                   BindingResult bindingResult) {
         // 결제를 구현하지 않기 때문에 모든 포인트를 사용해야만 결제가 되도록 함
         if (orderCreateParam.getPaymentAmount() != 0) {
             return ApiResponse.ofError("결제가 완료되지 않았습니다.");
+        }
+
+        if (bindingResult.hasFieldErrors("recipientName")) {
+            return ApiResponse.ofError("수취인명은 공백일 수 없습니다.(영문 기준 4~32자)");
+        } else if (bindingResult.hasFieldErrors("recipientContact")) {
+            return ApiResponse.ofError("수취인 연락처는 공백일 수 없습니다.");
+        } else if (bindingResult.hasFieldErrors("recipientAddress")) {
+            return ApiResponse.ofError("주소는 필수 값입니다.");
+        }
+        if (bindingResult.hasErrors()) {
+            return ApiResponse.ofError("잘못된 정보가 입력되었습니다.");
         }
 
         Long orderId;
