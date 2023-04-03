@@ -4,6 +4,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import prettypop.shop.dto.review.CanReviewItemDto;
+import prettypop.shop.dto.review.ReviewDto;
 import prettypop.shop.entity.Item;
 import prettypop.shop.entity.Member;
 import prettypop.shop.entity.OrderItem;
@@ -15,6 +17,7 @@ import prettypop.shop.repository.OrderItemRepository;
 import prettypop.shop.repository.ReviewRepository;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -28,7 +31,7 @@ public class ReviewService {
     private final ItemRepository itemRepository;
 
     public boolean canReview(Long memberId, Long itemId) {
-        int notReviewedItemCount = orderItemRepository.getNotReviewedItem(memberId, itemId).size();
+        int notReviewedItemCount = orderItemRepository.findNotReviewedByMemberAndItem(memberId, itemId).size();
         return notReviewedItemCount > 0;
     }
 
@@ -39,13 +42,18 @@ public class ReviewService {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(IllegalArgumentException::new);
 
-        List<OrderItem> notReviewedItem = orderItemRepository.getNotReviewedItem(memberId, itemId);
-        if (notReviewedItem.size() <= 0) {
+        int count = updateHasReviewTrue(memberId, itemId);
+        if (count == 0) {
             throw new CannotWriteReviewException();
         }
-        orderItemRepository.checkHasReview(notReviewedItem);
         Review review = reviewRepository.save(new Review(item, rating, content, member));
         return review.getId();
+    }
+
+    public int updateHasReviewTrue(Long memberId, Long itemId) {
+        List<OrderItem> notReviewedItem = orderItemRepository.findNotReviewedByMemberAndItem(memberId, itemId);
+        int count = orderItemRepository.updateBulkHasReviewTrue(notReviewedItem);
+        return count;
     }
 
     @Transactional
@@ -73,5 +81,17 @@ public class ReviewService {
 
         reviewRepository.delete(review);
         return review.getId();
+    }
+
+    public List<ReviewDto> findAllReviews(Long memberId) {
+        return reviewRepository.findAllByReviewerIdWithItem(memberId).stream()
+                .map(review -> ReviewDto.of(review))
+                .collect(Collectors.toList());
+    }
+
+    public List<CanReviewItemDto> findCanReviewItems(Long memberId) {
+        return orderItemRepository.findNotReviewedItem(memberId).stream()
+                .map(item -> CanReviewItemDto.of(item))
+                .collect(Collectors.toList());
     }
 }

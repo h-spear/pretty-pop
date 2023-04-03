@@ -56,6 +56,17 @@ public class ItemReviewController {
         return ApiResponse.ofSuccess();
     }
 
+    @PutMapping("/{itemId}/review")
+    public ApiResponse doNotReview(@Login Long id,
+                                   @PathVariable("itemId") Long itemId) {
+        try {
+            reviewService.updateHasReviewTrue(id, itemId);
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.ofError("회원 번호 혹은 상품 번호가 잘못되었습니다.");
+        }
+        return ApiResponse.ofSuccess();
+    }
+
     @DeleteMapping("/{itemId}/review/{reviewId}")
     public ApiResponse deleteReview(@Login Long id,
                                     @PathVariable("itemId") Long itemId,
