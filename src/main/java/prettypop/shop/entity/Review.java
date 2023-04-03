@@ -33,4 +33,12 @@ public class Review extends BaseEntity{
         this.content = content;
         this.reviewer = reviewer;
     }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
 }

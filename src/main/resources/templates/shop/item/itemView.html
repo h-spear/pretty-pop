@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="fragment/layout :: html(#{title.items}, ~{::main})">
 
 
@@ -116,7 +117,7 @@
                 <div class="d-inline ms-2" style="font-size: 14px">
                     <i th:each="num: ${#numbers.sequence(1, 5)}"
                        class="fa-solid fa-star"
-                       th:classappend="${num <= item.rating} ? 'text-warning' : 'text-secondary'"></i>
+                       th:classappend="${num <= review.rating} ? 'text-warning' : 'text-secondary'"></i>
                 </div>
                 <p class="d-inline text-muted ms-2" style="font-size: 10px">
                     <span th:text="|#{label.registrationDate} : ${#temporals.format(review.registrationDate, 'yyyy-MM-dd HH:mm:ss')} / |"></span>
@@ -128,6 +129,14 @@
                        class="fa-solid fa-chevron-down"></i>
                     <span th:id="reviewToggleMsg + ${reviewStat.index}" th:text="#{button.readReview}">Read Review</span>
                 </button>
+                <button sec:authorize="hasAnyRole('ROLE_USER')"
+                        th:if="${review.reviewerId} == ${#authentication.principal.id}"
+                        type="button" class="btn btn-outline-info btn-sm mx-1" th:text="#{button.modify}"
+                        th:onclick="'openModifyModal(' + ${reviewStat.index} + ')'">Small button</button>
+                <button sec:authorize="hasAnyRole('ROLE_USER')"
+                        th:if="${review.reviewerId} == ${#authentication.principal.id}"
+                        type="button" class="btn btn-sm btn-outline-danger mx-1" th:text="#{button.delete}"
+                        th:onclick="openDeleteModal()">Small button</button>
                 <p class="ms-4 mt-1 ft-5 hidden" style="font-size: 12px;"
                    th:id="reviewContent + ${reviewStat.index}"
                    th:utext="${#strings.replace(review.content, nlString, '&lt;br /&gt;')}"></p>
@@ -158,11 +167,40 @@
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-primary btn-block"
-                                id="info-update"
+                                id="write-review"
                                 th:text="#{button.write}"
                                 onclick="writeReview()">Write</button>
+                        <button class="btn btn-info btn-block"
+                                id="modify-review"
+                                th:text="#{button.modify}"
+                                th:onclick="modifyReview()">Modify</button>
                         <a class="btn btn-dark btn-block"
                            onclick="hideModal()"
+                           type="button" data-dismiss="modal"
+                           th:text="#{button.cancel}">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+        <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true"
+             style="top: 25%">
+            <form class="modal-dialog" role="dialog">
+                <input type="hidden" id="delete-parent-id">
+                <div class="modal-content" style="width: 400px">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="deleteModalLabel"
+                            th:text="#{label.review}">Delete</h4>
+                    </div>
+                    <div class="modal-body" th:text="#{message.delete}">Are you sure?</div>
+                    <div class="modal-footer">
+                        <button class="btn btn-danger btn-block"
+                                id="delete-review"
+                                th:text="#{button.delete}"
+                                onclick="deleteReview()">Delete</button>
+                        <a class="btn btn-dark btn-block"
+                           onclick="hideDeleteModal()"
                            type="button" data-dismiss="modal"
                            th:text="#{button.cancel}">Cancel</a>
                     </div>
@@ -255,8 +293,17 @@
     </script>
     <!-- 리뷰 관련 -->
     <script th:inline="javascript">
+        let selectReviewIndex = 0;
+
         function hideModal() {
             $('#modal').modal("hide");
+            $('.starRev span').parent().children('span').removeClass('on');
+            $('.starRev span').addClass('on').prevAll('span').addClass('on');
+            $('#review-input').val([[#{message.review.default}]]);
+        }
+
+        function hideDeleteModal() {
+            $('#deleteModal').modal("hide");
         }
 
         $('.starRev span').click(function(){
@@ -273,6 +320,66 @@
                 }
             });
             return rating;
+        }
+
+        function deleteReview() {
+            event.preventDefault();
+            const reviews = [[${item.reviewDtos}]];
+            const review = reviews[selectReviewIndex];
+            const reviewId = review.id;
+            let flag = true;
+            $.ajax({
+                url: "/items/" + itemId + "/review/" + reviewId,
+                type: 'delete',
+                headers: {'Content-Type': 'application/json'},
+                async: false,
+                success: function (result) {
+                    if (result.status == 'success') {
+                        alert([[#{message.success.deleteReview}]]);
+                        flag = true;
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert('error!!!');
+                }
+            });
+            flag && window.location.reload();
+        }
+
+        function modifyReview() {
+            event.preventDefault();
+            const reviews = [[${item.reviewDtos}]];
+            const review = reviews[selectReviewIndex];
+            const reviewId = review.id;
+            const content = document.querySelector('#review-input').value.replaceAll('\n', '<br>');
+            const rating = getReviewRating();
+            let flag = true;
+
+            const obj = {
+                rating: rating,
+                content: content,
+            };
+            $.ajax({
+                url: "/items/" + itemId + "/review/" + reviewId,
+                type: 'put',
+                headers: {'Content-Type': 'application/json'},
+                async: false,
+                data: JSON.stringify(obj),
+                success: function (result) {
+                    if (result.status == 'success') {
+                        alert([[#{message.success.modifyReview}]]);
+                        flag = true;
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert('error!!!');
+                }
+            });
+            flag && window.location.reload();
         }
 
         function writeReview() {
@@ -306,6 +413,32 @@
             flag && window.location.reload();
         }
 
+        function openDeleteModal() {
+            $('#deleteModal').modal("show");
+        }
+
+        function openModifyModal(index) {
+            $('#modal').modal("show");
+            const reviews = [[${item.reviewDtos}]];
+            const review = reviews[index];
+            const content = review.content.replaceAll("<br>", "\n");
+            let rating = review.rating;
+            console.log(review);
+            $('#review-input').val(content);
+            document.querySelector('#write-review').classList.add('hidden');
+            document.querySelector('#modify-review').classList.remove('hidden');
+            document.querySelectorAll(".starR").forEach(elem => {
+                if (rating > 0) {
+                    elem.classList.add('on');
+                    rating--;
+                } else {
+                    elem.classList.remove('on');
+                }
+            });
+            selectReviewIndex = index;
+            $('#modal').modal("show");
+        }
+
         function openReviewForm() {
             let flag = false;
 
@@ -325,7 +458,12 @@
                     alert('error!!!');
                 }
             });
-            flag && $('#modal').modal("show");
+
+            if (flag) {
+                document.querySelector('#modify-review').classList.add('hidden');
+                document.querySelector('#write-review').classList.remove('hidden');
+                $('#modal').modal("show");
+            }
         }
     </script>
 </main>

@@ -47,4 +47,31 @@ public class ReviewService {
         Review review = reviewRepository.save(new Review(item, rating, content, member));
         return review.getId();
     }
+
+    @Transactional
+    public Long modifyReview(Long memberId, Long reviewId, int rating, String content) {
+        Review review = reviewRepository.findByIdWithMember(reviewId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        if (!review.getReviewer().getId().equals(memberId)) {
+            throw new IllegalArgumentException();
+        }
+
+        review.setRating(rating);
+        review.setContent(content);
+        return review.getId();
+    }
+
+    @Transactional
+    public Long deleteReview(Long memberId, Long reviewId) {
+        Review review = reviewRepository.findByIdWithMember(reviewId)
+                .orElseThrow(IllegalArgumentException::new);
+
+        if (!review.getReviewer().getId().equals(memberId)) {
+            throw new IllegalArgumentException();
+        }
+
+        reviewRepository.delete(review);
+        return review.getId();
+    }
 }

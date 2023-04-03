@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class ItemReviewDto {
+public class ItemReviewDto implements Comparable<ItemReviewDto> {
 
     private Long id;
     private int rating;
@@ -32,5 +32,10 @@ public class ItemReviewDto {
                 .registrationDate(review.getRegistrationDate())
                 .lastModifiedDate(review.getLastModifiedDate())
                 .build();
+    }
+
+    @Override
+    public int compareTo(ItemReviewDto o2) {
+        return o2.registrationDate.compareTo(this.registrationDate);
     }
 }

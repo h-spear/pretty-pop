@@ -8,6 +8,7 @@ import prettypop.shop.entity.ItemStatus;
 import prettypop.shop.entity.Review;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Data
@@ -44,8 +45,8 @@ public class ItemDto {
         for (Review review: item.getReviews()) {
             reviewDtos.add(ItemReviewDto.of(review));
             reviewRatingSum += review.getRating();
-            ItemReviewDto.of(review);
         }
+        Collections.sort(reviewDtos);
 
         return ItemDto.builder()
                 .id(item.getId())
