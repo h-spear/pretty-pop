@@ -28,6 +28,7 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
                 .where(order.member.id.eq(memberId),
                         order.orderDate.year().eq(year),
                         order.orderDate.month().eq(month))
+                .orderBy(order.orderDate.desc())
                 .fetch();
     }
 }
