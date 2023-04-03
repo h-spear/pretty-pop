@@ -9,7 +9,12 @@
             max-width: 700px;
         }
 
-
+        .review-menu {
+            color: var(--bs-primary);
+        }
+        .review-menu:hover{
+            color: #c85855
+        }
         .starR{
             display: inline-block;
             width: 30px;
@@ -75,16 +80,16 @@
                 <div>
                     <ul class="m-0 p-0 d-flex fs-3 align-items-center">
                         <li>
-                            <a href="#" class="cartMenu-item m-0 p-0 mx-3"
+                            <button class="review-menu m-0 p-0 mx-3 border-0 bg-transparent"
                                th:onclick="'openReviewForm(' + ${item.itemId} + ')'">
                                 <i class="fa-solid fa-pen-to-square"></i>
-                            </a>
+                            </button>
                         </li>
                         <li>
-                            <a href="#" class="cartMenu-item m-0 p-0 mx-3"
+                            <button class="review-menu m-0 p-0 mx-3 border-0 bg-transparent"
                                th:onclick="'openDeleteModal(' + ${item.itemId} + ')'">
                                 <i class="fa-regular fa-trash-can"></i>
-                            </a>
+                            </button>
                         </li>
                     </ul>
                 </div>
@@ -127,10 +132,10 @@
                                 id="write-review"
                                 th:text="#{button.write}"
                                 onclick="writeReview()">Write</button>
-                        <a class="btn btn-dark btn-block"
+                        <button class="btn btn-dark btn-block"
                            onclick="hideModal()"
                            type="button" data-dismiss="modal"
-                           th:text="#{button.cancel}">Cancel</a>
+                           th:text="#{button.cancel}">Cancel</button>
                     </div>
                 </div>
             </form>
@@ -144,7 +149,7 @@
                 <div class="modal-content" style="width: 400px">
                     <div class="modal-header">
                         <h4 class="modal-title" id="deleteModalLabel"
-                            th:text="#{label.review}">Delete</h4>
+                            th:text="#{label.delete}">Delete</h4>
                     </div>
                     <div class="modal-body" th:text="#{message.canReviewDelete}">Are you sure?</div>
                     <div class="modal-footer">
@@ -152,10 +157,10 @@
                                 id="delete-review"
                                 th:text="#{button.ok}"
                                 onclick="doNotReview()">OK</button>
-                        <a class="btn btn-dark btn-block"
+                        <button class="btn btn-dark btn-block"
                            onclick="hideDeleteModal()"
                            type="button" data-dismiss="modal"
-                           th:text="#{button.cancel}">Cancel</a>
+                           th:text="#{button.cancel}">Cancel</button>
                     </div>
                 </div>
             </form>
