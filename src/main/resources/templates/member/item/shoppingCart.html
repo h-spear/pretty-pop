@@ -41,7 +41,8 @@
                            th:id="cartItemCheck + ${itemStat.index}"
                            th:data-id="${item.itemId}"
                            th:data-count="${item.count}"
-                           th:data-index="${itemStat.index}">
+                           th:data-index="${itemStat.index}"
+                           checked="checked">
                 </div>
                 <div class="cartItem mb-2 p-4 d-flex align-items-center w-100" style="font-size: 14px"
                      th:id="cartItemContainer + ${itemStat.index}">
