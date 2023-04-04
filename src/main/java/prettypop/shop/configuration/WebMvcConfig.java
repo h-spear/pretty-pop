@@ -21,16 +21,16 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     private final JwtTokenUtils jwtTokenUtils;
 
-    @Bean
+//    @Bean
     public LocaleResolver localeResolver() {
         CookieLocaleResolver localeResolver = new CookieLocaleResolver();
         localeResolver.setCookieName("lang");
-        localeResolver.setDefaultLocale(new Locale("ko"));
+        localeResolver.setDefaultLocale(new Locale("en"));
         localeResolver.setCookieMaxAge(Integer.MAX_VALUE);
         return localeResolver;
     }
 
-    @Bean
+//    @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         LocaleChangeInterceptor interceptor = new LocaleChangeInterceptor();
         interceptor.setParamName("lang");
@@ -42,8 +42,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
         resolvers.add(new LoginMemberArgumentResolver(jwtTokenUtils));
     }
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(localeChangeInterceptor());
-    }
+//    @Override
+//    public void addInterceptors(InterceptorRegistry registry) {
+//        registry.addInterceptor(localeChangeInterceptor());
+//    }
 }
