@@ -274,6 +274,7 @@
 
         function addCart() {
             const quantity = document.querySelector('#inputQuantity').value;
+            let login = true;
             const obj = {
                 itemId: itemId,
                 quantity: quantity
@@ -285,21 +286,28 @@
                 async: false,
                 data: JSON.stringify(obj),
                 success: function (result) {
-                    if (result.status == 'success') {
+                    if (result.status === 'success') {
                         alert([[#{message.addTheCart}]]);
-                    } else if(result.status == 'fail') {
+                    } else if(result.status === 'fail') {
                         alert('error!!!')
-                    } else {
+                    } else if(result.status === 'error') {
                         alert(result.message);
+                    } else {
+                        login = false;
                     }
                 },
                 error: function () {
                     alert("error!!!");
                 }
             });
+            console.log(login);
+            if (!login) {
+                location.replace('/login?redirectURL=/items/' + itemId);
+            }
         }
 
         function addWishList() {
+            let login = true;
             const obj = {
                 itemId: itemId
             }
@@ -314,14 +322,19 @@
                         alert([[#{message.addTheWishList}]]);
                     } else if(result.status == 'fail') {
                         alert('error!!!')
-                    } else {
+                    } else if(result.status === 'error') {
                         alert(result.message);
+                    } else {
+                        login = false;
                     }
                 },
                 error: function () {
                     alert("error!!!");
                 }
             });
+            if (!login) {
+                location.replace('/login?redirectURL=/items/' + itemId);
+            }
         }
     </script>
     <!-- 리뷰 관련 -->

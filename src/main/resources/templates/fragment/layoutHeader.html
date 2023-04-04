@@ -163,45 +163,45 @@
     }
   </script>
   <script>
-    const languageCookieName = 'lang';
-    const languageToggleText = document.querySelector('.language-toggle-text');
+    // const languageCookieName = 'lang';
+    // const languageToggleText = document.querySelector('.language-toggle-text');
 
-    window.onload = function() {
-      const langKo = document.querySelector('#lang-ko');
-      const langEn = document.querySelector('#lang-en');
-      if (getCookie(languageCookieName) === 'en') {
-        langKo.innerHTML = 'Korean';
-        langEn.innerHTML = 'English';
-      } else {
-        langKo.innerHTML = '한국어';
-        langEn.innerHTML = '영어';
-      }
-    };
+    // window.onload = function() {
+    //   const langKo = document.querySelector('#lang-ko');
+    //   const langEn = document.querySelector('#lang-en');
+    //   if (getCookie(languageCookieName) === 'en') {
+    //     langKo.innerHTML = 'Korean';
+    //     langEn.innerHTML = 'English';
+    //   } else {
+    //     langKo.innerHTML = '한국어';
+    //     langEn.innerHTML = '영어';
+    //   }
+    // };
 
-    function expireCookie(cookieName) {
-      document.cookie = cookieName + '=value; max-age=0';
-    }
-
-    function setCookie(cookieName, value, days) {
-      let expireDate = new Date();
-      expireDate.setDate(expireDate.getDate() + days);
-
-      let cookieValue = escape(value) + ((days == null) ? '' : '; expires=' + expireDate.toUTCString());
-      document.cookie = cookieName + '=' + cookieValue;
-    }
-
-    function getCookie(cookieName) {
-      let x, y;
-      let val = document.cookie.split(';');
-
-      for (let i = 0; i < val.length; i++) {
-        x = val[i].substr(0, val[i].indexOf('='));
-        y = val[i].substr(val[i].indexOf('=') + 1);
-        x = x.replace(/^\s+|\s+$/g, '');
-        if (x == cookieName) {
-          return unescape(y);
-        }
-      }
-    }
+    // function expireCookie(cookieName) {
+    //   document.cookie = cookieName + '=value; max-age=0';
+    // }
+    //
+    // function setCookie(cookieName, value, days) {
+    //   let expireDate = new Date();
+    //   expireDate.setDate(expireDate.getDate() + days);
+    //
+    //   let cookieValue = escape(value) + ((days == null) ? '' : '; expires=' + expireDate.toUTCString());
+    //   document.cookie = cookieName + '=' + cookieValue;
+    // }
+    //
+    // function getCookie(cookieName) {
+    //   let x, y;
+    //   let val = document.cookie.split(';');
+    //
+    //   for (let i = 0; i < val.length; i++) {
+    //     x = val[i].substr(0, val[i].indexOf('='));
+    //     y = val[i].substr(val[i].indexOf('=') + 1);
+    //     x = x.replace(/^\s+|\s+$/g, '');
+    //     if (x == cookieName) {
+    //       return unescape(y);
+    //     }
+    //   }
+    // }
   </script>
 </header>

@@ -49,9 +49,9 @@ public class MemberRegisterParam {
              groups = ValidationGroups.PatternCheckGroup.class)
     private String phoneNumber;
 
-    @NotBlank(groups = ValidationGroups.NotBlankGroup.class)
-    @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$",
-             groups = ValidationGroups.PatternCheckGroup.class)
+//    @NotBlank(groups = ValidationGroups.NotBlankGroup.class)
+//    @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$",
+//             groups = ValidationGroups.PatternCheckGroup.class)
     private String email;
 
 }

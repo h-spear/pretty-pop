@@ -19,7 +19,12 @@ public class HomeController {
 
     @GetMapping({"/", "/home"})
     public String home() {
-        return "home";
+        return "redirect:/items";
+    }
+
+    @GetMapping("/company")
+    public String company() {
+        return "company";
     }
 
     @GetMapping("/notice")
@@ -37,15 +42,15 @@ public class HomeController {
         return "use";
     }
 
-    @GetMapping("/language")
-    public String languageChange(HttpServletRequest request,
-                                 @CookieValue(value = "lang", defaultValue = "ko") String language) {
-        String requestURI = request.getRequestURI();
-        log.info("requestURI={}", requestURI);
-        if (language.equals("en")) {
-            return "redirect:/home?lang=ko";
-        }
-        return "redirect:/home?lang=en";
-    }
+//    @GetMapping("/language")
+//    public String languageChange(HttpServletRequest request,
+//                                 @CookieValue(value = "lang", defaultValue = "ko") String language) {
+//        String requestURI = request.getRequestURI();
+//        log.info("requestURI={}", requestURI);
+//        if (language.equals("en")) {
+//            return "redirect:/home?lang=ko";
+//        }
+//        return "redirect:/home?lang=en";
+//    }
 }
 

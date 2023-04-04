@@ -380,11 +380,11 @@
             const urlParams = getUrlParams();
             const categoryParam = urlParams.get('category');
             if (urlParams.get("keyword")) {
-                category.innerText = 'Search';
+                category.innerText = 'SEARCH';
             } else if (urlParams.get("category")) {
                 category.innerText = categoryParam.replaceAll('_', ' ');
             } else {
-                category.innerText = 'All';
+                category.innerText = 'ALL';
             }
         }
 

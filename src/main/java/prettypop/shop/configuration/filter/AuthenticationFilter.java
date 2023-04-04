@@ -20,8 +20,8 @@ import java.io.IOException;
 public class AuthenticationFilter extends GenericFilterBean {
 
     private static final String[] whiteList = {"/", "/home", "/join", "/login", "/logout", "/refresh", "/language",
-                                                "/css/*", "/js/*", "/*.ico", "/error", "/assets/*", "/use",
-                                                "/items", "/notice", "/cs-center", "/member/username/*", "/member/email/*"};
+                                                "/css/*", "/js/*", "/*.ico", "/error", "/assets/*", "/use", "/company",
+                                                "/items", "/items/*", "/notice", "/cs-center", "/member/username/*", "/member/email/*"};
 
     private final JwtTokenUtils jwtTokenUtils;
     private final SecurityContextUtils securityContextUtils;
@@ -45,7 +45,7 @@ public class AuthenticationFilter extends GenericFilterBean {
                 log.info("액세스 토큰 만료. 리프레시");
                 httpResponse.sendRedirect("/refresh?redirectURL=" + requestURI);
             } else {
-                log.info("미인증 사용자 요청");
+                log.info("미인증 사용자 요청 {}", requestURI);
                 httpResponse.sendRedirect("/login?redirectURL=" + requestURI);
             }
             return;

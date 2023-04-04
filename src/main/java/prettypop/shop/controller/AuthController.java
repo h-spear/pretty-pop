@@ -38,6 +38,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public String login(@Validated(ValidationSequence.class) @ModelAttribute("loginForm") LoginParam loginParam,
+                        @RequestParam(defaultValue = "/home") String redirectURL,
                         BindingResult bindingResult,
                         HttpServletResponse response) {
 
@@ -50,7 +51,7 @@ public class AuthController {
             jwtTokenUtils.setCookieAccessToken(response, token.getAccessToken());
             jwtTokenUtils.setCookieRefreshToken(response, token.getRefreshToken());
             securityContextUtils.setAuthentication(token.getAccessToken());
-            return "redirect:/home";
+            return "redirect:" + redirectURL;
         } catch (UsernameNotFoundException e) {
             bindingResult.rejectValue("username", "notFound");
         } catch (LoginPasswordNotMatchException e) {
