@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html th:replace="~{fragment/errorPageLayout :: errorPageLayout (500, ~{::div})}"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div class="text-center mt-4">
+    <h1 class="display-1">500</h1>
+    <p class="lead">Internal Server Error</p>
+    <a href="index.html" th:href="@{/home}">
+        <i class="fas fa-arrow-left me-1"></i>
+        Return to Main Page
+    </a>
+</div>

@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html th:replace="~{fragment/errorPageLayout :: errorPageLayout (401, ~{::div})}"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div class="text-center mt-4">
+    <h1 class="display-1">401</h1>
+    <p class="lead">Unauthorized</p>
+    <p>Access to this resource is denied.</p>
+    <a href="index.html" th:href="@{/home}">
+        <i class="fas fa-arrow-left me-1"></i>
+        Return to Main Page
+    </a>
+</div>

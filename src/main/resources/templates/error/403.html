@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html th:replace="~{fragment/errorPageLayout :: errorPageLayout (403, ~{::div})}"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div class="text-center mt-4">
+    <h1 class="display-1">403</h1>
+    <p class="lead">Forbidden</p>
+    <p>Forbidden</p>
+    <a href="index.html" th:href="@{/home}">
+        <i class="fas fa-arrow-left me-1"></i>
+        Return to Main Page
+    </a>
+</div>

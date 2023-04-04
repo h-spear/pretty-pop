@@ -382,7 +382,7 @@
             if (urlParams.get("keyword")) {
                 category.innerText = 'Search';
             } else if (urlParams.get("category")) {
-                category.innerText = categoryParam;
+                category.innerText = categoryParam.replaceAll('_', ' ');
             } else {
                 category.innerText = 'All';
             }

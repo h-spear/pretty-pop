@@ -19,8 +19,8 @@ spring:
         enabled: true
 
 
-  thymeleaf:
-    cache: false  # 타임리프 실시간 리로드
+#  thymeleaf:
+#    cache: false  # 타임리프 실시간 리로드
 
   servlet:
     multipart:

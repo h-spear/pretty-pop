@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html th:replace="~{fragment/errorPageLayout :: errorPageLayout (400, ~{::div})}"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div class="text-center mt-4">
+    <h1 class="display-1">400</h1>
+    <p class="lead">Bad Request</p>
+    <p>The server cannot or will not process the request due to something that is perceived to be a client error.</p>
+    <a href="index.html" th:href="@{/home}">
+        <i class="fas fa-arrow-left me-1"></i>
+        Return to Main Page
+    </a>
+</div>

@@ -1,5 +1,5 @@
 package prettypop.shop.entity;
 
 public enum Category {
-    category1, category2, category3
+    TOPPER, ART_SIGN, POSTER, BADGE_MEDAL, JOKE_PARTY, DECORATION, BANNER, POP_CUSTOM
 }
