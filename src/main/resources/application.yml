@@ -1,11 +1,10 @@
 
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/prettypop?serverTimezone=UTC&characterEncoding=UTF-8
-    username: root
-    password: 991214
+    url: jdbc:mysql://${TODO_MYSQL_HOST}:${TODO_MYSQL_PORT}/${TODO_DATA_BASE_NAME}?serverTimezone=UTC&characterEncoding=UTF-8
+    username: ${TODO_MYSQL_USERNAME}
+    password: ${TODO_MYSQL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
-
   jpa:
     hibernate:
       ddl-auto: create
@@ -21,8 +20,8 @@ spring:
         enabled: true
 
 
-#  thymeleaf:
-#    cache: false  # 타임리프 실시간 리로드
+  #  thymeleaf:
+  #    cache: false  # 타임리프 실시간 리로드
 
   servlet:
     multipart:
@@ -35,4 +34,3 @@ spring:
   sql:
     init:
       mode: always
-
