@@ -18,6 +18,8 @@ public class Review extends BaseEntity{
     private Item item;
 
     private int rating;
+
+    @Column(length = 2000)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
