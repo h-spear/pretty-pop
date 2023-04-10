@@ -3,7 +3,7 @@
       th:replace="fragment/layout :: html(#{title.items}, ~{::main})">
 
 
-<main class="w-100 d-flex justify-content-center my-3">
+<main class="w-100 d-flex justify-content-center mb-3">
     <style>
         .card-effect:hover {
             cursor: pointer;
@@ -43,20 +43,108 @@
             border-bottom: 2px solid palevioletred;
         }
 
+        #slide-container{
+            position: relative;
+        }
+
         .home-container-1 {
-            min-width: 430px;
-            height: 430px;
-            border: 1px solid antiquewhite;
-            background: url("/assets/images/background1.png") no-repeat center/cover;
+            background: url("/assets/images/bg/background1.png") no-repeat center/cover;
+        }
+        .home-container-2 {
+            background: url("/assets/images/bg/background2.png") no-repeat center/cover;
+        }
+        .home-container-3 {
+            background: url("/assets/images/bg/background3.png") no-repeat center/cover;
+        }
+
+        .mainslide-section {
+            position: absolute;
+            visibility: hidden;
+            opacity: 0;
+            height: 450px;
+            width: 100%;
+            transition: all 1000ms ease-in-out;
+        }
+        .slide-visible {
+            visibility: visible;
+            opacity: 1;
         }
     </style>
 
 
     <div class="max-width-1000 w-100 d-flex flex-column justify-content-center align-items-center">
+        <div class="position-relative w-100" style="height: 450px">
+            <!-- 회사소개 -->
+            <section class="mainslide-section w-100 slide-visible">
+                <div class="p-3 text-center home-container-1 d-flex flex-column justify-content-center align-items-center h-100">
+                    <div class="my-3">
+                        <img src="/assets/images/logo.png" class="header-logo"/>
+                    </div>
+                    <div class="border-bottom border-secondary w-50"></div>
+                    <p class="mt-2">
+                        <span class="fs-4 fw-bold" style="color: #d16c00">예쁜광고디자인 전문</span><br>
+                        <span class="fs-4 fw-bold">POP에이전시입니다.</span>
+                    </p>
+                    <p style="font-size:14px">
+                        <span>손글씨 POP의 아날로그 감성과</span><br>
+                        <span>수익의 극대화를 이루는 디지털 출력의 만남.</span><br>
+                        <span>예쁜피오피는</span><br>
+                        <span>소량에서 대량작업까지 모두 가능!!</span>
+                    </p>
+                    <p class="fw-bolder" style="color: maroon">
+                        <span>한장이라도 정성껏 작업합니다.</span><br>
+                        <span>언제든지 전화주세요.</span><br>
+                        <span>항상 친절하게 상담해드리겠습니다.</span>
+                    </p>
+                </div>
+            </section>
 
+            <!-- 이용안내 -->
+            <section class="mainslide-section w-100">
+                <div class="p-3 text-center home-container-2 d-flex flex-column justify-content-center align-items-center h-100">
+                    <div class="max-width-700 rounded-3 p-4 text-start"
+                         style="width: 60%; background: rgba(255, 255, 255, 50%);">
+                        <p>
+                            이 홈페이지는 학습용 프로젝트로 제작된 홈페이지입니다.
+                        </p>
+                        <p>
+                            <span>회원가입을 하면 1,000,000,000 포인트가 지급됩니다.</span><br><br>
+                            <span>결제 시스템은 구현하지 않았기 때문에 회원가입 시 지급되는 포인트로만 상품 주문을 진행할 수 있습니다.</span><br><br>
+                            <span>상품을 주문하면 바로 <b>배송 완료</b> 상태가 됩니다.</span><br><br>
+                            <span>주문한 상품에 대해서만 리뷰 관련 기능을 사용할 수 있습니다.</span><br>
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 공지사항 -->
+            <section class="mainslide-section w-100">
+                <div class="p-1 text-center home-container-3 d-flex flex-column justify-content-center align-items-center h-100">
+                    <div class="max-width-700 rounded-3 p-4 text-start"
+                         style="width: 60%;">
+                        <p>해당 홈페이지는 실제로 사용할 수 있는 홈페이지가 아닌 개인 학습용 프로젝트로 제작한 홈페이지입니다.</p>
+                        <p>제작할 때 참고한 실제 쇼핑몰 홈페이지는
+                            <a class="text-info" target="_blank"
+                               href="http://prettypop.co.kr">http://prettypop.co.kr</a>
+                            입니다.</p>
+                        <p>
+                            등록된 상품 정보는 예쁜피오피의 허락을 받고 크롤링하여 사용했습니다.
+                        </p>
+                        <p class="m-0">
+                            <span>인원 : 1인</span><br>
+                            <span>개발 : Spring Boot, JPA, Spring Data JPA, QueryDSL, Thymeleaf, MySQL</span><br>
+                            <span>깃허브 : <a class="text-info" target="_blank"
+                                           href="https://github.com/h-spear/pretty-pop">https://github.com/h-spear/pretty-pop</a></span>
+                        </p>
+                    </div>
+                    <img src="/assets/images/tech.png" alt="tech"/>
+                </div>
+            </section>
+
+        </div>
 
         <!-- 카테고리별 상품 -->
-        <h1 class="w-100">
+        <h1 class="w-100 mt-4">
             <span th:text="#{label.home.topItemsByCategory1}"
                   class="fs-3 fw-light"></span>
             <span th:text="#{label.home.topItemsByCategory2}"
@@ -121,6 +209,21 @@
             </section>
         </div>
     </div>
+
+    <script type="text/javascript">
+        const slides = document.querySelectorAll('.mainslide-section');
+        const sectionCount = slides.length;
+        const interval = 4000;
+        let slideIndex = 0;
+
+        setInterval(() => {
+            console.log(1)
+            slides[slideIndex].classList.remove('slide-visible');
+            slideIndex = (slideIndex + 1) % sectionCount;
+            slides[slideIndex].classList.add('slide-visible');
+        }, interval);
+
+    </script>
 </main>
 
 </html>

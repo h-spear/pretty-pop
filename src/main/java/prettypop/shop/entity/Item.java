@@ -44,10 +44,11 @@ public class Item extends BaseEntity {
     }
 
     @Builder
-    public Item(String name, String description, int originalPrice, int purchasePrice, int earnedPoint, int stockQuantity, int salesVolume, ItemStatus itemStatus, Category category, String thumbnailImageUrl, List<String> imageFileUrls) {
+    public Item(Long id, String name, String description, int originalPrice, int purchasePrice, int earnedPoint, int stockQuantity, int salesVolume, ItemStatus itemStatus, Category category, String thumbnailImageUrl, List<String> imageFileUrls) {
         if (this.purchasePrice > this.originalPrice) {
             throw new IllegalArgumentException("구매 가격은 원래 가격보다 작거나 같아야 합니다.");
         }
+        this.id = id;
         this.name = name;
         this.description = description;
         this.originalPrice = originalPrice;

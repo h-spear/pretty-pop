@@ -23,7 +23,7 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
 
     @Override
     public List<Item> findTopRatingByCategory(int top) {
-        String sql = "SELECT ITEM_ID as ID, *" +
+        String sql = "SELECT *" +
                     "   FROM (SELECT I.*, RANK() OVER (PARTITION BY I.CATEGORY ORDER BY AVG(R.RATING) DESC, COUNT(R.REVIEW_ID) DESC, I.ITEM_ID) AS RANK" +
                     "           FROM ITEM I" +
                     "           LEFT JOIN REVIEW R" +
