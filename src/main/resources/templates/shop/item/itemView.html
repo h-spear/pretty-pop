@@ -44,7 +44,8 @@
                 <div class="container px-4 px-lg-5 my-5">
                     <div class="row gx-4 gx-lg-5 align-items-center">
                         <div class="col-md-6">
-                            <img class="card-img-top mb-5 mb-md-0" src="https://dummyimage.com/600x700/dee2e6/6c757d.jpg" alt="..."
+                            <img class="card-img-top mb-5 mb-md-0"
+                                 src="/assets/images/item/preparing-image.png" alt="..."
                                  th:src="*{thumbnailImageUrl}"/>
                         </div>
                         <div class="col-md-6">
@@ -85,18 +86,45 @@
                                 <input class="form-control text-center me-3 p-1" id="inputQuantity"
                                        type="number" value="1" style="max-width: 5rem"
                                        th:onchange="validateCount()"/>
-                                <button class="btn btn-outline-primary flex-shrink-0" type="button"
-                                        th:onclick="createOrder()">
-                                    <span th:text="#{button.item.buy}">buy</span>
-                                </button>
-                                <button class="btn btn-outline-dark flex-shrink-0 ms-3" type="button"
-                                        onclick="addCart()">
-                                    <span th:text="#{button.item.cart}">cart</span>
-                                </button>
-                                <button class="btn btn-outline-dark flex-shrink-0 ms-3" type="button"
-                                        onclick="addWishList()">
-                                    <span th:text="#{button.item.wish}">wish</span>
-                                </button>
+                                <!-- 구매하기 버튼 -->
+                                <div>
+                                    <a class="btn btn-outline-primary flex-shrink-0" type="button"
+                                            th:href="@{/login(redirectURL='/items/' + ${item.id})}"
+                                            sec:authorize="isAnonymous()">
+                                        <span th:text="#{button.item.buy}">buy</span>
+                                    </a>
+                                    <button class="btn btn-outline-primary flex-shrink-0" type="button"
+                                            th:onclick="createOrder()"
+                                            sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
+                                        <span th:text="#{button.item.buy}">buy</span>
+                                    </button>
+                                </div>
+                                <!-- 장바구니 버튼 -->
+                                <div>
+                                    <a class="btn btn-outline-dark flex-shrink-0 ms-3" type="button"
+                                       th:href="@{/login(redirectURL='/items/' + ${item.id})}"
+                                       sec:authorize="isAnonymous()">
+                                        <span th:text="#{button.item.cart}">cart</span>
+                                    </a>
+                                    <button class="btn btn-outline-dark flex-shrink-0 ms-3" type="button"
+                                            onclick="addCart()"
+                                            sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
+                                        <span th:text="#{button.item.cart}">cart</span>
+                                    </button>
+                                </div>
+                                <!-- 찜하기 버튼 -->
+                                <div>
+                                    <a class="btn btn-outline-dark flex-shrink-0 ms-3" type="button"
+                                       th:href="@{/login(redirectURL='/items/' + ${item.id})}"
+                                       sec:authorize="isAnonymous()">
+                                        <span th:text="#{button.item.wish}">wish</span>
+                                    </a>
+                                    <button class="btn btn-outline-dark flex-shrink-0 ms-3" type="button"
+                                            onclick="addWishList()"
+                                            sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
+                                        <span th:text="#{button.item.wish}">wish</span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -112,8 +140,13 @@
                     <span th:text="|(*{reviewCount})|">123</span>
                 </div>
                 <div class="me-4 mb-1">
+                    <a class="btn btn-primary btn-sm" style="width: 150px"
+                       th:href="@{/login(redirectURL='/items/' + ${item.id})}"
+                       th:text="#{button.review}"
+                       sec:authorize="isAnonymous()">Primary</a>
                     <button type="button" class="btn btn-primary btn-sm" style="width: 150px"
                             th:text="#{button.review}"
+                            sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')"
                             th:onclick="openReviewForm()">Primary</button>
                 </div>
             </div>
@@ -249,6 +282,7 @@
         }
 
         function createOrder() {
+
             const obj = {
                 itemId: itemId,
                 quantity: document.querySelector('#inputQuantity').value
@@ -274,7 +308,6 @@
 
         function addCart() {
             const quantity = document.querySelector('#inputQuantity').value;
-            let login = true;
             const obj = {
                 itemId: itemId,
                 quantity: quantity
@@ -290,20 +323,14 @@
                         alert([[#{message.addTheCart}]]);
                     } else if(result.status === 'fail') {
                         alert('error!!!')
-                    } else if(result.status === 'error') {
-                        alert(result.message);
                     } else {
-                        login = false;
+                        alert(result.message);
                     }
                 },
                 error: function () {
                     alert("error!!!");
                 }
             });
-            console.log(login);
-            if (!login) {
-                location.replace('/login?redirectURL=/items/' + itemId);
-            }
         }
 
         function addWishList() {
@@ -322,19 +349,14 @@
                         alert([[#{message.addTheWishList}]]);
                     } else if(result.status == 'fail') {
                         alert('error!!!')
-                    } else if(result.status === 'error') {
-                        alert(result.message);
                     } else {
-                        login = false;
+                        alert(result.message);
                     }
                 },
                 error: function () {
                     alert("error!!!");
                 }
             });
-            if (!login) {
-                location.replace('/login?redirectURL=/items/' + itemId);
-            }
         }
     </script>
     <!-- 리뷰 관련 -->
