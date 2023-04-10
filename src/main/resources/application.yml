@@ -1,27 +1,9 @@
 
 spring:
-  datasource:
-    url: jdbc:mysql://${TODO_MYSQL_HOST}:${TODO_MYSQL_PORT}/${TODO_DATA_BASE_NAME}?serverTimezone=UTC&characterEncoding=UTF-8
-    username: ${TODO_MYSQL_USERNAME}
-    password: ${TODO_MYSQL_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-    defer-datasource-initialization: true
-
   mvc:
     hiddenmethod:
       filter:
         enabled: true
-
-
-  #  thymeleaf:
-  #    cache: false  # 타임리프 실시간 리로드
 
   servlet:
     multipart:
@@ -30,7 +12,3 @@ spring:
 
   messages:
     basename: messages, errors
-
-  sql:
-    init:
-      mode: always

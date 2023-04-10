@@ -1,6 +1,7 @@
-package prettypop.shop;
+package prettypop.shop.configuration;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +15,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+@Profile("local")
 @Component
 @RequiredArgsConstructor
 public class InitDb {
@@ -40,7 +42,7 @@ public class InitDb {
 
             String[] nick = new String[] {"Rabbit", "Giraffe", "Tiger", "Horse", "Monkey", "Lion", "Deer", "Fox", "Hyena", "Hedgehog",
                     "Pig", "Elephant", "Mole", "Raccoon", "Bear", "Panda", "Whale", "Sloth", "Duck", "Swan",
-                    "Starling", "Frog", "Bee", "Bufferfly", "Spider", "Goldbug", "Turtle", "Snake", "Parrot", "Penguin"};
+                    "Starling", "Frog", "Bee", "Butterfly", "Spider", "Goldbug", "Turtle", "Snake", "Parrot", "Penguin"};
 
             for (int i = 1; i <= memberCount; ++i) {
                 memberRepository.save(
