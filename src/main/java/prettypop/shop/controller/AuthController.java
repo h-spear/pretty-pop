@@ -38,8 +38,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public String login(@Validated(ValidationSequence.class) @ModelAttribute("loginForm") LoginParam loginParam,
-                        @RequestParam(defaultValue = "/home") String redirectURL,
                         BindingResult bindingResult,
+                        @RequestParam(defaultValue = "/home") String redirectURL,
                         HttpServletResponse response) {
 
         if (bindingResult.hasErrors()) {
