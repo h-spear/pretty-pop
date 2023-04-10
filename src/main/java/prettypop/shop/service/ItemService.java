@@ -8,10 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import prettypop.shop.dto.item.*;
 import prettypop.shop.dto.order.OrderItemDto;
-import prettypop.shop.entity.CartItem;
-import prettypop.shop.entity.Item;
-import prettypop.shop.entity.Member;
-import prettypop.shop.entity.WishItem;
+import prettypop.shop.entity.*;
 import prettypop.shop.repository.*;
 import prettypop.shop.repository.query.ItemQueryRepository;
 
@@ -71,6 +68,14 @@ public class ItemService {
             CartItem cartItem = optional.get();
             cartItem.addCount(count);
         }
+    }
+
+    public Map<Category, List<ItemSimpleDto>> findTopItemsByCategory(int top) {
+        Map<Category, List<ItemSimpleDto>> map = new HashMap<>();
+        itemRepository.findTopRatingByCategory(top).stream()
+                .forEach(item -> map.computeIfAbsent(item.getCategory(), c -> new ArrayList<>())
+                        .add(ItemSimpleDto.of(item)));
+        return map;
     }
 
     @Transactional

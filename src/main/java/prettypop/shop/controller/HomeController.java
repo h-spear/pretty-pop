@@ -17,9 +17,12 @@ import javax.servlet.http.HttpServletRequest;
 @RequiredArgsConstructor
 public class HomeController {
 
+    private final ItemService itemService;
+
     @GetMapping({"/", "/home"})
-    public String home() {
-        return "redirect:/items";
+    public String home(Model model) {
+        model.addAttribute("items", itemService.findTopItemsByCategory(5));
+        return "home";
     }
 
     @GetMapping("/company")

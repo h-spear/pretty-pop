@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      th:replace="fragment/layout :: html(#{title.items}, ~{::main})">
+
+
+<main class="w-100 d-flex justify-content-center my-3">
+    <style>
+        .card-effect:hover {
+            cursor: pointer;
+            -webkit-box-shadow: 0px 3px 13px -1px rgba(0,0,0,0.35);
+            box-shadow: 0px 3px 13px -1px rgba(0,0,0,0.35);
+            transition: 0.2s;
+        }
+
+        .border-color-0 {
+            border-bottom: 2px solid red;
+        }
+        .border-color-1 {
+            border-bottom: 2px solid orange;
+        }
+        .border-color-2 {
+            border-bottom: 2px solid yellowgreen;
+        }
+        .border-color-3 {
+            border-bottom: 2px solid green;
+        }
+        .border-color-4 {
+            border-bottom: 2px solid darkturquoise;
+        }
+        .border-color-5 {
+            border-bottom: 2px solid blue;
+        }
+        .border-color-6 {
+            border-bottom: 2px solid mediumpurple;
+        }
+        .border-color-7 {
+            border-bottom: 2px solid fuchsia;
+        }
+        .border-color-8 {
+            border-bottom: 2px solid firebrick;
+        }
+        .border-color-9 {
+            border-bottom: 2px solid palevioletred;
+        }
+
+        .home-container-1 {
+            min-width: 430px;
+            height: 430px;
+            border: 1px solid antiquewhite;
+            background: url("/assets/images/background1.png") no-repeat center/cover;
+        }
+    </style>
+
+
+    <div class="max-width-1000 w-100 d-flex flex-column justify-content-center align-items-center">
+
+
+        <!-- 카테고리별 상품 -->
+        <h1 class="w-100">
+            <span th:text="#{label.home.topItemsByCategory1}"
+                  class="fs-3 fw-light"></span>
+            <span th:text="#{label.home.topItemsByCategory2}"
+                  class="text-info fs-3 fw-bolder"></span>
+        </h1>
+        <div class="category-item"
+            th:each="category: ${T(prettypop.shop.entity.Category).values()}">
+            <!-- 결과가 있을 때 -->
+            <section th:if="${items.get(category).size() > 0}" id="item-container" class="w-100 py-2 px-3">
+                <h5 class="fs-5 text-dark"
+                    th:text="|#{'navbar.' + ${category}}|">
+                    category popular
+                </h5>
+                <div class="small pb-1 w-100"
+                     th:class="${'border-color-' + categoryStat.index}"></div>
+                <div class="row gx-4 gx-lg-3 row-cols-2 row-cols-md-6 row-cols-xl-6 justify-content-center">
+                    <!-- Product card -->
+                    <a th:each="item: ${items.get(category)}"
+                       href="#" th:href="@{/items/{id}(id=${item.id})}"
+                       class="col p-2 m-1 card-effect text-decoration-none text-black">
+                        <div class="card h-100 w-100 border-0 mb-2">
+                            <!-- Sale badge-->
+                            <div th:if="${item.purchasePrice < item.originalPrice}"
+                                 class="badge bg-primary text-white position-absolute"
+                                 style="top: 0.5rem; right: 0.5rem">Sale</div>
+
+                            <!-- Product image-->
+                            <img class="card-img-top"
+                                 style="border-radius: 0%"
+                                 src="/assets/images/item/preparing-image.png"
+                                 th:if="*{item.getThumbnailImageUrl() == null}"
+                                 alt="Not Image" />
+                            <img class="card-img-top"
+                                 style="border-radius: 0%"
+                                 src=""
+                                 th:src="*{item.getThumbnailImageUrl()}"
+                                 th:if="*{item.getThumbnailImageUrl() != null}"
+                                 alt="Not Image" />
+
+                            <!-- Product details-->
+                            <div id="itemDetails" class="card-body p-2">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <span th:text="*{item.name}">Item Name VeryLongVeryLong...</span>
+
+                                    <!-- Product price-->
+                                    <div th:if="${item.purchasePrice < item.originalPrice}">
+                                    <span th:text="|*{item.originalPrice}#{unit.money}|"
+                                          class="text-muted text-decoration-line-through">$20.00</span>
+                                        <span th:text="|*{item.purchasePrice}#{unit.money}|"
+                                              style="font-size: 14px" class="fw-bold text-danger">$18.00</span>
+                                    </div>
+                                    <div th:unless="${item.purchasePrice < item.originalPrice}">
+                                    <span th:text="|*{item.originalPrice}#{unit.money}|"
+                                          style="font-size: 14px" class="fw-bold text-danger">$20.00</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </section>
+        </div>
+    </div>
+</main>
+
+</html>
