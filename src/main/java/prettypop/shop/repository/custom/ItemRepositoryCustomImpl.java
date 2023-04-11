@@ -24,13 +24,13 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
     @Override
     public List<Item> findTopRatingByCategory(int top) {
         String sql = "SELECT *" +
-                    "   FROM (SELECT I.*, RANK() OVER (PARTITION BY I.CATEGORY ORDER BY AVG(R.RATING) DESC, COUNT(R.REVIEW_ID) DESC, I.ITEM_ID) AS RANK" +
-                    "           FROM ITEM I" +
-                    "           LEFT JOIN REVIEW R" +
-                    "             ON I.ITEM_ID = R.ITEM_ID" +
-                    "          WHERE I.STOCK_QUANTITY >= 0" +
-                    "          GROUP BY I.ITEM_ID) SUB" +
-                    "  WHERE RANK <= :top";
+                    "   FROM (SELECT I.*, RANK() OVER (PARTITION BY I.category ORDER BY AVG(R.rating) DESC, COUNT(R.review_id) DESC, I.item_id) AS rank" +
+                    "           FROM item I" +
+                    "           LEFT JOIN review R" +
+                    "             ON I.item_id = R.item_id" +
+                    "          WHERE I.stock_quantity >= 0" +
+                    "          GROUP BY I.item_id) sub" +
+                    "  WHERE rank <= :top";
 
         SqlParameterSource param = new MapSqlParameterSource()
                 .addValue("top", top);
