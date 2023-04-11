@@ -30,7 +30,8 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
                     "             ON I.item_id = R.item_id" +
                     "          WHERE I.stock_quantity >= 0" +
                     "          GROUP BY I.item_id) sub" +
-                    "  WHERE rank <= :top";
+                    "  WHERE rank <= :top" +
+                    "  ORDER BY rank ASC";
 
         SqlParameterSource param = new MapSqlParameterSource()
                 .addValue("top", top);

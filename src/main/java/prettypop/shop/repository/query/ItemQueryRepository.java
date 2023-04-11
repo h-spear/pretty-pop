@@ -46,7 +46,8 @@ public class ItemQueryRepository {
                         reviewCountGe(condition.getReviewCountGe()))
                 .orderBy(getOrderSpecifier(condition.getOrder()),
                         review.rating.avg().desc(),
-                        item.registrationDate.desc())
+                        item.registrationDate.desc(),
+                        item.id.asc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
@@ -73,7 +74,6 @@ public class ItemQueryRepository {
                 .groupBy(item)
                 .orderBy(review.rating.sum().desc(),
                         review.rating.avg().desc(),
-                        item.registrationDate.desc(),
                         item.id.asc())
                 .limit(top)
                 .fetch();
