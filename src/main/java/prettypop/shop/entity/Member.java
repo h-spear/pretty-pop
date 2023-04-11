@@ -103,4 +103,10 @@ public class Member extends BaseEntity {
     public void addWishItem(WishItem wishItem) {
         wishList.add(wishItem);
     }
+
+    public void addRole(String role) {
+        if (!this.roles.contains(role)) {
+            this.roles.add(role);
+        }
+    }
 }

@@ -23,8 +23,8 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
         return query
                 .select(order).distinct()
                 .from(order)
-                .join(order.orderItems, orderItem).fetchJoin()
-                .join(orderItem.item, item).fetchJoin()
+                .leftJoin(order.orderItems, orderItem).fetchJoin()
+                .leftJoin(orderItem.item, item).fetchJoin()
                 .where(order.member.id.eq(memberId),
                         order.orderDate.year().eq(year),
                         order.orderDate.month().eq(month))
