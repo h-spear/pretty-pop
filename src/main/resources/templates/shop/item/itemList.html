@@ -58,6 +58,9 @@
             color: var(--bs-secondary);
             transition: 0.2s;
         }
+        #selectFilter > p {
+            margin: 0;
+        }
     </style>
 
     <div class="max-width-1000 w-100 d-flex justify-content-between">
@@ -234,146 +237,271 @@
             </div>
         </section>
 
-        <!-- 결과가 있을 때 -->
-        <section th:if="${itemQueryResults.content.size() > 0}"
-                 id="item-container" class="w-100 py-2 px-3">
-            <div class="row gx-4 gx-lg-3 row-cols-2 row-cols-md-4 row-cols-xl-4 justify-content-center">
-                <!-- Product card -->
-                <a th:each="item: ${itemQueryResults}"
-                   href="#" th:href="@{/items/{id}(id=${item.id})}"
-                   class="col p-2 mb-3 card-effect text-decoration-none text-black">
-                    <div class="card h-100 w-100 border-0 mb-3">
-                        <!-- Sale badge-->
-                        <div th:if="${item.purchasePrice < item.originalPrice}"
-                             class="badge bg-primary text-white position-absolute"
-                             style="top: 0.5rem; right: 0.5rem">Sale</div>
-<!--                        &lt;!&ndash; Cart badge&ndash;&gt;-->
-<!--                        <button class="badge border-0 position-absolute d-flex align-items-center badge-cart" style="top: 0.3rem; left: 0.1rem; background: transparent;">-->
-<!--                            <i class="fa-solid fa-cart-shopping"></i>-->
-<!--                        </button>-->
-                        <!-- Product image-->
-                        <img class="card-img-top"
-                             style="border-radius: 0%"
-                             src="/assets/images/item/preparing-image.png"
-                             th:if="*{item.getThumbnailImageUrl() == null}"
-                             alt="Not Image" />
-                        <img class="card-img-top"
-                             style="border-radius: 0%"
-                             src=""
-                             th:src="*{item.getThumbnailImageUrl()}"
-                             th:if="*{item.getThumbnailImageUrl() != null}"
-                             alt="Not Image" />
+        <div class="w-100 h-100">
+            <div class="mb-2 d-flex justify-content-end align-items-center">
+                <div id="selectFilter" class="me-3 small">
+                </div>
+                <select th:onchange="changeSize()" id="sizeSelect"
+                        class="form-select-sm pe-2">
+                    <option value=12 selected>12</option>
+                    <option value=24>24</option>
+                    <option value=36>36</option>
+                    <option value=48>48</option>
+                </select>
+            </div>
 
-                        <!-- Product details-->
-                        <div id="itemDetails" class="card-body p-2">
-                            <div class="text-center">
-                                <!-- Product name-->
-                                <span th:text="*{item.name}">Item Name VeryLongVeryLong...</span>
+            <!-- 결과가 있을 때 -->
+            <section th:if="${itemQueryResults.content.size() > 0}"
+                     id="item-container" class="w-100 py-2 px-3">
 
-                                <!-- Product price-->
-                                <div th:if="${item.purchasePrice < item.originalPrice}">
+                <div class="row gx-4 gx-lg-3 row-cols-2 row-cols-md-4 row-cols-xl-4 justify-content-center">
+                    <!-- Product card -->
+                    <a th:each="item: ${itemQueryResults}"
+                       href="#" th:href="@{/items/{id}(id=${item.id})}"
+                       class="col p-2 mb-3 card-effect text-decoration-none text-black">
+                        <div class="card h-100 w-100 border-0 mb-3">
+                            <!-- Sale badge-->
+                            <div th:if="${item.purchasePrice < item.originalPrice}"
+                                 class="badge bg-primary text-white position-absolute"
+                                 style="top: 0.5rem; right: 0.5rem">Sale</div>
+                            <!--                        &lt;!&ndash; Cart badge&ndash;&gt;-->
+                            <!--                        <button class="badge border-0 position-absolute d-flex align-items-center badge-cart" style="top: 0.3rem; left: 0.1rem; background: transparent;">-->
+                            <!--                            <i class="fa-solid fa-cart-shopping"></i>-->
+                            <!--                        </button>-->
+                            <!-- Product image-->
+                            <img class="card-img-top"
+                                 style="border-radius: 0%"
+                                 src="/assets/images/item/preparing-image.png"
+                                 th:if="*{item.getThumbnailImageUrl() == null}"
+                                 alt="Not Image" />
+                            <img class="card-img-top"
+                                 style="border-radius: 0%"
+                                 src=""
+                                 th:src="*{item.getThumbnailImageUrl()}"
+                                 th:if="*{item.getThumbnailImageUrl() != null}"
+                                 alt="Not Image" />
+
+                            <!-- Product details-->
+                            <div id="itemDetails" class="card-body p-2">
+                                <div class="text-center">
+                                    <!-- Product name-->
+                                    <span th:text="*{item.name}">Item Name VeryLongVeryLong...</span>
+
+                                    <!-- Product price-->
+                                    <div th:if="${item.purchasePrice < item.originalPrice}">
                                     <span th:text="|*{item.originalPrice}#{unit.money}|"
                                           class="text-muted text-decoration-line-through">$20.00</span>
-                                    <span th:text="|*{item.purchasePrice}#{unit.money}|"
-                                          style="font-size: 14px" class="fw-bold text-danger">$18.00</span>
-                                </div>
-                                <div th:unless="${item.purchasePrice < item.originalPrice}">
+                                        <span th:text="|*{item.purchasePrice}#{unit.money}|"
+                                              style="font-size: 14px" class="fw-bold text-danger">$18.00</span>
+                                    </div>
+                                    <div th:unless="${item.purchasePrice < item.originalPrice}">
                                     <span th:text="|*{item.originalPrice}#{unit.money}|"
                                           style="font-size: 14px" class="fw-bold text-danger">$20.00</span>
-                                </div>
-                                <!-- Product Reviews -->
-                                <div class="d-flex justify-content-center mb-2 align-items-center mt-1">
-                                    <!-- 평점이 0.5 미만 ☆☆☆☆☆ -->
-                                    <div th:if="*{item.getRatingIntegerPart() == 0 && item.getRatingDecimalPart() < 0.5}">
-                                        <i th:each="num: ${#numbers.sequence(1, 5)}"
-                                           class="fa-solid fa-star text-secondary"></i>
                                     </div>
+                                    <!-- Product Reviews -->
+                                    <div class="d-flex justify-content-center mb-2 align-items-center mt-1">
+                                        <!-- 평점이 0.5 미만 ☆☆☆☆☆ -->
+                                        <div th:if="*{item.getRatingIntegerPart() == 0 && item.getRatingDecimalPart() < 0.5}">
+                                            <i th:each="num: ${#numbers.sequence(1, 5)}"
+                                               class="fa-solid fa-star text-secondary"></i>
+                                        </div>
 
-                                    <!-- 평점이 4.5 이상 ★★★★★ -->
-                                    <div th:if="*{item.getRatingIntegerPart() == 4 && item.getRatingDecimalPart() >= 0.5}">
-                                        <i th:each="num: ${#numbers.sequence(1, 5)}"
-                                           class="fa-solid fa-star text-warning"></i>
-                                    </div>
+                                        <!-- 평점이 4.5 이상 ★★★★★ -->
+                                        <div th:if="*{item.getRatingIntegerPart() == 4 && item.getRatingDecimalPart() >= 0.5}">
+                                            <i th:each="num: ${#numbers.sequence(1, 5)}"
+                                               class="fa-solid fa-star text-warning"></i>
+                                        </div>
 
-                                    <!-- 그외 -->
-                                    <div th:unless="*{(item.getRatingIntegerPart() == 0 && item.getRatingDecimalPart() < 0.5) ||
+                                        <!-- 그외 -->
+                                        <div th:unless="*{(item.getRatingIntegerPart() == 0 && item.getRatingDecimalPart() < 0.5) ||
                                                       (item.getRatingIntegerPart() == 4 && item.getRatingDecimalPart() >= 0.5)}">
-                                        <i th:if="*{item.getRatingIntegerPart() > 0}"
-                                           th:each="num: ${#numbers.sequence(1, 5)}"
-                                           class="fa-solid fa-star"
-                                           th:classappend="*{num <= item.getRatingIntegerPart()} ? 'text-warning' : 'text-secondary'"></i>
+                                            <i th:if="*{item.getRatingIntegerPart() > 0}"
+                                               th:each="num: ${#numbers.sequence(1, 5)}"
+                                               class="fa-solid fa-star"
+                                               th:classappend="*{num <= item.getRatingIntegerPart()} ? 'text-warning' : 'text-secondary'"></i>
+                                        </div>
+                                        <small th:text="'(' + *{item.reviewCount} +  ')'">(250)</small>
                                     </div>
-                                    <small th:text="'(' + *{item.reviewCount} +  ')'">(250)</small>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </a>
-            </div>
+                    </a>
+                </div>
 
-            <!-- Pagination -->
-            <div class="d-flex justify-content-center"
-                 th:object="${itemQueryResults}"
-                 th:with="
+                <!-- Pagination -->
+                <div class="d-flex justify-content-center"
+                     th:object="${itemQueryResults}"
+                     th:with="
                     pageLine = 10,
                     pageNumber = *{pageable.pageNumber},
                     pageSize = *{pageable.pageSize},
                     totalPages = *{totalPages},
                     startPage = ${(pageNumber / pageLine) * pageLine + 1},
                     endPage = (${(totalPages == 0) ? 1 : (startPage + (pageLine - 1) < totalPages ? startPage + (pageLine - 1) : totalPages)})">
-                <ul class="pagination">
+                    <ul class="pagination">
 
-                    <li th:classappend="${startPage <= 1} ? 'disabled'" class="page-item">
-                        <button class="page-link" aria-label="Previous"
-                           th:onclick="'paging(' + ${pageNumber - pageLine} + ')'">
-                            <span>&laquo;</span>
-                            <span class="sr-only">10 Previous</span>
-                        </button>
-                    </li>
+                        <li th:classappend="${startPage <= 1} ? 'disabled'" class="page-item">
+                            <button class="page-link" aria-label="Previous"
+                                    th:onclick="'paging(' + ${pageNumber - pageLine} + ')'">
+                                <span>&laquo;</span>
+                                <span class="sr-only">10 Previous</span>
+                            </button>
+                        </li>
 
-                    <li th:classappend="${!itemQueryResults.hasPrevious()} ? 'disabled'" class="page-item">
-                        <button class="page-link" aria-label="Previous"
-                           th:onclick="'paging(' + ${pageNumber - 1} + ')'">
-                            <span aria-hidden="true">&lt;</span>
-                            <span class="sr-only">Previous</span>
-                        </button>
-                    </li>
+                        <li th:classappend="${!itemQueryResults.hasPrevious()} ? 'disabled'" class="page-item">
+                            <button class="page-link" aria-label="Previous"
+                                    th:onclick="'paging(' + ${pageNumber - 1} + ')'">
+                                <span aria-hidden="true">&lt;</span>
+                                <span class="sr-only">Previous</span>
+                            </button>
+                        </li>
 
-                    <li th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${page - 1 == pageNumber} ? 'active'" class="page-item">
-                        <button th:text="${page}" class="page-link"
-                           th:onclick="'paging(' + ${page - 1} + ')'"></button>
-                    </li>
+                        <li th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${page - 1 == pageNumber} ? 'active'" class="page-item">
+                            <button th:text="${page}" class="page-link"
+                                    th:onclick="'paging(' + ${page - 1} + ')'"></button>
+                        </li>
 
-                    <li th:classappend="${!itemQueryResults.hasNext()} ? 'disabled'" class="page-item">
-                        <button class="page-link" aria-label="Next"
-                           th:onclick="'paging(' + ${pageNumber + 1} + ')'">
-                            <span aria-hidden="true">&gt;</span>
-                            <span class="sr-only">Next</span>
-                        </button>
-                    </li>
+                        <li th:classappend="${!itemQueryResults.hasNext()} ? 'disabled'" class="page-item">
+                            <button class="page-link" aria-label="Next"
+                                    th:onclick="'paging(' + ${pageNumber + 1} + ')'">
+                                <span aria-hidden="true">&gt;</span>
+                                <span class="sr-only">Next</span>
+                            </button>
+                        </li>
 
-                    <li th:classappend="${endPage >= totalPages} ? 'disabled'" class="page-item">
-                        <button class="page-link" aria-label="Next"
-                           th:onclick="'paging(' + ${pageNumber + pageLine >= totalPages ? totalPages - 1 : pageNumber + pageLine} + ')'">
-                            <span>&raquo;</span>
-                            <span class="sr-only">10 Next</span>
-                        </button>
-                    </li>
-                </ul>
-            </div>
-        </section>
+                        <li th:classappend="${endPage >= totalPages} ? 'disabled'" class="page-item">
+                            <button class="page-link" aria-label="Next"
+                                    th:onclick="'paging(' + ${pageNumber + pageLine >= totalPages ? totalPages - 1 : pageNumber + pageLine} + ')'">
+                                <span>&raquo;</span>
+                                <span class="sr-only">10 Next</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </section>
 
-        <!-- 결과가 없을 때 -->
-        <section th:if="${itemQueryResults.content.size() <= 0}"
-                 class="w-100 d-flex justify-content-center align-items-center">
-            <h1 class="display-4" th:text="#{message.emptyItemView}">
-                NO ITEM IN SHOPPING CART
-            </h1>
-        </section>
+            <!-- 결과가 없을 때 -->
+            <section th:if="${itemQueryResults.content.size() <= 0}"
+                     class="w-100 d-flex justify-content-center align-items-center w-100 h-100">
+                <h1 class="display-4" th:text="#{message.emptyItemView}">
+                    NO ITEM IN SHOPPING CART
+                </h1>
+            </section>
+        </div>
     </div>
 
     <script th:inline="javascript">
         setCategoryBox();
+        setSizeSelectBox();
+        setFilter();
+
+        function setFilter() {
+            const selectFilter = document.querySelector('#selectFilter');
+            const urlParams = getUrlParams();
+            const category = urlParams.get('category');
+            const order = urlParams.get('order');
+            const ratingGe = urlParams.get('ratingGe');
+            const priceGe = urlParams.get('priceGe');
+            const priceLe = urlParams.get('priceLe');
+            if (order) {
+                const element = document.createElement('p');
+                element.classList.add('badge');
+                element.classList.add('rounded-pill');
+                element.classList.add('bg-info');
+                element.classList.add('me-2');
+                switch (order) {
+                    case 'PRICE_ASC':
+                        element.textContent = [[#{item.search.priceAsc}]];
+                        break;
+                    case 'PRICE_DESC':
+                        element.textContent = [[#{item.search.priceDesc}]];
+                        break;
+                    case 'REVIEWS_DESC':
+                        element.textContent = [[#{item.search.reviewDesc}]];
+                        break;
+                    case 'RATING_DESC':
+                        element.textContent = [[#{item.search.ratingDesc}]];
+                        break;
+                    case 'NEWEST':
+                        element.textContent = [[#{item.search.newest}]];
+                        break;
+                    case 'SALES_VOLUME':
+                        element.textContent = [[#{item.search.salesVolume}]];
+                        break;
+                }
+                selectFilter.appendChild(element);
+            }
+
+            if (priceGe) {
+                const element = document.createElement('p');
+                element.classList.add('badge');
+                element.classList.add('rounded-pill');
+                element.classList.add('bg-dark');
+                element.classList.add('me-2');
+                const upMark = document.createElement('i');
+                upMark.classList.add('fa-solid');
+                upMark.classList.add('fa-arrow-up');
+                element.innerText = priceGe + [[#{unit.money}]] + " ";
+                element.appendChild(upMark);
+                selectFilter.appendChild(element);
+            }
+            if (priceLe) {
+                const element = document.createElement('p');
+                element.classList.add('badge');
+                element.classList.add('rounded-pill');
+                element.classList.add('me-2');
+                element.classList.add('bg-dark');
+                const upMark = document.createElement('i');
+                upMark.classList.add('fa-solid');
+                upMark.classList.add('fa-arrow-down');
+                element.innerText = priceLe + [[#{unit.money}]] + " ";
+                element.appendChild(upMark);
+                selectFilter.appendChild(element);
+            }
+            if (ratingGe) {
+                const element = document.createElement('p');
+                element.classList.add('badge');
+                element.classList.add('rounded-pill');
+                element.classList.add('me-2');
+                element.classList.add('bg-primary');
+                const span = document.createElement('span');
+                span.innerText = [[#{item.search.rating}]] + " " + ratingGe + [[#{unit.rating}]] + " ";
+                const starMark = document.createElement('i');
+                starMark.classList.add('fa-solid');
+                starMark.classList.add('fa-star');
+                starMark.classList.add('me-1');
+                starMark.classList.add('text-warning');
+                const upMark = document.createElement('i');
+                upMark.classList.add('fa-solid');
+                upMark.classList.add('fa-arrow-up');
+                element.appendChild(starMark);
+                element.appendChild(span);
+                element.appendChild(upMark);
+                selectFilter.appendChild(element);
+            }
+        }
+
+        function setSizeSelectBox() {
+            const sizeSelect = document.querySelector('#sizeSelect');
+            const urlParams = getUrlParams();
+            const sizeParam = urlParams.get('size');
+            const pageSizeMap = {
+                12: 0,
+                24: 1,
+                36: 2,
+                48: 3
+            }
+
+            if (sizeParam in pageSizeMap) {
+                const index = pageSizeMap[sizeParam];
+                sizeSelect.options[index].selected = true
+            }
+        }
+
+        function changeSize() {
+            const sizeSelect = document.querySelector('#sizeSelect');
+            changeUrlParams('size', sizeSelect.value);
+        }
 
         function setCategoryBox() {
             const category = document.querySelector('#item-category');
