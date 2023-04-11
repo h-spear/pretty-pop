@@ -16,6 +16,7 @@ public class HomeController {
 
     @GetMapping({"/", "/home"})
     public String home(Model model) {
+        model.addAttribute("topItems", itemService.findTopItems(8));
         model.addAttribute("items", itemService.findTopItemsByCategory(10));
         return "home";
     }

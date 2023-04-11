@@ -78,6 +78,10 @@ public class ItemService {
         return map;
     }
 
+    public List<ItemQueryDto> findTopItems(int top) {
+        return itemQueryRepository.findTopRating(top);
+    }
+
     @Transactional
     public void deleteCartItem(Long memberId, Long itemId) {
         cartItemRepository.findByMemberAndItem(memberId, itemId)

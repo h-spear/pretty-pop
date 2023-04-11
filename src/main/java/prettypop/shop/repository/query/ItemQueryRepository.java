@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -33,20 +34,7 @@ public class ItemQueryRepository {
     }
 
     public Page<ItemQueryDto> query(ItemQueryCondition condition, Pageable pageable) {
-        List<ItemQueryDto> result = query
-                .select(new QItemQueryDto(
-                        item.id,
-                        item.name,
-                        item.thumbnailImageUrl,
-                        item.originalPrice,
-                        item.purchasePrice,
-                        item.earnedPoint,
-                        item.stockQuantity,
-                        item.itemStatus,
-                        item.category,
-                        review.rating.avg().as("rating"),
-                        review.count().intValue().as("reviewCount")))
-                .from(item)
+        List<ItemQueryDto> result = selectItemQueryDtoFromItem()
                 .leftJoin(item.reviews, review)
                 .where(stringContains(item.name, condition.getKeyword()),
                         categoryEqual(condition.getCategory()),
@@ -77,6 +65,35 @@ public class ItemQueryRepository {
                         reviewCountGe(condition.getReviewCountGe()));
 
         return PageableExecutionUtils.getPage(result, pageable, () -> countQuery.fetchCount());
+    }
+
+    public List<ItemQueryDto> findTopRating(int top) {
+        return selectItemQueryDtoFromItem()
+                .leftJoin(item.reviews, review)
+                .groupBy(item)
+                .orderBy(review.rating.sum().desc(),
+                        review.rating.avg().desc(),
+                        item.registrationDate.desc(),
+                        item.id.asc())
+                .limit(top)
+                .fetch();
+    }
+
+    private JPAQuery<ItemQueryDto> selectItemQueryDtoFromItem() {
+        return query
+                .select(new QItemQueryDto(
+                        item.id,
+                        item.name,
+                        item.thumbnailImageUrl,
+                        item.originalPrice,
+                        item.purchasePrice,
+                        item.earnedPoint,
+                        item.stockQuantity,
+                        item.itemStatus,
+                        item.category,
+                        review.rating.avg().as("rating"),
+                        review.count().intValue().as("reviewCount")))
+                .from(item);
     }
 
     private BooleanExpression ratingGe(Integer ratingGeCond) {

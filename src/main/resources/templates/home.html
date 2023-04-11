@@ -140,11 +140,99 @@
                     <img src="/assets/images/tech.png" alt="tech"/>
                 </div>
             </section>
-
         </div>
 
+        <!-- 결과가 있을 때 -->
+        <section th:if="${topItems.size() > 0}" class="w-100 py-2 px-3 mt-5">
+            <div class="row gx-4 gx-lg-3 row-cols-2 row-cols-md-4 row-cols-xl-4 justify-content-center">
+                <!-- Product card -->
+                <a th:each="item: ${topItems}"
+                   href="#" th:href="@{/items/{id}(id=${item.id})}"
+                   class="col p-2 mb-3 card-effect text-decoration-none text-black">
+                    <div class="card h-100 w-100 border-0 mb-3">
+                        <!-- Sale badge-->
+                        <div th:if="${item.purchasePrice < item.originalPrice && itemStat.index <= 2}"
+                             class="badge bg-primary text-white position-absolute"
+                             style="top: 2.0rem; right: 0.5rem">Sale</div>
+                        <!-- Sale badge-->
+                        <div th:if="${item.purchasePrice < item.originalPrice && itemStat.index > 2}"
+                             class="badge bg-primary text-white position-absolute"
+                             style="top: 0.5rem; right: 0.5rem">Sale</div>
+
+                        <!-- Rank badge-->
+                        <div th:if="${itemStat.index == 0}"
+                             class="badge bg-success text-white position-absolute"
+                             style="top: 0.5rem; right: 0.5rem">1st</div>
+                        <div th:if="${itemStat.index == 1}"
+                             class="badge bg-danger text-white position-absolute"
+                             style="top: 0.5rem; right: 0.5rem">2nd</div>
+                        <div th:if="${itemStat.index == 2}"
+                             class="badge bg-info text-white position-absolute"
+                             style="top: 0.5rem; right: 0.5rem">3rd</div>
+
+                        <!-- Product image-->
+                        <img class="card-img-top"
+                             style="border-radius: 0%"
+                             src="/assets/images/item/preparing-image.png"
+                             th:if="*{item.getThumbnailImageUrl() == null}"
+                             alt="Not Image" />
+                        <img class="card-img-top"
+                             style="border-radius: 0%"
+                             src=""
+                             th:src="*{item.getThumbnailImageUrl()}"
+                             th:if="*{item.getThumbnailImageUrl() != null}"
+                             alt="Not Image" />
+
+                        <!-- Product details-->
+                        <div class="card-body p-2">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <span th:text="*{item.name}">Item Name VeryLongVeryLong...</span>
+
+                                <!-- Product price-->
+                                <div th:if="${item.purchasePrice < item.originalPrice}">
+                                    <span th:text="|*{item.originalPrice}#{unit.money}|"
+                                          class="text-muted text-decoration-line-through">$20.00</span>
+                                    <span th:text="|*{item.purchasePrice}#{unit.money}|"
+                                          style="font-size: 14px" class="fw-bold text-danger">$18.00</span>
+                                </div>
+                                <div th:unless="${item.purchasePrice < item.originalPrice}">
+                                    <span th:text="|*{item.originalPrice}#{unit.money}|"
+                                          style="font-size: 14px" class="fw-bold text-danger">$20.00</span>
+                                </div>
+                                <!-- Product Reviews -->
+                                <div class="d-flex justify-content-center mb-2 align-items-center mt-1">
+                                    <!-- 평점이 0.5 미만 ☆☆☆☆☆ -->
+                                    <div th:if="*{item.getRatingIntegerPart() == 0 && item.getRatingDecimalPart() < 0.5}">
+                                        <i th:each="num: ${#numbers.sequence(1, 5)}"
+                                           class="fa-solid fa-star text-secondary"></i>
+                                    </div>
+
+                                    <!-- 평점이 4.5 이상 ★★★★★ -->
+                                    <div th:if="*{item.getRatingIntegerPart() == 4 && item.getRatingDecimalPart() >= 0.5}">
+                                        <i th:each="num: ${#numbers.sequence(1, 5)}"
+                                           class="fa-solid fa-star text-warning"></i>
+                                    </div>
+
+                                    <!-- 그외 -->
+                                    <div th:unless="*{(item.getRatingIntegerPart() == 0 && item.getRatingDecimalPart() < 0.5) ||
+                                                      (item.getRatingIntegerPart() == 4 && item.getRatingDecimalPart() >= 0.5)}">
+                                        <i th:if="*{item.getRatingIntegerPart() > 0}"
+                                           th:each="num: ${#numbers.sequence(1, 5)}"
+                                           class="fa-solid fa-star"
+                                           th:classappend="*{num <= item.getRatingIntegerPart()} ? 'text-warning' : 'text-secondary'"></i>
+                                    </div>
+                                    <small th:text="'(' + *{item.reviewCount} +  ')'">(250)</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
         <!-- 카테고리별 상품 -->
-        <h1 class="w-100 mt-4">
+        <h1 class="w-100 mt-2">
             <span th:text="#{label.home.topItemsByCategory1}"
                   class="fs-3 fw-light"></span>
             <span th:text="#{label.home.topItemsByCategory2}"
@@ -165,7 +253,6 @@
                 <div th:id="categorySlider + ${categoryStat.index}"
                         class="categorySlider row gx-4 gx-lg-3 justify-content-center w-100">
                     <!-- Product card -->
-
                     <a th:each="item: ${items.get(category)}"
                        href="#" th:href="@{/items/{id}(id=${item.id})}"
                        class="col p-2 m-1 card-effect text-decoration-none text-black">
