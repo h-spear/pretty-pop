@@ -1,0 +1,23 @@
+
+spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/prettypop
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+    defer-datasource-initialization: false
+
+  sql:
+    init:
+      mode: never
+
+my-security:
+  access-secret-key: prettypopaccesssecretkey
+  refresh-secret-key: prettypoprefreshsecretkey
