@@ -12,6 +12,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 
 @Data
@@ -20,7 +21,7 @@ public class MemberRegisterParam {
     @NotBlank(groups = ValidationGroups.NotBlankGroup.class)
     @Size(min=4, max=16, groups = ValidationGroups.SizeCheckGroup.class)
     @Pattern(regexp = "[a-zA-Z0-9]{4,16}",
-            groups = ValidationGroups.PatternCheckGroup.class)
+             groups = ValidationGroups.PatternCheckGroup.class)
     private String username;
 
     @NotBlank(groups = ValidationGroups.NotBlankGroup.class)
@@ -32,16 +33,13 @@ public class MemberRegisterParam {
     private String passwordConfirm;
 
     @NotBlank(groups = ValidationGroups.NotBlankGroup.class)
-    @Size(min=3, max=32, groups = ValidationGroups.SizeCheckGroup.class)
     private String name;
 
-    @NotNull(groups = ValidationGroups.NotNullGroup.class)
     private Gender gender;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate = LocalDate.now();
 
-    @NotNull(groups = ValidationGroups.NotNullGroup.class)
     private Address address;
 
     @NotBlank(groups = ValidationGroups.NotBlankGroup.class)
@@ -49,9 +47,20 @@ public class MemberRegisterParam {
              groups = ValidationGroups.PatternCheckGroup.class)
     private String phoneNumber;
 
-//    @NotBlank(groups = ValidationGroups.NotBlankGroup.class)
-//    @Pattern(regexp = "^(?:\\w+\\.?)*\\w+@(?:\\w+\\.)+\\w+$",
-//             groups = ValidationGroups.PatternCheckGroup.class)
     private String email;
 
+    @Size(min=4, max=32, groups = ValidationGroups.SizeCheckGroup.class)
+    public byte[] getNameByteLength() throws UnsupportedEncodingException {
+        return name.getBytes("EUC-KR");
+    }
+
+    @NotBlank(groups = ValidationGroups.NotBlankGroup.class)
+    public String getZipcode() {
+        return address.getZipcode();
+    }
+
+    @NotBlank(groups = ValidationGroups.NotBlankGroup.class)
+    public String getJibunAddress() {
+        return address.getJibunAddress();
+    }
 }

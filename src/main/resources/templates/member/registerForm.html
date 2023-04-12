@@ -15,6 +15,10 @@
                                 </div>
                                 <div class="card-body">
                                     <form role="form" action="/join" th:object="${joinForm}" method="post">
+                                        <div th:if="${#fields.hasGlobalErrors()}">
+                                            <p class="field-error" th:each="err : ${#fields.globalErrors()}"
+                                               th:text="${err}">Global Error Msg</p>
+                                        </div>
                                         <fieldset>
                                             <!-- ID -->
                                             <div class="form-group">
@@ -91,30 +95,33 @@
                                             </div>
 
                                             <!-- Address -->
-                                            <fieldset class="form-group" th:object="${joinForm.address}">
+                                            <fieldset class="form-group">
                                                 <label for="address" class="form-label mt-4"
                                                        th:text="#{form.address}">Address</label>
                                                 <span class="text-danger">*</span>
-
                                                 <div class="input-group mb-2">
-                                                    <input type="text" class="form-control" th:placeholder="#{form.zipcode.placeholder}" readonly th:errorclass="is-invalid"
-                                                           id="zipcode" th:field="*{zipcode}">
+                                                    <input type="text" class="form-control" th:placeholder="#{form.zipcode.placeholder}" readonly
+                                                           id="zipcode" th:field="*{address.zipcode}" th:classappend="${#fields.hasErrors('address') ? 'is-invalid' : ''}">
                                                     <button class="btn btn-primary" type="button" id="button-zipcode"
                                                             th:text="#{button.zipcode}" onclick="getPostcode()">Find postal code</button>
                                                 </div>
                                                 <div style="display: flex">
-                                                    <input type="text" class="form-control" readonly th:errorclass="is-invalid"
-                                                           id="address" th:field="*{address}" style="width: 70%"
+                                                    <input type="text" class="form-control" readonly
+                                                           id="address" th:field="*{address.address}" style="width: 70%"
+                                                           th:classappend="${#fields.hasErrors('address') ? 'is-invalid' : ''}"
                                                            th:placeholder="#{form.roadAddress.placeholder}">
                                                     <input type="text" class="form-control ms-sm-2"
-                                                           id="detailAddress" th:field="*{detailAddress}" style="width: 30%"
+                                                           id="detailAddress" th:field="*{address.detailAddress}" style="width: 30%"
                                                            th:placeholder="#{form.detailAddress.placeholder}">
                                                 </div>
-                                                <input id="jibunAddress" th:field="*{jibunAddress}" readonly th:errorclass="is-invalid"
+                                                <input id="jibunAddress" th:field="*{address.jibunAddress}" readonly
                                                        th:placeholder="#{form.address.defaultMessage}"
                                                        style="width:100%; border:none; background: transparent; cursor: default;" class="form-text text-muted ms-sm-1 mb-2">
-                                            </fieldset>
 
+                                                <div class="invalid-feedback d-flex"
+                                                     th:errors="${joinForm.address}">
+                                                </div>
+                                            </fieldset>
                                             <!-- Phone Number -->
                                             <div class="form-group">
                                                 <label for="phoneNumber" class="form-label mt-4"

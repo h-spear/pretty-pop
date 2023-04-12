@@ -39,6 +39,12 @@ public class MemberController {
     public String join(@Validated(ValidationSequence.class) @ModelAttribute("joinForm") MemberRegisterParam memberRegisterParam,
                        BindingResult bindingResult) {
 
+        if (bindingResult.hasFieldErrors("nameByteLength")) {
+            bindingResult.rejectValue("name", "Size", new Object[]{4, 32}, null);
+        }
+        if (bindingResult.hasFieldErrors("zipcode") || bindingResult.hasFieldErrors("zibunAddress")) {
+            bindingResult.rejectValue("address", "NotBlank");
+        }
         if (bindingResult.hasErrors()) {
             return "member/registerForm";
         }
@@ -75,10 +81,15 @@ public class MemberController {
                          @Validated(ValidationSequence.class) MemberUpdateParam memberUpdateParam,
                          BindingResult bindingResult) {
 
+        if (bindingResult.hasFieldErrors("nameByteLength")) {
+            bindingResult.rejectValue("name", "Size", new Object[]{4, 32}, null);
+        }
+        if (bindingResult.hasFieldErrors("zipcode") || bindingResult.hasFieldErrors("zibunAddress")) {
+            bindingResult.rejectValue("address", "NotBlank");
+        }
         if (bindingResult.hasErrors()) {
             return "member/memberModifyForm";
         }
-
         try {
             memberService.update(id, memberUpdateParam);
             return "redirect:/member";
@@ -86,20 +97,6 @@ public class MemberController {
             bindingResult.reject("error");
         }
         return "member/memberModifyForm";
-    }
-
-    @PutMapping("/member/nickname")
-    @ResponseBody
-    public ApiResponse modifyNickname(@Login Long id,
-                                      @RequestBody MemberNicknameRequest changeRequest) {
-        try {
-            memberService.updateNickname(id, changeRequest.getNickname());
-        } catch (IllegalArgumentException e) {
-            return ApiResponse.ofError("존재하지 않는 회원입니다.");
-        } catch (MemberNicknameDuplicateException e) {
-            return ApiResponse.ofError("이미 존재하는 닉네임입니다.");
-        }
-        return ApiResponse.ofSuccess();
     }
 
     @GetMapping("/wish")

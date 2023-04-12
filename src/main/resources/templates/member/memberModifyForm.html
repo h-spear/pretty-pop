@@ -29,6 +29,7 @@
                         <input type="text" class="form-control" th:errorclass="is-invalid"
                                id="name" th:field="*{name}">
                     </div>
+                    <div class="invalid-feedback d-block w-75 small fw-light" th:errors="*{name}"></div>
 
                     <!-- Gender -->
                     <fieldset class="form-group mt-3 w-75 d-flex justify-content-center align-items-center">
@@ -65,6 +66,7 @@
                         <input type="text" class="form-control" th:errorclass="is-invalid"
                                id="phoneNumber" th:field="*{phoneNumber}" maxlength="13">
                     </div>
+                    <div class="invalid-feedback d-block w-75 small fw-light" th:errors="*{phoneNumber}"></div>
 
                     <!-- Email -->
                     <div class="form-group d-flex mt-4 w-75 align-items-center">
@@ -75,27 +77,32 @@
                     </div>
 
                     <!-- Address -->
-                    <fieldset class="form-group w-75 mt-2" th:object="${memberUpdateParam.address}">
+                    <fieldset class="form-group w-75 mt-2">
                         <label for="address" class="form-label mt-3"
                                th:text="#{form.address}">Address</label>
 
                         <div class="input-group mb-2">
-                            <input type="text" class="form-control" th:placeholder="#{form.zipcode.placeholder}" readonly th:errorclass="is-invalid"
-                                   id="zipcode" th:field="*{zipcode}">
+                            <input type="text" class="form-control" th:placeholder="#{form.zipcode.placeholder}" readonly
+                                   th:classappend="${#fields.hasErrors('address') ? 'is-invalid' : ''}"
+                                   id="zipcode" th:field="*{address.zipcode}">
                             <button class="btn btn-primary" type="button" id="button-zipcode"
                                     th:text="#{button.zipcode}" onclick="getPostcode()">Find postal code</button>
                         </div>
                         <div style="display: flex">
                             <input type="text" class="form-control" readonly
-                                   id="address" th:field="*{address}" style="width: 70%"
+                                   id="address" th:field="*{address.address}" style="width: 70%"
+                                   th:classappend="${#fields.hasErrors('address') ? 'is-invalid' : ''}"
                                    th:placeholder="#{form.roadAddress.placeholder}">
                             <input type="text" class="form-control ms-sm-2" th:errorclass="is-invalid"
-                                   id="detailAddress" th:field="*{detailAddress}" style="width: 30%"
+                                   id="detailAddress" th:field="*{address.detailAddress}" style="width: 30%"
                                    th:placeholder="#{form.detailAddress.placeholder}">
                         </div>
-                        <input id="jibunAddress" th:field="*{jibunAddress}" readonly
+                        <input id="jibunAddress" th:field="*{address.jibunAddress}" readonly
                                th:placeholder="#{form.address.defaultMessage}" th:errorclass="is-invalid"
                                style="width:100%; border:none; background: transparent; cursor: default;" class="form-text text-muted ms-sm-1 mb-2">
+                        <div class="invalid-feedback d-flex"
+                             th:errors="${memberUpdateParam.address}">
+                        </div>
                     </fieldset>
                 </div>
             </section>
