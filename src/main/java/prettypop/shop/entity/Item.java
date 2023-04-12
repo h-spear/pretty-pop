@@ -33,18 +33,16 @@ public class Item extends BaseEntity {
     private Category category;
 
     private String thumbnailImageUrl;
+    private String itemImageUrl;
 
     @OneToMany(mappedBy = "item")
     private List<Review> reviews = new ArrayList<>();
-
-    @ElementCollection
-    private List<String> imageFileUrls;
 
     protected Item() {
     }
 
     @Builder
-    public Item(Long id, String name, String description, int originalPrice, int purchasePrice, int earnedPoint, int stockQuantity, int salesVolume, ItemStatus itemStatus, Category category, String thumbnailImageUrl, List<String> imageFileUrls) {
+    public Item(Long id, String name, String description, int originalPrice, int purchasePrice, int earnedPoint, int stockQuantity, int salesVolume, ItemStatus itemStatus, Category category, String thumbnailImageUrl, String itemImageUrl) {
         if (this.purchasePrice > this.originalPrice) {
             throw new IllegalArgumentException("구매 가격은 원래 가격보다 작거나 같아야 합니다.");
         }
@@ -59,7 +57,7 @@ public class Item extends BaseEntity {
         this.itemStatus = itemStatus;
         this.category = category;
         this.thumbnailImageUrl = thumbnailImageUrl;
-        this.imageFileUrls = imageFileUrls;
+        this.itemImageUrl = itemImageUrl;
     }
 
     public void addStock(int quantity) {

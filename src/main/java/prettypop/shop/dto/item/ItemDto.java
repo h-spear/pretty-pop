@@ -34,7 +34,7 @@ public class ItemDto {
     private int reviewCount;
 
     private String thumbnailImageUrl;
-    private List<String> itemFileUrls;
+    private String itemImageUrl;
     private List<ItemReviewDto> reviewDtos;
 
     public static ItemDto of(Item item) {
@@ -62,7 +62,7 @@ public class ItemDto {
                 .rating((double) reviewRatingSum / (double) reviewCount)
                 .reviewCount(reviewCount)
                 .thumbnailImageUrl(item.getThumbnailImageUrl())
-                .itemFileUrls(item.getImageFileUrls())
+                .itemImageUrl(item.getItemImageUrl())
                 .reviewDtos(reviewDtos)
                 .build();
     }
