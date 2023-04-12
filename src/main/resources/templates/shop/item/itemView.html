@@ -153,9 +153,8 @@
 
 
             <div th:each="review: *{reviewDtos}" class="mt-4 mb-5 px-3">
-                <a class="text-decoration-none text-info fw-bold" href="#" style="font-size: 15px"
-                   th:href="@{/member/{reviewer}(reviewer=${review.reviewerId})}"
-                   th:text="${review.reviewerNickname + '(' + review.reviewerUsername + ')'}"></a>
+                <span class="text-decoration-none text-info fw-bold" style="font-size: 15px"
+                   th:text="${review.reviewerNickname + '(' + review.reviewerUsername + ')'}"></span>
                 <div class="d-inline ms-2" style="font-size: 14px">
                     <i th:each="num: ${#numbers.sequence(1, 5)}"
                        class="fa-solid fa-star"
@@ -165,12 +164,12 @@
                     <span th:text="|#{label.registrationDate} : ${#temporals.format(review.registrationDate, 'yyyy-MM-dd HH:mm:ss')} / |"></span>
                     <span th:text="|#{label.lastModifiedDate} : ${#temporals.format(review.lastModifiedDate, 'yyyy-MM-dd HH:mm:ss')}|"></span>
                 </p>
-                <button th:onclick="'toggleReview(' + ${reviewStat.index} + ')'"
-                        class="d-inline ms-4 fw-bold bg-transparent border-0 text-danger" style="font-size: 14px">
-                    <i th:id="reviewToggleIcon + ${reviewStat.index}"
-                       class="fa-solid fa-chevron-down"></i>
-                    <span th:id="reviewToggleMsg + ${reviewStat.index}" th:text="#{button.readReview}">Read Review</span>
-                </button>
+<!--                <button th:onclick="'toggleReview(' + ${reviewStat.index} + ')'"-->
+<!--                        class="d-inline ms-4 fw-bold bg-transparent border-0 text-danger" style="font-size: 14px">-->
+<!--                    <i th:id="reviewToggleIcon + ${reviewStat.index}"-->
+<!--                       class="fa-solid fa-chevron-down"></i>-->
+<!--                    <span th:id="reviewToggleMsg + ${reviewStat.index}" th:text="#{button.readReview}">Read Review</span>-->
+<!--                </button>-->
                 <button sec:authorize="hasAnyRole('ROLE_USER')"
                         th:if="${review.reviewerId} == ${#authentication.principal.id}"
                         type="button" class="btn btn-outline-info btn-sm mx-1" th:text="#{button.modify}"
@@ -179,7 +178,7 @@
                         th:if="${review.reviewerId} == ${#authentication.principal.id}"
                         type="button" class="btn btn-sm btn-outline-danger mx-1" th:text="#{button.delete}"
                         th:onclick="openDeleteModal()">Small button</button>
-                <p class="ms-4 mt-1 ft-5 hidden" style="font-size: 12px;"
+                <p class="ms-4 mt-1 ft-5" style="font-size: 12px;"
                    th:id="reviewContent + ${reviewStat.index}"
                    th:utext="${#strings.replace(review.content, nlString, '&lt;br /&gt;')}"></p>
             </div>
