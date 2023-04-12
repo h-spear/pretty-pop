@@ -10,10 +10,10 @@ import java.io.UnsupportedEncodingException;
 @Data
 public class MemberNicknameRequest {
 
-    @NotBlank(message = "닉네임을 공백으로 할 수 없습니다.")
+    @NotBlank(message = "{NotBlank.nickname}")
     private String nickname;
 
-    @Size(min=4, max=16, message = "닉네임은 4글자 ~ 16글자로 작성해주세요. (한글 1글자 = 영어 2글자)")
+    @Size(min=4, max=16, message = "{Size.nickname}")
     public byte[] getNicknameByteLength() throws UnsupportedEncodingException {
         return nickname.getBytes("EUC-KR");
     }

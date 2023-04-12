@@ -26,29 +26,29 @@ public class OrderCreateParam {
     private int earnedPoint;
     private int usedPoint;
 
-    @NotBlank
+    @NotBlank(message = "{NotBlank.recipientName}", groups = ValidationGroups.NotBlankGroup.class)
     private String recipientName;
 
-    @NotBlank(message = "수취인 연락처를 입력해주세요.")
+    @NotBlank(message = "{NotBlank.recipientContact}", groups = ValidationGroups.NotBlankGroup.class)
     @Pattern(regexp = "^01(?:0|1|[6-9])[.-]?(\\d{3}|\\d{4})[.-]?(\\d{4})$",
-             message = "잘못된 휴대전화 번호입니다.")
+             message = "{Pattern.recipientContact}", groups = ValidationGroups.PatternCheckGroup.class)
     private String recipientContact;
 
     private Address recipientAddress;
 
     private String memo;
 
-    @Size(min=4, max=32, message = "이름은 영문 기준 4 ~ 32 글자만 허용됩니다. (한글 1글자 = 영어 2글자)")
+    @Size(min=4, max=32, message = "{Size.recipientName}", groups = ValidationGroups.SizeCheckGroup.class)
     public byte[] getNameByteLength() throws UnsupportedEncodingException {
         return recipientName.getBytes("EUC-KR");
     }
 
-    @NotBlank(message = "배송지 주소를 입력해주세요.")
+    @NotBlank(message = "{NotBlank.recipientAddress}", groups = ValidationGroups.NotBlankGroup.class)
     public String getZipcode() {
         return recipientAddress.getZipcode();
     }
 
-    @NotBlank(message = "배송지 주소를 입력해주세요.")
+    @NotBlank(message = "{NotBlank.recipientAddress}", groups = ValidationGroups.NotBlankGroup.class)
     public String getJibunAddress() {
         return recipientAddress.getJibunAddress();
     }

@@ -4,10 +4,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import prettypop.shop.configuration.annotation.Login;
 import prettypop.shop.controller.request.DateRequest;
@@ -21,6 +23,7 @@ import prettypop.shop.entity.Member;
 import prettypop.shop.repository.MemberRepository;
 import prettypop.shop.service.ItemService;
 import prettypop.shop.service.OrderService;
+import prettypop.shop.validation.ValidationSequence;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -39,6 +42,7 @@ public class OrderController {
     private final OrderService orderService;
     private final ItemService itemService;
     private final MemberRepository memberRepository;
+    private final MessageSource messageSource;
 
     @GetMapping("/{orderId}")
     public String getOrder(@Login Long id,
@@ -87,21 +91,18 @@ public class OrderController {
     @PostMapping
     @ResponseBody
     public ApiResponse createOrder(@Login Long id,
-                                   @Valid @RequestBody OrderCreateParam orderCreateParam,
+                                   @Validated(ValidationSequence.class) @RequestBody OrderCreateParam orderCreateParam,
                                    BindingResult bindingResult) {
         // 결제를 구현하지 않기 때문에 모든 포인트를 사용해야만 결제가 되도록 함
         if (orderCreateParam.getPaymentAmount() != 0) {
-            return ApiResponse.ofError("결제가 완료되지 않았습니다.");
+            return ApiResponse.ofError(messageSource.getMessage("fail.notEnoughMoney", null, null));
         }
 
-        if (bindingResult.hasFieldErrors("recipientName")) {
-            return ApiResponse.ofError("수취인명은 공백일 수 없습니다.");
-        }
         for (FieldError error: bindingResult.getFieldErrors()) {
             return ApiResponse.ofError(error.getDefaultMessage());
         }
         if (bindingResult.hasErrors()) {
-            return ApiResponse.ofError("잘못된 정보가 입력되었습니다.");
+            return ApiResponse.ofError(messageSource.getMessage("error", null, null));
         }
 
         Long orderId;
@@ -111,7 +112,8 @@ public class OrderController {
             // 학습용 홈페이지이므로 주문을 하자마자 배송완료 처리
             orderService.completeDelivery(orderId);
         } catch (IllegalArgumentException e) {
-            return ApiResponse.ofError("결제 과정에서 오류가 발생했습니다.");
+
+            return ApiResponse.ofError(messageSource.getMessage("fail.payment", null, null));
         }
         return ApiResponse.ofSuccess(orderId);
     }
