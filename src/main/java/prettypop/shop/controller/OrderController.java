@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import prettypop.shop.configuration.annotation.Login;
 import prettypop.shop.controller.request.DateRequest;
@@ -94,11 +95,10 @@ public class OrderController {
         }
 
         if (bindingResult.hasFieldErrors("recipientName")) {
-            return ApiResponse.ofError("수취인명은 공백일 수 없습니다.(영문 기준 4~32자)");
-        } else if (bindingResult.hasFieldErrors("recipientContact")) {
-            return ApiResponse.ofError("수취인 연락처는 공백일 수 없습니다.");
-        } else if (bindingResult.hasFieldErrors("recipientAddress")) {
-            return ApiResponse.ofError("주소는 필수 값입니다.");
+            return ApiResponse.ofError("수취인명은 공백일 수 없습니다.");
+        }
+        for (FieldError error: bindingResult.getFieldErrors()) {
+            return ApiResponse.ofError(error.getDefaultMessage());
         }
         if (bindingResult.hasErrors()) {
             return ApiResponse.ofError("잘못된 정보가 입력되었습니다.");
