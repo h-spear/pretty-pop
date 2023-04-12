@@ -40,5 +40,4 @@ out/
 /src/main/resources/notuse/
 /src/main/resources/application-dev.yml
 /src/main/resources/application-local.yml
-/src/main/resources/data.sql
 /src/main/java/prettypop/shop/controller/TestController.java
