@@ -71,7 +71,7 @@ public class ReviewService {
     }
 
     @Transactional
-    public Long deleteReview(Long memberId, Long reviewId) {
+    public void deleteReview(Long memberId, Long reviewId) {
         Review review = reviewRepository.findByIdWithMember(reviewId)
                 .orElseThrow(IllegalArgumentException::new);
 
@@ -80,7 +80,6 @@ public class ReviewService {
         }
 
         reviewRepository.delete(review);
-        return review.getId();
     }
 
     public List<ReviewDto> findAllReviews(Long memberId) {
