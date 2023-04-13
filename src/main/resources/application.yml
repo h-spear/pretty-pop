@@ -12,3 +12,6 @@ spring:
 
   messages:
     basename: messages, errors
+
+application:
+  join-base-point: 1000000000

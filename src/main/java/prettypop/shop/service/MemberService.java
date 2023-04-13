@@ -3,6 +3,7 @@ package prettypop.shop.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.bytebuddy.utility.RandomString;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,8 @@ import prettypop.shop.repository.MemberRepository;
 public class MemberService {
 
     // 계정 생성 시 지급되는 포인트
-    private static final int BASE_POINT = 1000000000;
+    @Value("${application.join-base-point}")
+    private static int BASE_POINT;
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
@@ -61,6 +63,12 @@ public class MemberService {
     public Long update(Long id, MemberUpdateParam param) {
         Member member = memberRepository.findById(id)
                 .orElseThrow(IllegalArgumentException::new);
+        if (!member.getEmail().equals(param.getEmail())) {
+            memberRepository.findByEmail(param.getEmail())
+                    .ifPresent(m -> {
+                        throw new MemberEmailDuplicateException();
+                    });
+        }
         member.changePersonalInfo(param.getName(), param.getGender(), param.getBirthDate(),
                                   param.getAddress(), param.getPhoneNumber(), param.getEmail());
         return member.getId();
@@ -83,14 +91,14 @@ public class MemberService {
                 .orElseThrow(IllegalArgumentException::new);
     }
 
-    public void validateDuplicateUsername(String username) {
+    private void validateDuplicateUsername(String username) {
         memberRepository.findByUsername(username)
                 .ifPresent(m -> {
                     throw new MemberUsernameDuplicateException();
                 });
     }
 
-    public void validateDuplicateEmail(String email) {
+    private void validateDuplicateEmail(String email) {
         memberRepository.findByEmail(email)
                 .ifPresent(m -> {
                     throw new MemberEmailDuplicateException();
