@@ -33,12 +33,12 @@ public class MemberService {
     @Transactional
     public Long join(MemberRegisterParam param) {
         log.info("회원가입 서비스 실행");
-        validateDuplicateUsername(param.getUsername());
-        validateDuplicateEmail(param.getEmail());
-
         if (!param.getPassword().equals(param.getPasswordConfirm())) {
             throw new PasswordConfirmNotMatchException();
         }
+
+        validateDuplicateUsername(param.getUsername());
+        validateDuplicateEmail(param.getEmail());
 
         String encodedPassword = passwordEncoder.encode(param.getPassword());
 

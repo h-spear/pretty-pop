@@ -58,10 +58,13 @@ class MemberServiceTest {
 
         // mock
         when(memberRepository.findByUsername(USERNAME)).thenReturn(Optional.of(oldUser));
+        when(memberRepository.findByEmail(EMAIL)).thenReturn(Optional.empty());
 
         // assert
         assertThatThrownBy(() -> memberService.join(param))
                 .isInstanceOf(MemberUsernameDuplicateException.class);
+        verify(memberRepository, times(1)).findByUsername(USERNAME);
+        verify(memberRepository, times(0)).findByEmail(EMAIL);
     }
 
     @Test
@@ -78,6 +81,8 @@ class MemberServiceTest {
         // assert
         assertThatThrownBy(() -> memberService.join(param))
                 .isInstanceOf(MemberEmailDuplicateException.class);
+        verify(memberRepository, times(1)).findByUsername(USERNAME);
+        verify(memberRepository, times(1)).findByEmail(EMAIL);
     }
 
     @Test
@@ -90,9 +95,15 @@ class MemberServiceTest {
         param.setPassword("password!");
         param.setPasswordConfirm("password@");
 
+        // mock
+        when(memberRepository.findByUsername(USERNAME)).thenReturn(Optional.empty());
+        when(memberRepository.findByEmail(EMAIL)).thenReturn(Optional.empty());
+
         // assert
         assertThatThrownBy(() -> memberService.join(param))
                 .isInstanceOf(PasswordConfirmNotMatchException.class);
+        verify(memberRepository, times(0)).findByUsername(USERNAME);
+        verify(memberRepository, times(0)).findByEmail(EMAIL);
     }
 
     @Test
@@ -101,9 +112,7 @@ class MemberServiceTest {
         // given
         Long fakeMemberId = 1L;
         MemberRegisterParam param = getRegisterParam();
-        Member member = Member.builder().username(USERNAME).name(NAME).password(PASSWORD).email(EMAIL)
-                .address(ADDRESS).gender(GENDER).phoneNumber(PHONE_NUMBER).birthDate(BIRTH_DATE).point(BASE_POINT)
-                .build();
+        Member member = Member.builder().username(USERNAME).email(EMAIL).build();
         ReflectionTestUtils.setField(member, "id", fakeMemberId);
 
         // mock
@@ -111,24 +120,16 @@ class MemberServiceTest {
         when(memberRepository.findByUsername(USERNAME)).thenReturn(Optional.empty());
         when(memberRepository.findByEmail(EMAIL)).thenReturn(Optional.empty());
         when(memberRepository.save(any(Member.class))).thenReturn(member);
-        when(memberRepository.findById(fakeMemberId)).thenReturn(Optional.of(member));
 
         // when
         Long id = memberService.join(param);
 
         // then
-        Member findMember = memberRepository.findById(id).get();
-
         assertThat(id).isEqualTo(fakeMemberId);
-        assertThat(findMember.getUsername()).isEqualTo(USERNAME);
-        assertThat(findMember.getPassword()).isEqualTo(PASSWORD);
-        assertThat(findMember.getName()).isEqualTo(NAME);
-        assertThat(findMember.getPoint()).isEqualTo(BASE_POINT);
-        assertThat(findMember.getEmail()).isEqualTo(EMAIL);
-        assertThat(findMember.getPhoneNumber()).isEqualTo(PHONE_NUMBER);
-        assertThat(findMember.getAddress()).isEqualTo(ADDRESS);
-        assertThat(findMember.getGender()).isEqualTo(GENDER);
-        assertThat(findMember.getBirthDate()).isEqualTo(BIRTH_DATE);
+        verify(passwordEncoder, times(1)).encode("password!");
+        verify(memberRepository, times(1)).findByUsername(USERNAME);
+        verify(memberRepository, times(1)).findByEmail(EMAIL);
+        verify(memberRepository, times(1)).save(any(Member.class));
     }
 
     @Test
@@ -152,6 +153,8 @@ class MemberServiceTest {
         // assert
         assertThatThrownBy(() -> memberService.update(fakeMemberId, param))
                 .isInstanceOf(MemberEmailDuplicateException.class);
+        verify(memberRepository, times(1)).findById(fakeMemberId);
+        verify(memberRepository, times(1)).findByEmail("new@pretty.com");
     }
 
     @Test
@@ -174,19 +177,21 @@ class MemberServiceTest {
 
         // mock
         when(memberRepository.findById(fakeMemberId)).thenReturn(Optional.of(member));
-        when(memberRepository.findByEmail("newEmail")).thenReturn(Optional.empty());
+        when(memberRepository.findByEmail("new@pretty.com")).thenReturn(Optional.empty());
 
         // when
         Long memberId = memberService.update(fakeMemberId, param);
 
         // then
-        Member findMember = memberRepository.findById(memberId).get();
-        assertThat(findMember.getName()).isEqualTo("avril");
-        assertThat(findMember.getGender()).isEqualTo(Gender.FEMALE);
-        assertThat(findMember.getBirthDate()).isEqualTo(LocalDate.of(1999, 12, 14));
-        assertThat(findMember.getPhoneNumber()).isEqualTo("010-8765-4321");
-        assertThat(findMember.getAddress()).isEqualTo(new Address("54321", "new", "newJibun", null));
-        assertThat(findMember.getEmail()).isEqualTo("new@pretty.com");
+        verify(memberRepository, times(1)).findById(fakeMemberId);
+        verify(memberRepository, times(1)).findByEmail("new@pretty.com");
+
+        assertThat(member.getName()).isEqualTo("avril");
+        assertThat(member.getGender()).isEqualTo(Gender.FEMALE);
+        assertThat(member.getBirthDate()).isEqualTo(LocalDate.of(1999, 12, 14));
+        assertThat(member.getPhoneNumber()).isEqualTo("010-8765-4321");
+        assertThat(member.getAddress()).isEqualTo(new Address("54321", "new", "newJibun", null));
+        assertThat(member.getEmail()).isEqualTo("new@pretty.com");
     }
 
     @Test
@@ -202,6 +207,7 @@ class MemberServiceTest {
         // assert
         assertThatThrownBy(() -> memberService.updateNickname(fakeMemberId, NICKNAME))
                 .isInstanceOf(MemberNicknameDuplicateException.class);
+        verify(memberRepository, times(1)).findByNickname(NICKNAME);
     }
 
     @Test
@@ -218,12 +224,12 @@ class MemberServiceTest {
         when(memberRepository.findById(fakeMemberId)).thenReturn(Optional.of(member));
 
         // when
-        assertThat(memberRepository.findById(fakeMemberId).get().getNickname()).isEqualTo(NICKNAME); // 변경 전
         Long id = memberService.updateNickname(fakeMemberId, newNickname);
 
         // then
-        Member afterMember = memberRepository.findById(fakeMemberId).get();
-        assertThat(afterMember.getNickname()).isEqualTo(newNickname); // 변경 후
+        assertThat(member.getNickname()).isEqualTo(newNickname);
+        verify(memberRepository, times(1)).findById(fakeMemberId);
+        verify(memberRepository, times(1)).findByNickname(newNickname);
     }
 
     private static MemberRegisterParam getRegisterParam() {
