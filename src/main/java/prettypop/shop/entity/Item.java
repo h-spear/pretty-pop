@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class Item extends BaseEntity {
     @Column(name = "ITEM_ID")
     private Long id;
 
+    @NotNull
     private String name;
     private String description;
 

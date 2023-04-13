@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,21 +19,28 @@ public class Member extends BaseEntity {
     @Column(name = "MEMBER_ID")
     private Long id;
 
+    @NotNull
     private String username;
 
+    @NotNull
     private String password;
 
+    @NotNull
     private String name;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
+
+    @NotNull
     private LocalDate birthDate;
 
+    @NotNull
     private String nickname;
 
     @Embedded
     private Address address;
 
+    @NotNull
     private String phoneNumber;
 
     private String email;

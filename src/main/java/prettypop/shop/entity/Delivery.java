@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Getter
@@ -16,7 +17,11 @@ public class Delivery extends BaseEntity {
 
     @OneToOne(mappedBy = "delivery", fetch = FetchType.LAZY)
     private Order order;
+
+    @NotNull
     private String recipient;
+
+    @NotNull
     private String contact;
 
     @Embedded
