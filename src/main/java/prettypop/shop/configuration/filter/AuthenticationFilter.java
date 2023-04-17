@@ -22,7 +22,6 @@ public class AuthenticationFilter extends GenericFilterBean {
     private static final String[] whiteList = {"/", "/home", "/join", "/login", "/logout", "/refresh",
                                                 "/use", "/company", "/notice", "/cs-center", // "/language",
                                                 "/items", "/items/*", "/member/username/*", "/member/email/*"};
-    private static final String[] resourceList = {"/css/*", "/js/*", "/*.ico", "/error", "/assets/*"};
 
     private final JwtTokenUtils jwtTokenUtils;
     private final SecurityContextUtils securityContextUtils;
@@ -39,29 +38,23 @@ public class AuthenticationFilter extends GenericFilterBean {
         String accessToken = jwtTokenUtils.resolveAccessToken(httpRequest);
         String refreshToken = jwtTokenUtils.resolveRefreshToken(httpRequest);
 
-        if (!isResourcePath(requestURI)) {      // 리소스가 아닌 경우에만 체크
-            log.info("requestURI={}", requestURI);
-            if (accessToken != null && jwtTokenUtils.validateAccessToken(accessToken)) {
-                securityContextUtils.setAuthentication(accessToken);
-            } else if (isAuthenticationCheckPath(requestURI)) {
-                if (refreshToken != null) {
-                    log.info("액세스 토큰 만료. 리프레시");
-                    httpResponse.sendRedirect("/refresh?redirectURL=" + requestURI);
-                } else {
-                    log.info("미인증 사용자 요청 {}", requestURI);
-                    httpResponse.sendRedirect("/login?redirectURL=" + requestURI);
-                }
-                return;
+        log.info("requestURI={}", requestURI);
+        if (accessToken != null && jwtTokenUtils.validateAccessToken(accessToken)) {
+            securityContextUtils.setAuthentication(accessToken);
+        } else if (isAuthenticationCheckPath(requestURI)) {
+            if (refreshToken != null) {
+                log.info("액세스 토큰 만료. 리프레시");
+                httpResponse.sendRedirect("/refresh?redirectURL=" + requestURI);
+            } else {
+                log.info("미인증 사용자 요청 {}", requestURI);
+                httpResponse.sendRedirect("/login?redirectURL=" + requestURI);
             }
+            return;
         }
         chain.doFilter(httpRequest, httpResponse);
     }
 
     private boolean isAuthenticationCheckPath(String requestURI) {
         return !PatternMatchUtils.simpleMatch(whiteList, requestURI);
-    }
-
-    private boolean isResourcePath(String requestURI) {
-        return PatternMatchUtils.simpleMatch(resourceList, requestURI);
     }
 }
