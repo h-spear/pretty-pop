@@ -1,4 +1,4 @@
-package prettypop.shop.controller.request;
+package prettypop.shop.restcontroller.request;
 
 import lombok.*;
 

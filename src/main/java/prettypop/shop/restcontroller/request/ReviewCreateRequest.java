@@ -1,4 +1,4 @@
-package prettypop.shop.controller.request;
+package prettypop.shop.restcontroller.request;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class ReviewUpdateRequest {
+public class ReviewCreateRequest {
 
     private int rating;
     private String content;

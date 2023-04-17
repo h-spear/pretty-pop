@@ -43,6 +43,14 @@ dependencies {
     implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
     annotationProcessor "com.querydsl:querydsl-apt:${queryDslVersion}"
 
+    // swagger
+    implementation (group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'){
+        exclude module: 'swagger-annotations' exclude module: 'swagger-models'
+    }
+    implementation "io.swagger:swagger-annotations:1.5.21"
+    implementation "io.swagger:swagger-models:1.5.21"
+    implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'

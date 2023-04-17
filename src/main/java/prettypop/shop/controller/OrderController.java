@@ -4,28 +4,23 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import prettypop.shop.configuration.annotation.Login;
 import prettypop.shop.controller.request.DateRequest;
-import prettypop.shop.controller.response.ApiResponse;
 import prettypop.shop.dto.item.ItemCountRequest;
 import prettypop.shop.dto.order.OrderCreateForm;
-import prettypop.shop.dto.order.OrderCreateParam;
 import prettypop.shop.dto.order.OrderDto;
 import prettypop.shop.dto.order.OrderItemDto;
 import prettypop.shop.entity.Member;
 import prettypop.shop.repository.MemberRepository;
 import prettypop.shop.service.ItemService;
 import prettypop.shop.service.OrderService;
-import prettypop.shop.validation.ValidationSequence;
 
-import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +37,6 @@ public class OrderController {
     private final OrderService orderService;
     private final ItemService itemService;
     private final MemberRepository memberRepository;
-    private final MessageSource messageSource;
 
     @GetMapping("/{orderId}")
     public String getOrder(@Login Long id,
@@ -86,36 +80,6 @@ public class OrderController {
         fillOrderRecipientInfo(orderCreateForm, member);
         model.addAttribute("orderCreateForm", orderCreateForm);
         return "shop/order/orderCreateForm";
-    }
-
-    @PostMapping
-    @ResponseBody
-    public ApiResponse createOrder(@Login Long id,
-                                   @Validated(ValidationSequence.class) @RequestBody OrderCreateParam orderCreateParam,
-                                   BindingResult bindingResult) {
-        // 결제를 구현하지 않기 때문에 모든 포인트를 사용해야만 결제가 되도록 함
-        if (orderCreateParam.getPaymentAmount() != 0) {
-            return ApiResponse.ofError(messageSource.getMessage("fail.notEnoughMoney", null, null));
-        }
-
-        for (FieldError error: bindingResult.getFieldErrors()) {
-            return ApiResponse.ofError(error.getDefaultMessage());
-        }
-        if (bindingResult.hasErrors()) {
-            return ApiResponse.ofError(messageSource.getMessage("error", null, null));
-        }
-
-        Long orderId;
-        try {
-            orderId = orderService.createOrder(id, orderCreateParam);
-
-            // 학습용 홈페이지이므로 주문을 하자마자 배송완료 처리
-            orderService.completeDelivery(orderId);
-        } catch (IllegalArgumentException e) {
-
-            return ApiResponse.ofError(messageSource.getMessage("fail.payment", null, null));
-        }
-        return ApiResponse.ofSuccess(orderId);
     }
 
     private List<ItemCountRequest> parseItemRequests(Map<String, String> paramMap) {

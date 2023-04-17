@@ -1,21 +1,25 @@
-package prettypop.shop.controller;
+package prettypop.shop.restcontroller;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import prettypop.shop.configuration.annotation.Login;
-import prettypop.shop.controller.response.ApiResponse;
 import prettypop.shop.dto.item.ItemCountRequest;
-import prettypop.shop.controller.request.ItemRequest;
+import prettypop.shop.restcontroller.request.ItemRequest;
+import prettypop.shop.restcontroller.response.ApiResponse;
 import prettypop.shop.service.ItemService;
 
 @Slf4j
 @RequiredArgsConstructor
+@Api(tags = "item", description = "상품")
 @RestController
-public class ItemApiController {
+public class ItemRestController {
 
     private final ItemService itemService;
 
+    @ApiOperation(value = "장바구니에 상품 추가")
     @PostMapping("/cart")
     public ApiResponse addCartItem(@Login Long memberId,
                                    @RequestBody ItemCountRequest itemRequest) {
@@ -32,6 +36,7 @@ public class ItemApiController {
         return ApiResponse.ofSuccess();
     }
 
+    @ApiOperation(value = "장바구니 상품 개수 수정")
     @PutMapping("/cart")
     public ApiResponse updateCartItem(@Login Long memberId,
                                       @RequestBody ItemCountRequest itemRequest) {
@@ -48,6 +53,7 @@ public class ItemApiController {
         return ApiResponse.ofSuccess();
     }
 
+    @ApiOperation(value = "장바구니 상품 삭제")
     @DeleteMapping("/cart")
     public ApiResponse deleteCartItems(@Login Long memberId,
                                        @RequestBody ItemRequest itemRequest) {
@@ -55,6 +61,7 @@ public class ItemApiController {
         return ApiResponse.ofSuccess();
     }
 
+    @ApiOperation(value = "찜 목록에 상품 추가")
     @PostMapping("/wish")
     public ApiResponse addWish(@Login Long memberId,
                                @RequestBody ItemRequest itemRequest) {
@@ -66,6 +73,7 @@ public class ItemApiController {
         return ApiResponse.ofSuccess();
     }
 
+    @ApiOperation(value = "찜 목록 상품 삭제")
     @DeleteMapping("/wish")
     public ApiResponse deleteWish(@Login Long memberId,
                                   @RequestBody ItemRequest itemRequest) {
