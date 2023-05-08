@@ -99,6 +99,9 @@ public class MemberService {
     }
 
     private void validateDuplicateEmail(String email) {
+        if (email.isEmpty()) {
+            return;
+        }
         memberRepository.findByEmail(email)
                 .ifPresent(m -> {
                     throw new MemberEmailDuplicateException();
