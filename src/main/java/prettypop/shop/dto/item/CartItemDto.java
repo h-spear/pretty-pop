@@ -32,4 +32,16 @@ public class CartItemDto {
                 .thumbnailImageUrl(item.getThumbnailImageUrl())
                 .build();
     }
+
+    public static CartItemDto of(Item item, int count) {
+        return CartItemDto.builder()
+                .itemId(item.getId())
+                .itemName(item.getName())
+                .originalPrice(item.getOriginalPrice())
+                .purchasePrice(item.getPurchasePrice())
+                .discountRate((int) ((double) (item.getOriginalPrice() - item.getPurchasePrice()) * 100 / (double) item.getOriginalPrice()))
+                .count(count)
+                .thumbnailImageUrl(item.getThumbnailImageUrl())
+                .build();
+    }
 }

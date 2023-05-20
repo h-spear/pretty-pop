@@ -1,16 +1,17 @@
 package prettypop.shop.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import nonapi.io.github.classgraph.json.JSONUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.*;
 import prettypop.shop.configuration.annotation.Login;
+import prettypop.shop.dto.item.CartItemDto;
 import prettypop.shop.dto.member.MemberDto;
 import prettypop.shop.dto.member.MemberRegisterParam;
 import prettypop.shop.dto.member.MemberUpdateParam;
@@ -19,7 +20,20 @@ import prettypop.shop.exception.MemberUsernameDuplicateException;
 import prettypop.shop.exception.PasswordConfirmNotMatchException;
 import prettypop.shop.service.ItemService;
 import prettypop.shop.service.MemberService;
+import prettypop.shop.utils.JsonUtils;
 import prettypop.shop.validation.ValidationSequence;
+import springfox.documentation.spring.web.json.Json;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -109,10 +123,33 @@ public class MemberController {
 
     @GetMapping("/cart")
     public String cart(@Login Long id,
-                       Model model) {
+                       Model model,
+                       @CookieValue(name = "cartItemCookie", required = false) Cookie cartItemCookie) throws JsonProcessingException {
+
         log.info("장바구니 컨트롤러 id={}", id);
-        model.addAttribute("cartList", itemService.getCartList(id));
+        if (id == null) {
+            if (cartItemCookie == null) {
+                model.addAttribute("cartList", new ArrayList<>());
+            } else {
+                String json = JsonUtils.decodeJsonString(cartItemCookie.getValue());
+                Map<String, Object> objectMap = JsonUtils.jsonToMap(json);
+                Map<Long, Integer> itemQuantityMap = generateItemQuantityMap(objectMap);
+                model.addAttribute("cartList", itemService.getCartListByMap(itemQuantityMap));
+            }
+        } else {
+            model.addAttribute("cartList", itemService.getCartList(id));
+        }
         return "member/item/shoppingCart";
+    }
+
+    private static Map<Long, Integer> generateItemQuantityMap(Map<String, Object> objectMap) {
+        Map<Long, Integer> itemQuantityMap = new HashMap<>();
+        for (Map.Entry<String, Object> entry: objectMap.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            itemQuantityMap.put(Long.parseLong(key), (Integer) value);
+        }
+        return itemQuantityMap;
     }
 
     private MemberUpdateParam getUpdateForm(Long id) {

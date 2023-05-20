@@ -109,6 +109,12 @@ public class ItemService {
                 .collect(Collectors.toList());
     }
 
+    public List<CartItemDto> getCartListByMap(Map<Long, Integer> itemQuantityMap) {
+        return itemRepository.findAllById(itemQuantityMap.keySet()).stream()
+                .map(item -> CartItemDto.of(item, itemQuantityMap.get(item.getId())))
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public void addWish(Long memberId, Long itemId) {
         log.info("찜 목록 아이템 추가 로직 실행");
