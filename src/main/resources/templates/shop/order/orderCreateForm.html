@@ -119,8 +119,9 @@
                     <textarea class="form-control" id="deliveryMemo" rows="3"></textarea>
                 </div>
                 <button class="btn btn-primary mt-5 w-75"
-                        onclick="generateRandomDeliveryInfo()">
-                    자동으로 배송정보 생성하기
+                        onclick="generateRandomDeliveryInfo()"
+                        th:text="#{button.randomDeliveryInfo}">
+
                 </button>
             </div>
         </section>
@@ -212,8 +213,7 @@
             document.getElementById("address").value = '충남 논산시 시민로 339';
             document.getElementById("jibunAddress").value = '충남 논산시 취암동 898';
             document.getElementById("detailAddress").value = '예쁜글씨&예쁜디자인';
-            document.getElementById("deliveryMemo").value = '학습용으로 제작된 사이트입니다.\n' +
-                '주문 후 바로 배송완료 상태가 됩니다.';
+            document.getElementById("deliveryMemo").value = [[#{message.autoDeliveryMemo}]];
         }
 
         function generateRandomName() {

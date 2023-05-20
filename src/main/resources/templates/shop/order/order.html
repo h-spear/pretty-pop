@@ -152,6 +152,7 @@
                 <div class="form-group w-75">
                     <label for="deliveryMemo" class="form-label mt-4" th:text="#{form.deliveryMemo}">Example textarea</label>
                     <textarea class="form-control" id="deliveryMemo" rows="8" th:disabled="true"
+                              th:field="${order.memo}"
                               style="resize: none"></textarea>
                 </div>
             </div>
