@@ -118,6 +118,10 @@
                     <label for="deliveryMemo" class="form-label mt-4" th:text="#{form.deliveryMemo}">Example textarea</label>
                     <textarea class="form-control" id="deliveryMemo" rows="3"></textarea>
                 </div>
+                <button class="btn btn-primary mt-5 w-75"
+                        onclick="generateRandomDeliveryInfo()">
+                    자동으로 배송정보 생성하기
+                </button>
             </div>
         </section>
 
@@ -199,6 +203,34 @@
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <script th:inline="javascript">
         const deliveryFee = 3000;
+
+        function generateRandomDeliveryInfo() {
+            event.preventDefault();
+            document.getElementById('recipientName').value = generateRandomName();
+            document.getElementById('recipientContact').value = generateRandomPhoneNumber();
+            document.getElementById('zipcode').value = 32976;
+            document.getElementById("address").value = '충남 논산시 시민로 339';
+            document.getElementById("jibunAddress").value = '충남 논산시 취암동 898';
+            document.getElementById("detailAddress").value = '예쁜글씨&예쁜디자인';
+            document.getElementById("deliveryMemo").value = '학습용으로 제작된 사이트입니다.\n' +
+                '주문 후 바로 배송완료 상태가 됩니다.';
+        }
+
+        function generateRandomName() {
+            const first = '김이박최정강조윤장임한오서신권황안송전홍유고문양손배조백허유남심노정하곽성차주우구신임전민유류나진지엄채원천방공강현함변염양변여추노도소신석선설마길주연방위표명기반라왕금옥육인맹제모장남탁국여진어은편';
+            const name = '가각간갈감갑강개객갱객갱갹거건걸검겁게격견결겸경계고곡곤골공곶과곽관괄광괘괴괵굉교구국군굴궁권궐궤귀규균귤극근글녑녕노농뇌뇨누눈눌뉴뉵늘능니닉닐다단달담답당대댁덕도독등라락란랄람랍랑래랭략량려력련렬렴렵령례로록론롱뢰료룡루류만말망매맥맹멱면멸명몌모목몰몽묘무묵문물미민밀박반발방보복본볼봉부북분불붕비빈빙사삭산살삼삽상새색생서석선설섬섭성세소속손솔송쇄쇠수숙순술숭쉬슬습승시식신실심십쌍씨아악안알암압앙애액앵야약양어억언얼엄업에엔여역연열염엽영예오옥온올옹와완왈왕의이익인일임입잉자작잔잠잡장재쟁저적전절점접정제조족존졸종좌죄주죽준줄중즉즐즙증지직진질짐집징차착찬측층치칙친칠침칩칭쾌타탁탄탈탐탑탕태택탱터토톤통퇴투퉁특틈파판팔패팽퍅편폄평폐포폭표품풍피픽필핍하학한할함합항호혹혼홀홍화확환활황회획횡효후훈훌훙훤훼휘휴휼흉흑흔흘흠흡흥희히';
+            const idx1 = Math.floor(Math.random() * first.length);
+            const idx2 = Math.floor(Math.random() * name.length);
+            const idx3 = Math.floor(Math.random() * name.length);
+            return first[idx1] + name[idx2] + name[idx3];
+        }
+
+        function generateRandomPhoneNumber() {
+            let phoneNumber = '010-';
+            phoneNumber += Math.floor(Math.random() * 10000).toString().padStart(4, '0') + '-';
+            phoneNumber += Math.floor(Math.random() * 10000).toString().padStart(4, '0');
+            return phoneNumber;
+        }
 
         function pointAllUse() {
             const totalItemPrice = [[${orderCreateForm.totalItemPrice}]] + deliveryFee;
