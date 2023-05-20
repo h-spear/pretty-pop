@@ -54,6 +54,16 @@
             color: var(--bs-info) !important;
         }
 
+        .filter-reset-btn {
+            background-color: var(--bs-secondary);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .filter-reset-btn:hover {
+            background-color: #e50000;
+        }
+
         .card:hover .badge-cart{
             color: var(--bs-secondary);
             transition: 0.2s;
@@ -69,7 +79,6 @@
                 <span id="item-category">CATEGORY</span>
             </div>
             <div id="item-searchConditionBox" class="mt-3 p-2">
-
                 <!-- Sort -->
                 <div class="mt">
                     <span style="font-size: 15px; font-weight: 700" th:text="#{item.search.sorting}">Sorting</span>
@@ -395,6 +404,16 @@
         setSizeSelectBox();
         setFilter();
 
+        function resetFilter() {
+            const urlParams = getUrlParams();
+            setSearchParam(urlParams, 'order', '');
+            setSearchParam(urlParams, 'page', '');
+            setSearchParam(urlParams, 'ratingGe', '');
+            setSearchParam(urlParams, 'priceGe', '');
+            setSearchParam(urlParams, 'priceLe', '');
+            refreshUrl(urlParams);
+        }
+
         function setFilter() {
             const selectFilter = document.querySelector('#selectFilter');
             const urlParams = getUrlParams();
@@ -403,6 +422,18 @@
             const ratingGe = urlParams.get('ratingGe');
             const priceGe = urlParams.get('priceGe');
             const priceLe = urlParams.get('priceLe');
+
+            if (order || priceGe || priceLe || ratingGe) {
+                const element = document.createElement('p');
+                element.classList.add('badge');
+                element.classList.add('rounded-pill');
+                element.classList.add('me-2');
+                element.classList.add('filter-reset-btn');
+                element.setAttribute('onclick', 'resetFilter()');
+                element.innerText = [[#{item.search.filterReset}]];
+                selectFilter.appendChild(element);
+            }
+
             if (order) {
                 const element = document.createElement('p');
                 element.classList.add('badge');
