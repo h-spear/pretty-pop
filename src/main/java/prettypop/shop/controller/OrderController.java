@@ -20,8 +20,13 @@ import prettypop.shop.entity.Member;
 import prettypop.shop.repository.MemberRepository;
 import prettypop.shop.service.ItemService;
 import prettypop.shop.service.OrderService;
+import prettypop.shop.utils.CookieConst;
+import prettypop.shop.utils.JsonUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -43,7 +48,7 @@ public class OrderController {
                            @PathVariable("orderId") Long orderId,
                            Model model) {
         OrderDto orderDto = orderService.getOrder(orderId);
-        if (!orderDto.getOrdererId().equals(id)) {
+        if (id != null && !orderDto.getOrdererId().equals(id)) {
             return "redirect:/home";
         }
         model.addAttribute("order", orderDto);
@@ -69,15 +74,21 @@ public class OrderController {
     public String createOrderForm(@Login Long id,
                                   @RequestParam Map<String, String> paramMap,
                                   Model model) {
-        Member member = memberRepository.findById(id).orElse(null);
-        if (member == null) {
-            return "redirect:/home";
-        }
         List<ItemCountRequest> itemRequests = parseItemRequests(paramMap);
         List<OrderItemDto> orderItemDtos = itemService.getOrderItems(itemRequests);
         OrderCreateForm orderCreateForm = new OrderCreateForm();
         fillOrderItemInfo(orderCreateForm, orderItemDtos);
-        fillOrderRecipientInfo(orderCreateForm, member);
+        if (id == null) {
+            orderItemDtos.forEach(
+                    orderItemDto -> orderItemDto.setEarnedPoint(0));
+            orderCreateForm.setEarnedPoint(0);
+        } else {
+            Member member = memberRepository.findById(id).orElse(null);
+            if (member == null) {
+                return "redirect:/home";
+            }
+            fillOrderRecipientInfo(orderCreateForm, member);
+        }
         model.addAttribute("orderCreateForm", orderCreateForm);
         return "shop/order/orderCreateForm";
     }

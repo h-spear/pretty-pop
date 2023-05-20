@@ -10,12 +10,16 @@ import org.springframework.transaction.annotation.Transactional;
 import prettypop.shop.dto.member.MemberDto;
 import prettypop.shop.dto.member.MemberRegisterParam;
 import prettypop.shop.dto.member.MemberUpdateParam;
+import prettypop.shop.entity.Address;
+import prettypop.shop.entity.Gender;
 import prettypop.shop.entity.Member;
 import prettypop.shop.exception.MemberEmailDuplicateException;
 import prettypop.shop.exception.MemberNicknameDuplicateException;
 import prettypop.shop.exception.MemberUsernameDuplicateException;
 import prettypop.shop.exception.PasswordConfirmNotMatchException;
 import prettypop.shop.repository.MemberRepository;
+
+import java.time.LocalDate;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -24,11 +28,28 @@ import prettypop.shop.repository.MemberRepository;
 public class MemberService {
 
     // 계정 생성 시 지급되는 포인트
-    @Value("${application.join-base-point}")
-    private static int BASE_POINT;
+    private static final int BASE_POINT = 1000000000;
 
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
+
+    @Transactional
+    public Long createDummyMember() {
+        Member member = Member.builder()
+                .username("NM_" + RandomString.make(10))
+                .password(passwordEncoder.encode("password"))
+                .name("NonMember")
+                .nickname(generateRandomNickname())
+                .gender(Gender.MALE)
+                .birthDate(LocalDate.now())
+                .address(new Address("", "", "", ""))
+                .phoneNumber("")
+                .email("")
+                .point(BASE_POINT)
+                .build();
+        memberRepository.save(member);
+        return member.getId();
+    }
 
     @Transactional
     public Long join(MemberRegisterParam param) {

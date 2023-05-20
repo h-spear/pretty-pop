@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="fragment/layout :: html(#{title.order}, ~{::main})">
 
 
@@ -46,9 +47,10 @@
                                   class="text-muted text-decoration-line-through">$20.00</span>
                         </div>
                         <span th:text="|${item.purchasePrice * item.quantity}#{unit.money}|"
-                           style="font-size: 18px" class="fw-bold text-dark m-0">$18.00</span>
-                        <span th:text="|(+${item.earnedPoint * item.quantity}#{unit.point})|"
-                           style="font-size: 12px" class="fw-bold text-info m-0">2P</span>
+                              style="font-size: 18px" class="fw-bold text-dark m-0">$18.00</span>
+                        <span th:if="${item.earnedPoint * item.quantity > 0}"
+                              th:text="|(+${item.earnedPoint * item.quantity}#{unit.point})|"
+                              style="font-size: 12px" class="fw-bold text-info m-0">2P</span>
 
                         <div class="input-group mt-2 d-flex align-items-center">
                             <input class="form-control text-center px-1" style="max-width: 80px"
@@ -59,7 +61,8 @@
                     </div>
                 </div>
 
-                <p class="mt-4 fs-6" th:text="#{message.earnedPoint(${orderCreateForm.getEarnedPoint()})}">
+                <p sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')"
+                   class="mt-4 fs-6" th:text="#{message.earnedPoint(${orderCreateForm.getEarnedPoint()})}">
                 </p>
             </div>
         </section>
@@ -127,9 +130,12 @@
         <section class="max-width-700 pt-3 w-100">
             <div class="d-flex flex-column align-items-center mb-2 p-4 fw-bold" style="font-size: 16px; color: black">
                 <div class="form-group d-flex m-4 w-75 justify-content-center align-items-center">
-                    <p class="text-center text-danger">
+                    <p class="text-center text-danger" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
                         <span th:text="#{message.order}"> </span><br>
                         <span th:text="#{message.order2}"> </span>
+                    </p>
+                    <p class="text-center text-danger" sec:authorize="isAnonymous()">
+                        <span th:text="#{message.orderNotLogin}"> </span><br>
                     </p>
                 </div>
                 <div class="form-group d-flex m-2 w-75 align-items-center">
@@ -154,11 +160,12 @@
                         <input type="number" class="form-control w-100" id="paymentAmount" th:value="${orderCreateForm.totalItemPrice + 3000}" readonly>
                     </div>
                 </div>
-                <div class="form-group d-flex m-2 mt-5 w-75 align-items-center">
-                    <label for="usedPoint" class="form-label m-0 me-3" style="width: 200px"
+                <div class="form-group d-flex m-2 mt-5 w-75 align-items-center"
+                     sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
+                    <label class="form-label m-0 me-3" style="width: 200px"
                            th:text="#{form.order.usePoint}"></label>
                     <div class="input-group w-100 d-flex">
-                        <input type="number" class="form-control" id="usedPoint"
+                        <input type="number" class="form-control usedPoint"
                                th:onchange="calculatePay()"
                                value="0">
                         <button class="btn btn-primary" type="button" th:text="#{button.pointAllUse}"
@@ -166,12 +173,17 @@
                                 id="button-allUse">Button</button>
                     </div>
                 </div>
-                <div class="form-group d-flex m-2 w-75 align-items-center">
-                    <label for="userPoint" class="form-label m-0 me-3" style="width: 200px"
+                <div class="form-group d-flex m-2 w-75 align-items-center"
+                     sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
+                    <label class="form-label m-0 me-3" style="width: 200px"
                            th:text="#{form.order.userPoint}"></label>
                     <div class="w-100">
-                        <input type="number" class="form-control w-100" id="userPoint" th:field="${orderCreateForm.userPoint}" disabled="true">
+                        <input type="number" class="form-control w-100 userPoint" th:field="${orderCreateForm.userPoint}" disabled="true">
                     </div>
+                </div>
+                <div sec:authorize="isAnonymous()">
+                    <input type="hidden" class="userPoint">
+                    <input type="hidden" class="usedPoint">
                 </div>
             </div>
         </section>
@@ -191,15 +203,15 @@
         function pointAllUse() {
             const totalItemPrice = [[${orderCreateForm.totalItemPrice}]] + deliveryFee;
             const havingPoint = [[${orderCreateForm.userPoint}]] * 1;
-            document.querySelector('#usedPoint').value = Math.min(havingPoint, totalItemPrice);
+            document.querySelector('.usedPoint').value = Math.min(havingPoint, totalItemPrice);
             calculatePay();
         }
 
         function calculatePay() {
             const totalItemPrice = [[${orderCreateForm.totalItemPrice}]];
             const orgUserPoint = [[${orderCreateForm.userPoint}]];
-            const usedPoint = document.querySelector('#usedPoint');
-            const userPoint = document.querySelector('#userPoint');
+            const usedPoint = document.querySelector('.usedPoint');
+            const userPoint = document.querySelector('.userPoint');
             const paymentAmount = document.querySelector('#paymentAmount');
             if (usedPoint.value * 1 < 0) {
                 usedPoint.value = 0;
@@ -212,7 +224,7 @@
 
         function order() {
             event.preventDefault();
-            const usedPoint = document.querySelector('#usedPoint').value;
+            const usedPoint = document.querySelector('.usedPoint').value;
             const orderItems = [[${orderCreateForm.orderItemDtos}]];
             const recipientName = document.querySelector('#recipientName').value;
             const recipientContact =document.querySelector('#recipientContact').value;

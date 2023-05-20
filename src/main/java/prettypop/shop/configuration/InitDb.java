@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Profile("local")
-@Component
+//@Component
 @RequiredArgsConstructor
 public class InitDb {
 
@@ -27,7 +27,7 @@ public class InitDb {
         initService.dbInit();
     }
 
-    @Component
+//    @Component
     @Transactional
     @RequiredArgsConstructor
     static class InitService {

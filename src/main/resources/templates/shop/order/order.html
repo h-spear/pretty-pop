@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="fragment/layout :: html(#{title.order}, ~{::main})">
 
 
@@ -90,6 +91,7 @@
                         <span th:text="|${item.purchasePrice * item.quantity}#{unit.money}|"
                               style="font-size: 18px" class="fw-bold text-dark m-0">$18.00</span>
                         <span th:text="|(+${item.earnedPoint * item.quantity}#{unit.point})|"
+                              sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')"
                               style="font-size: 12px" class="fw-bold text-info m-0">2P</span>
 
                         <div class="input-group mt-2 d-flex align-items-center">

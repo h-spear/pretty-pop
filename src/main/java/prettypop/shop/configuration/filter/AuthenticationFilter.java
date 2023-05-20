@@ -19,10 +19,11 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthenticationFilter extends GenericFilterBean {
 
-    private static final String[] whiteList = {"/", "/home", "/join", "/login", "/logout", "/refresh",
-                                                "/use", "/company", "/notice", "/cs-center", // "/language",
-                                                "/items", "/items/*", "/member/username/*", "/member/email/*",
-                                                "/cart", "/cart/*"};
+//    private static final String[] whiteList = {"/", "/home", "/join", "/login", "/logout", "/refresh",
+//                                                "/use", "/company", "/notice", "/cs-center", // "/language",
+//                                                "/items", "/items/*", "/member/username/*", "/member/email/*",
+//                                                "/cart", "/cart/*"};
+    private static final String[] checkList = {"/wish", "/member"};
 
     private final JwtTokenUtils jwtTokenUtils;
     private final SecurityContextUtils securityContextUtils;
@@ -56,6 +57,6 @@ public class AuthenticationFilter extends GenericFilterBean {
     }
 
     private boolean isAuthenticationCheckPath(String requestURI) {
-        return !PatternMatchUtils.simpleMatch(whiteList, requestURI);
+        return PatternMatchUtils.simpleMatch(checkList, requestURI);
     }
 }

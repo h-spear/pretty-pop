@@ -88,14 +88,8 @@
                                        th:onchange="validateCount()"/>
                                 <!-- 구매하기 버튼 -->
                                 <div>
-                                    <a class="btn btn-outline-primary flex-shrink-0" type="button"
-                                            th:href="@{/login(redirectURL='/items/' + ${item.id})}"
-                                            sec:authorize="isAnonymous()">
-                                        <span th:text="#{button.item.buy}">buy</span>
-                                    </a>
                                     <button class="btn btn-outline-primary flex-shrink-0" type="button"
-                                            th:onclick="createOrder()"
-                                            sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
+                                            th:onclick="createOrder()">
                                         <span th:text="#{button.item.buy}">buy</span>
                                     </button>
                                 </div>
@@ -133,10 +127,10 @@
                     <span th:text="|(*{reviewCount})|">123</span>
                 </div>
                 <div class="me-4 mb-1">
-                    <a class="btn btn-primary btn-sm" style="width: 150px"
-                       th:href="@{/login(redirectURL='/items/' + ${item.id})}"
-                       th:text="#{button.review}"
-                       sec:authorize="isAnonymous()">Primary</a>
+                    <button type="button" class="btn btn-primary btn-sm" style="width: 150px"
+                            th:text="#{button.review}"
+                            sec:authorize="isAnonymous()"
+                            th:onclick="reviewAlert()">Primary</button>
                     <button type="button" class="btn btn-primary btn-sm" style="width: 150px"
                             th:text="#{button.review}"
                             sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')"
@@ -263,6 +257,10 @@
                 reviewToggleIcon.classList.remove('fa-chevron-up');
                 reviewToggleMsg.innerText = [[#{button.readReview}]];
             }
+        }
+
+        function reviewAlert() {
+            alert([[#{message.reviewNotLogin}]]);
         }
 
         function validateCount() {
