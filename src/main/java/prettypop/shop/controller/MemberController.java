@@ -20,6 +20,7 @@ import prettypop.shop.exception.MemberUsernameDuplicateException;
 import prettypop.shop.exception.PasswordConfirmNotMatchException;
 import prettypop.shop.service.ItemService;
 import prettypop.shop.service.MemberService;
+import prettypop.shop.utils.CookieConst;
 import prettypop.shop.utils.JsonUtils;
 import prettypop.shop.validation.ValidationSequence;
 import springfox.documentation.spring.web.json.Json;
@@ -124,15 +125,15 @@ public class MemberController {
     @GetMapping("/cart")
     public String cart(@Login Long id,
                        Model model,
-                       @CookieValue(name = "cartItemCookie", required = false) Cookie cartItemCookie) throws JsonProcessingException {
+                       HttpServletRequest request) throws JsonProcessingException {
 
         log.info("장바구니 컨트롤러 id={}", id);
         if (id == null) {
-            if (cartItemCookie == null) {
+            String cookieValue = JsonUtils.getCookieValue(request, CookieConst.CART_ITEMS_COOKIE);
+            if (cookieValue == null) {
                 model.addAttribute("cartList", new ArrayList<>());
             } else {
-                String json = JsonUtils.decodeJsonString(cartItemCookie.getValue());
-                Map<String, Object> objectMap = JsonUtils.jsonToMap(json);
+                Map<String, Object> objectMap = JsonUtils.jsonToMap(cookieValue);
                 Map<Long, Integer> itemQuantityMap = generateItemQuantityMap(objectMap);
                 model.addAttribute("cartList", itemService.getCartListByMap(itemQuantityMap));
             }

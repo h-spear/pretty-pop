@@ -101,27 +101,20 @@
                                 </div>
                                 <!-- 장바구니 버튼 -->
                                 <div>
-                                    <a class="btn btn-outline-dark flex-shrink-0 ms-3" type="button"
-                                       th:href="@{/login(redirectURL='/items/' + ${item.id})}"
-                                       sec:authorize="isAnonymous()">
-                                        <span th:text="#{button.item.cart}">cart</span>
-                                    </a>
+<!--                                    <a class="btn btn-outline-dark flex-shrink-0 ms-3" type="button"-->
+<!--                                       th:href="@{/login(redirectURL='/items/' + ${item.id})}"-->
+<!--                                       sec:authorize="isAnonymous()">-->
+<!--                                        <span th:text="#{button.item.cart}">cart</span>-->
+<!--                                    </a>-->
                                     <button class="btn btn-outline-dark flex-shrink-0 ms-3" type="button"
-                                            onclick="addCart()"
-                                            sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
+                                            onclick="addCart()">
                                         <span th:text="#{button.item.cart}">cart</span>
                                     </button>
                                 </div>
                                 <!-- 찜하기 버튼 -->
-                                <div>
-                                    <a class="btn btn-outline-dark flex-shrink-0 ms-3" type="button"
-                                       th:href="@{/login(redirectURL='/items/' + ${item.id})}"
-                                       sec:authorize="isAnonymous()">
-                                        <span th:text="#{button.item.wish}">wish</span>
-                                    </a>
+                                <div sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
                                     <button class="btn btn-outline-dark flex-shrink-0 ms-3" type="button"
-                                            onclick="addWishList()"
-                                            sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
+                                            onclick="addWishList()">
                                         <span th:text="#{button.item.wish}">wish</span>
                                     </button>
                                 </div>

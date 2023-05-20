@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -14,25 +17,33 @@ public class JsonUtils {
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static String decodeJsonString(String json) {
-        return URLDecoder.decode(json, StandardCharsets.UTF_8);
+    public static void addCookie(HttpServletResponse response,
+                                 String cookieName, String value) {
+        String encoded = URLEncoder.encode(value, StandardCharsets.UTF_8);
+        Cookie cookie = new Cookie(cookieName, encoded);
+        response.addCookie(cookie);
     }
 
-    public static String encodeJsonString(String json) {
-        return URLEncoder.encode(json, StandardCharsets.UTF_8);
+    public static String getCookieValue(HttpServletRequest request,
+                                        String cookieName) {
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie: cookies) {
+            if (cookie.getName().equals(cookieName)) {
+                return URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8);
+            }
+        }
+        return null;
     }
 
     public static <K, V> String mapToJson(Map<K, V> map) {
         try {
-            String string = objectMapper.writeValueAsString(map);
-            return URLEncoder.encode(string, StandardCharsets.UTF_8);
+            return objectMapper.writeValueAsString(map);
         } catch (JsonProcessingException e) {
             return null;
         }
     }
 
     public static Map<String, Object> jsonToMap(String string) {
-        string = URLDecoder.decode(string, StandardCharsets.UTF_8);
         try {
             return objectMapper.readValue(string, new TypeReference<Map<String, Object>>() {});
         } catch (JsonProcessingException e) {
