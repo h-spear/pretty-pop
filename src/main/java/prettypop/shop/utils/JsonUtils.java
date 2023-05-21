@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,12 +28,14 @@ public class JsonUtils {
     public static String getCookieValue(HttpServletRequest request,
                                         String cookieName) {
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie: cookies) {
-            if (cookie.getName().equals(cookieName)) {
-                return URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8);
-            }
+        if (cookies == null) {
+            return "{}";
         }
-        return null;
+        return Arrays.stream(cookies)
+                .filter(cookie -> cookie.getName().equals(cookieName))
+                .findFirst()
+                .map(cookie -> URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8))
+                .orElse("{}");
     }
 
     public static <K, V> String mapToJson(Map<K, V> map) {

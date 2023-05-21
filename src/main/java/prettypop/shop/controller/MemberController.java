@@ -1,17 +1,17 @@
 package prettypop.shop.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import nonapi.io.github.classgraph.json.JSONUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import prettypop.shop.configuration.annotation.Login;
-import prettypop.shop.dto.item.CartItemDto;
 import prettypop.shop.dto.member.MemberDto;
 import prettypop.shop.dto.member.MemberRegisterParam;
 import prettypop.shop.dto.member.MemberUpdateParam;
@@ -23,17 +23,10 @@ import prettypop.shop.service.MemberService;
 import prettypop.shop.utils.CookieConst;
 import prettypop.shop.utils.JsonUtils;
 import prettypop.shop.validation.ValidationSequence;
-import springfox.documentation.spring.web.json.Json;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -130,13 +123,9 @@ public class MemberController {
         log.info("장바구니 컨트롤러 id={}", id);
         if (id == null) {
             String cookieValue = JsonUtils.getCookieValue(request, CookieConst.CART_ITEMS_COOKIE);
-            if (cookieValue == null) {
-                model.addAttribute("cartList", new ArrayList<>());
-            } else {
-                Map<String, Object> objectMap = JsonUtils.jsonToMap(cookieValue);
-                Map<Long, Integer> itemQuantityMap = generateItemQuantityMap(objectMap);
-                model.addAttribute("cartList", itemService.getCartListByMap(itemQuantityMap));
-            }
+            Map<String, Object> objectMap = JsonUtils.jsonToMap(cookieValue);
+            Map<Long, Integer> itemQuantityMap = generateItemQuantityMap(objectMap);
+            model.addAttribute("cartList", itemService.getCartListByMap(itemQuantityMap));
         } else {
             model.addAttribute("cartList", itemService.getCartList(id));
         }
