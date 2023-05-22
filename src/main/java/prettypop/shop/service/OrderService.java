@@ -6,9 +6,7 @@ import net.bytebuddy.utility.RandomString;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import prettypop.shop.dto.item.ItemCountRequest;
-import prettypop.shop.dto.order.OrderCreateParam;
-import prettypop.shop.dto.order.OrderDto;
-import prettypop.shop.dto.order.OrderSimpleDto;
+import prettypop.shop.dto.order.*;
 import prettypop.shop.entity.*;
 import prettypop.shop.repository.*;
 
@@ -16,6 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,8 +32,8 @@ public class OrderService {
 
     @Transactional
     public Long createOrder(Long memberId, OrderCreateParam orderCreateParam) {
-        Map<Long, Integer> quantityMap = generateQuantityMap(orderCreateParam);
-        List<Long> ids = generateIds(orderCreateParam);
+        Map<Long, Integer> quantityMap = generateQuantityMap(orderCreateParam.getOrderItemRequests());
+        List<Long> ids = generateIds(orderCreateParam.getOrderItemRequests());
 
         // 회원 포인트 사용
         Member member = memberRepository.findById(memberId).orElseThrow(IllegalArgumentException::new);
@@ -84,6 +83,38 @@ public class OrderService {
     }
 
     @Transactional
+    public Long createGuestOrder(OrderGuestCreateParam orderCreateParam) {
+        Map<Long, Integer> quantityMap = generateQuantityMap(orderCreateParam.getOrderItemRequests());
+        List<Long> ids = generateIds(orderCreateParam.getOrderItemRequests());
+
+        // 배송 정보
+        Delivery delivery = Delivery.builder()
+                .recipient(orderCreateParam.getRecipientName())
+                .contact(orderCreateParam.getRecipientContact())
+                .address(orderCreateParam.getRecipientAddress())
+                .memo(orderCreateParam.getMemo())
+                .build();
+        deliveryRepository.save(delivery);
+
+        // 주문 상품
+        List<OrderItem> orderItems = itemRepository.findAllById(ids).stream()
+                .map(item -> OrderItem.createOrderItem(item, quantityMap.get(item.getId())))
+                .collect(Collectors.toList());
+        orderItemRepository.saveAll(orderItems);
+
+        // 주문 정보
+        Order order = Order.guestBuilder()
+                .orderItems(orderItems)
+                .deliveryFee(orderCreateParam.getDeliveryFee())
+                .paymentAmount(orderCreateParam.getPaymentAmount())
+                .delivery(delivery)
+                .guestPassword(orderCreateParam.getGuestPassword())
+                .build();
+        Order savedOrder = orderRepository.save(order);
+        return savedOrder.getId();
+    }
+
+    @Transactional
     public void completeDelivery(Long orderId) {
         Order order = orderRepository.findByIdWithFetchJoin(orderId)
                 .orElseThrow(IllegalArgumentException::new);
@@ -96,20 +127,35 @@ public class OrderService {
         return OrderDto.of(order);
     }
 
+    public OrderGuestDto getGuestOrder(Long orderId, String password) {
+        Order order = orderRepository.findByIdWithFetchJoin(orderId)
+                .orElseThrow(IllegalArgumentException::new);
+        if (!order.getGuestPassword().equals(password)) {
+            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+        return OrderGuestDto.of(order);
+    }
+
+    public boolean checkGuestOrder(Long orderId, String password) {
+        Optional<Order> optional = orderRepository.findById(orderId);
+        return optional.map(order -> order.getGuestPassword().equals(password))
+                .orElse(false);
+    }
+
     public List<OrderSimpleDto> getOrdersByMemberAndDate(Long memberId, int year, int month) {
         return orderRepository.findAllByMemberAndOrderDate(memberId, year, month).stream()
                 .map(order -> OrderSimpleDto.of(order))
                 .collect(Collectors.toList());
     }
 
-    private List<Long> generateIds(OrderCreateParam orderCreateParam) {
-        return orderCreateParam.getOrderItemRequests().stream()
+    private List<Long> generateIds(List<ItemCountRequest> itemRequests) {
+        return itemRequests.stream()
                 .map(ItemCountRequest::getItemId)
                 .collect(Collectors.toList());
     }
 
-    private Map<Long, Integer> generateQuantityMap(OrderCreateParam orderCreateParam) {
-        return orderCreateParam.getOrderItemRequests().stream()
+    private Map<Long, Integer> generateQuantityMap(List<ItemCountRequest> itemRequests) {
+        return itemRequests.stream()
                 .collect(Collectors.toMap(
                         ItemCountRequest::getItemId,
                         ItemCountRequest::getQuantity

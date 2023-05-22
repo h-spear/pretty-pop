@@ -15,6 +15,7 @@ import prettypop.shop.configuration.annotation.Login;
 import prettypop.shop.dto.member.MemberDto;
 import prettypop.shop.dto.member.MemberRegisterParam;
 import prettypop.shop.dto.member.MemberUpdateParam;
+import prettypop.shop.restcontroller.request.GuestOrderSearchRequest;
 import prettypop.shop.exception.MemberEmailDuplicateException;
 import prettypop.shop.exception.MemberUsernameDuplicateException;
 import prettypop.shop.exception.PasswordConfirmNotMatchException;
@@ -25,7 +26,6 @@ import prettypop.shop.utils.JsonUtils;
 import prettypop.shop.validation.ValidationSequence;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -73,6 +73,10 @@ public class MemberController {
     @GetMapping("/member")
     public String myPage(@Login Long id,
                          Model model) {
+        if (id == null) {
+            model.addAttribute("guestOrderSearch", new GuestOrderSearchRequest());
+            return "member/guestPage";
+        }
         model.addAttribute("memberInfo", memberService.getMemberInfo(id));
         return "member/myPage";
     }
@@ -125,7 +129,7 @@ public class MemberController {
             String cookieValue = JsonUtils.getCookieValue(request, CookieConst.CART_ITEMS_COOKIE);
             Map<String, Object> objectMap = JsonUtils.jsonToMap(cookieValue);
             Map<Long, Integer> itemQuantityMap = generateItemQuantityMap(objectMap);
-            model.addAttribute("cartList", itemService.getCartListByMap(itemQuantityMap));
+            model.addAttribute("cartList",  itemService.getCartListByMap(itemQuantityMap));
         } else {
             model.addAttribute("cartList", itemService.getCartList(id));
         }

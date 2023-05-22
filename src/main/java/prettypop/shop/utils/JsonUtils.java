@@ -3,6 +3,7 @@ package prettypop.shop.utils;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.ResponseCookie;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,8 @@ public class JsonUtils {
                                  String cookieName, String value) {
         String encoded = URLEncoder.encode(value, StandardCharsets.UTF_8);
         Cookie cookie = new Cookie(cookieName, encoded);
+        cookie.setPath("/");
+        cookie.setMaxAge(60 * 60 * 24 * 365);
         response.addCookie(cookie);
     }
 

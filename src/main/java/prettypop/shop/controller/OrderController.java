@@ -6,16 +6,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import prettypop.shop.configuration.annotation.Login;
 import prettypop.shop.controller.request.DateRequest;
 import prettypop.shop.dto.item.ItemCountRequest;
-import prettypop.shop.dto.order.OrderCreateForm;
-import prettypop.shop.dto.order.OrderDto;
-import prettypop.shop.dto.order.OrderItemDto;
+import prettypop.shop.dto.order.*;
 import prettypop.shop.entity.Member;
 import prettypop.shop.repository.MemberRepository;
 import prettypop.shop.service.ItemService;
@@ -43,10 +38,24 @@ public class OrderController {
                            @PathVariable("orderId") Long orderId,
                            Model model) {
         OrderDto orderDto = orderService.getOrder(orderId);
-        if (id != null && !orderDto.getOrdererId().equals(id)) {
+        if (!orderDto.getOrdererId().equals(id)) {
             return "redirect:/home";
         }
         model.addAttribute("order", orderDto);
+        return "shop/order/order";
+    }
+
+    @PostMapping("/guest/{orderId}")
+    public String getGuestOrder(@PathVariable("orderId") Long orderId,
+                                @RequestParam String password,
+                                Model model) {
+
+        try {
+            OrderGuestDto orderGuestDto = orderService.getGuestOrder(orderId, password);
+            model.addAttribute("order", orderGuestDto);
+        } catch (IllegalArgumentException e) {
+            return "redirect:/home";
+        }
         return "shop/order/order";
     }
 

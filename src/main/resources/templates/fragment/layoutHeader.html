@@ -79,9 +79,15 @@
             <a href="#" th:text="#{header.button.myPage}" th:href="@{/member}">My page</a>
           </li>
           <li sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
+            <a href="#" th:text="#{header.button.order}" th:href="@{/order}">Order</a>
+          </li>
+          <li sec:authorize="isAnonymous()">
+            <a href="#" th:text="#{header.button.order}" th:href="@{/member}">Order</a>
+          </li>
+          <li sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')">
             <a href="#" th:text="#{header.button.logout}" th:onclick="logout()">Logout</a>
           </li>
-          <li><a href="#" th:text="#{header.button.notice}" th:href="@{/notice}">Notice</a></li>
+<!--          <li><a href="#" th:text="#{header.button.notice}" th:href="@{/notice}">Notice</a></li>-->
           <!--          <li><a href="#" th:text="#{button.csCenter}" th:href="@{/cs-center}">CS Center</a></li>-->
           <li><a href="#" th:text="#{footer.button.use}" th:href="@{/use}">Use</a></li>
           <li sec:authorize="hasAnyRole('ROLE_ADMIN')">

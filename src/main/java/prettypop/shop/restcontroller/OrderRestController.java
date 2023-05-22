@@ -14,10 +14,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import prettypop.shop.configuration.annotation.Login;
 import prettypop.shop.dto.item.ItemCountRequest;
-import prettypop.shop.dto.member.MemberRegisterParam;
 import prettypop.shop.dto.order.OrderCreateParam;
+import prettypop.shop.dto.order.OrderGuestCreateParam;
+import prettypop.shop.dto.order.OrderGuestDto;
+import prettypop.shop.restcontroller.request.GuestOrderSearchRequest;
 import prettypop.shop.restcontroller.response.ApiResponse;
-import prettypop.shop.service.MemberService;
 import prettypop.shop.service.OrderService;
 import prettypop.shop.utils.CookieConst;
 import prettypop.shop.utils.JsonUtils;
@@ -34,7 +35,6 @@ import java.util.Map;
 @RequestMapping("/order")
 public class OrderRestController {
 
-    private final MemberService memberService;
     private final OrderService orderService;
     private final MessageSource messageSource;
 
@@ -46,15 +46,32 @@ public class OrderRestController {
                                    HttpServletRequest request,
                                    HttpServletResponse response) {
 
-        if (id == null) {
-            orderCreateParam.setUsedPoint(orderCreateParam.getPaymentAmount());
-            orderCreateParam.setPaymentAmount(0);
-        } else {
-            // 결제를 구현하지 않기 때문에 모든 포인트를 사용해야만 결제가 되도록 함
-            if (orderCreateParam.getPaymentAmount() != 0) {
-                return ApiResponse.ofError(messageSource.getMessage("fail.notEnoughMoney", null, null));
-            }
+        // 결제를 구현하지 않기 때문에 모든 포인트를 사용해야만 결제가 되도록 함
+        if (orderCreateParam.getPaymentAmount() != 0) {
+            return ApiResponse.ofError(messageSource.getMessage("fail.notEnoughMoney", null, null));
         }
+        for (FieldError error: bindingResult.getFieldErrors()) {
+            return ApiResponse.ofError(error.getDefaultMessage());
+        }
+        if (bindingResult.hasErrors()) {
+            return ApiResponse.ofError(messageSource.getMessage("error", null, null));
+        }
+        Long orderId;
+        try {
+            orderId = orderService.createOrder(id, orderCreateParam);
+            orderService.completeDelivery(orderId);   // 주문을 하자마자 배송완료 처리
+        } catch (IllegalArgumentException e) {
+            return ApiResponse.ofError(messageSource.getMessage("fail.payment", null, null));
+        }
+        return ApiResponse.ofSuccess(orderId);
+    }
+
+    @ApiOperation(value = "비회원 상품 주문")
+    @PostMapping("/guest")
+    public ApiResponse createGuestOrder(@Validated(ValidationSequence.class) @RequestBody OrderGuestCreateParam orderCreateParam,
+                                        BindingResult bindingResult,
+                                        HttpServletRequest request,
+                                        HttpServletResponse response) {
 
         for (FieldError error: bindingResult.getFieldErrors()) {
             return ApiResponse.ofError(error.getDefaultMessage());
@@ -64,16 +81,16 @@ public class OrderRestController {
         }
         Long orderId;
         try {
-            if (id == null) {
-                String cookieValue = JsonUtils.getCookieValue(request, CookieConst.CART_ITEMS_COOKIE);
-                Map<String, Object> objectMap = JsonUtils.jsonToMap(cookieValue);
-                for (ItemCountRequest req: orderCreateParam.getOrderItemRequests()) {
-                    objectMap.remove(req.getItemId().toString());   // 장바구니 상품 제거
-                }
-                JsonUtils.addCookie(response, CookieConst.CART_ITEMS_COOKIE, JsonUtils.mapToJson(objectMap));
-                id = memberService.createDummyMember();
+            String cookieValue = JsonUtils.getCookieValue(request, CookieConst.CART_ITEMS_COOKIE);
+            Map<String, Object> objectMap = JsonUtils.jsonToMap(cookieValue);
+            log.info("!!!!!!!!!!!!!");
+            log.info("{}",objectMap);
+            for (ItemCountRequest req: orderCreateParam.getOrderItemRequests()) {
+                objectMap.remove(req.getItemId().toString());   // 장바구니 상품 제거
             }
-            orderId = orderService.createOrder(id, orderCreateParam);
+            log.info("{}",objectMap);
+            JsonUtils.addCookie(response, CookieConst.CART_ITEMS_COOKIE, JsonUtils.mapToJson(objectMap));
+            orderId = orderService.createGuestOrder(orderCreateParam);
             orderService.completeDelivery(orderId);   // 주문을 하자마자 배송완료 처리
         } catch (IllegalArgumentException e) {
             return ApiResponse.ofError(messageSource.getMessage("fail.payment", null, null));
@@ -81,4 +98,16 @@ public class OrderRestController {
         return ApiResponse.ofSuccess(orderId);
     }
 
+    @ApiOperation(value = "비회원 주문 내역 조회")
+    @PostMapping("/search")
+    public ApiResponse orderSearch(@Validated(ValidationSequence.class) @RequestBody GuestOrderSearchRequest searchRequest,
+                                   BindingResult bindingResult) {
+        for (FieldError error: bindingResult.getFieldErrors()) {
+            return ApiResponse.ofError(error.getDefaultMessage());
+        }
+        if (orderService.checkGuestOrder(searchRequest.getId(), searchRequest.getPassword())) {
+            return ApiResponse.ofSuccess();
+        }
+        return ApiResponse.ofError("존재하지 않는 주문번호이거나 잘못된 비밀번호입니다.");
+    }
 }

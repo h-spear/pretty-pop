@@ -23,7 +23,7 @@ public class AuthenticationFilter extends GenericFilterBean {
 //                                                "/use", "/company", "/notice", "/cs-center", // "/language",
 //                                                "/items", "/items/*", "/member/username/*", "/member/email/*",
 //                                                "/cart", "/cart/*"};
-    private static final String[] checkList = {"/wish", "/member"};
+    private static final String[] checkList = {"/wish"};
 
     private final JwtTokenUtils jwtTokenUtils;
     private final SecurityContextUtils securityContextUtils;

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      th:replace="fragment/layout :: html(#{title.orders}, ~{::main})">
+
+
+<main class="w-100 d-flex justify-content-center my-3">
+    <style>
+    </style>
+
+    <div class="max-width-1000 w-100 d-flex flex-column justify-content-center align-items-center">
+        <div class="border-bottom border-secondary small pb-1 w-100">
+            <span th:text="#{label.myOrder}">My Order</span>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+    </script>
+</main>
+
+</html>

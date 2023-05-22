@@ -17,4 +17,6 @@ public class OrderCreateForm {
     private String recipientContact;
     private Address recipientAddress;
     private String memo;
+
+    private String guestPassword;
 }

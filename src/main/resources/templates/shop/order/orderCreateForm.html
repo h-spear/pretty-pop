@@ -190,13 +190,25 @@
                     <input type="hidden" class="userPoint">
                     <input type="hidden" class="usedPoint">
                 </div>
+                <div sec:authorize="isAnonymous()"
+                     class="form-group d-flex m-2 w-75 align-items-center mt-5">
+                    <label class="form-label m-0 me-3 text-danger" style="width: 200px"
+                           th:text="#{form.order.guestPassword}"></label>
+                    <div class="w-100">
+                        <input type="password" class="form-control w-100 userPoint"
+                               th:field="${orderCreateForm.guestPassword}">
+                    </div>
+                </div>
             </div>
         </section>
 
         <!-- Button -->
         <section class="mb-5">
             <div class="mt-5 mb-2" style="display: flex; justify-content: center">
-                <button th:onclick="order()" class="btn btn-primary fs-4" style="width: 100%" th:text="#{button.order}">Order</button>
+                <button th:onclick="order()" sec:authorize="hasAnyRole('ROLE_ADMIN', 'ROLE_USER')"
+                        class="btn btn-primary fs-4" style="width: 100%" th:text="#{button.order}">Order</button>
+                <button th:onclick="guestOrder()" sec:authorize="isAnonymous()"
+                        class="btn btn-primary fs-4" style="width: 100%" th:text="#{button.order}">Order</button>
             </div>
         </section>
 
@@ -296,10 +308,10 @@
                 async: false,
                 data: JSON.stringify(obj),
                 success: function (result) {
-                    if (result.status == 'success') {
+                    if (result.status === 'success') {
                         flag = true;
                         orderId = result.data;
-                    } else if(result.status == 'fail') {
+                    } else if(result.status === 'fail') {
                         alert('error!!!')
                     } else {
                         alert(result.message);
@@ -312,6 +324,75 @@
 
             const link = "/order/" + orderId
             flag && location.replace(link);
+        }
+
+        function guestOrder() {
+            event.preventDefault();
+            const orderItems = [[${orderCreateForm.orderItemDtos}]];
+            const recipientName = document.querySelector('#recipientName').value;
+            const recipientContact =document.querySelector('#recipientContact').value;
+            const guestPassword = document.querySelector('#guestPassword').value;
+            const recipientAddress = {
+                zipcode: document.querySelector('#zipcode').value,
+                address: document.querySelector('#address').value,
+                jibunAddress: document.querySelector('#jibunAddress').value,
+                detailAddress: document.querySelector('#detailAddress').value,
+            }
+            const deliveryMemo = document.querySelector('#deliveryMemo').value;
+            const orderItemRequests = [];
+            orderItems.forEach(oi => {
+                orderItemRequests.push({itemId: oi.itemId, quantity: oi.quantity})
+            });
+            const obj = {
+                orderItemRequests: orderItemRequests,
+                deliveryFee: 3000,
+                recipientName: recipientName,
+                recipientContact: recipientContact,
+                recipientAddress: recipientAddress,
+                memo: deliveryMemo,
+                guestPassword: guestPassword
+            };
+
+            let flag = false;
+            let orderId;
+            $.ajax({
+                url: "/order/guest",
+                headers: {'Content-Type': 'application/json'},
+                type: 'post',
+                async: false,
+                data: JSON.stringify(obj),
+                success: function (result) {
+                    if (result.status === 'success') {
+                        flag = true;
+                        orderId = result.data;
+                    } else if(result.status === 'fail') {
+                        alert('error!!!')
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert("error!!!");
+                }
+            });
+
+            if (flag) {
+                const form = document.createElement('form');
+                form.setAttribute("charset", "UTF-8");
+                form.setAttribute("accept-charset", "UTF-8");
+                form.setAttribute("role", "form");
+                form.setAttribute("method", "post");
+                form.setAttribute("action", "/order/guest/" + orderId);
+
+                const input = document.createElement("input");
+                input.setAttribute("type", "hidden");
+                input.setAttribute("name", "password");
+                input.setAttribute("type", "password");
+                input.setAttribute("value", guestPassword);
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
         }
     </script>
 

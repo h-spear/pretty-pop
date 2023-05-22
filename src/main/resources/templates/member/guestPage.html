@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="fragment/layout :: html(#{title.myPage}, ~{::main})">
+
+
+<main class="w-100 d-flex justify-content-center">
+    <style>
+        .max-width-700 {
+            max-width: 700px;
+        }
+        .myPageButton {
+            background: transparent;
+            border: none;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            border: var(--bs-primary) solid 1px;
+            border-radius: 10px;
+            color: var(--bs-primary);
+        }
+
+        .myPageButton:hover{
+            transition: 0.3s;
+            background: var(--bs-primary);
+            color: white;
+        }
+    </style>
+
+    <form class="w-100 max-width-1000 d-flex justify-content-center my-3 flex-column align-items-center">
+        <div class="border-bottom border-secondary small pb-1 w-100">
+            <span th:text="#{label.myPage}">My Page</span>
+        </div>
+
+        <div class="max-width-700 py-1 w-100">
+            <!-- 활동내역 -->
+            <section class="max-width-700 p-1 pb-3 w-100 my-2 d-flex justify-content-center flex-column align-items-center">
+                <div class="mt-4 d-flex justify-content-center align-items-center">
+                    <a href="#" th:href="@{/items}" class="myPageButton p-2 mx-2">
+                        <i class="fa-solid fa-bag-shopping fs-4"></i>
+                        <small class="fw-bold mt-1" th:text="#{button.myPage.shopping}">
+                            Shopping
+                        </small>
+                    </a>
+                    <a href="#" th:href="@{/cart}"  class="myPageButton p-2 mx-2">
+                        <i class="fa-solid fa-cart-shopping fs-4"></i>
+                        <small class="fw-bold mt-1" th:text="#{button.myPage.shoppingCart}">
+                            cart
+                        </small>
+                    </a>
+                </div>
+            </section>
+            <div class="bg-secondary border-top my-3"></div>
+            <section class="max-width-700 pt-1 w-100 my-4 d-flex justify-content-center flex-column align-items-center">
+                <h4 class="mb-3" th:text="#{message.orderSearch}"></h4>
+                <h6 class="" th:text="#{message.orderSearch2}"></h6>
+                <h6 class="mb-4" th:text="#{message.orderSearch3}"></h6>
+                <form class="mt-5" th:object="${guestOrderSearch}"
+                      role="form" method="post" action="/order/guest">
+                    <div class="form-group w-75">
+                        <div class="form-floating mb-3">
+                            <input type="text" class="form-control"
+                                   id="id" th:field="*{id}" th:errorclass="is-invalid"
+                                   placeholder="Enter Order Number" th:placeholder="#{form.order.orderNumber.placeholder}">
+                            <label for="id" th:text="#{form.orderNumber}">ID</label>
+                            <div class="invalid-feedback" th:errors="*{id}"></div>
+                        </div>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-group w-75">
+                        <div class="form-floating mb-3">
+                            <input type="password" class="form-control"
+                                   id="password" th:field="*{password}" th:errorclass="is-invalid"
+                                   placeholder="Password" th:placeholder="#{form.password.placeholder}">
+                            <label for="password" th:text="#{form.password}">Password</label>
+                            <div class="invalid-feedback" th:errors="*{password}"></div>
+                        </div>
+                    </div>
+
+                    <!-- Button -->
+                    <div class="w-75 d-flex align-items-center justify-content-center mt-4 mb-0">
+                        <button class="btn btn-primary w-100"
+                                th:onclick="search()"
+                                th:text="#{button.orderSearch}">search</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </form>
+
+    <script th:inline="javascript">
+
+        function search() {
+            event.preventDefault();
+            const orderId = document.querySelector('#id').value;
+            const orderPassword = document.querySelector('#password').value;
+            const obj = {
+                id: orderId,
+                password: orderPassword,
+            };
+
+            let flag;
+            $.ajax({
+                url: "/order/search",
+                headers: {'Content-Type': 'application/json'},
+                type: 'post',
+                async: false,
+                data: JSON.stringify(obj),
+                success: function (result) {
+                    if (result.status === 'success') {
+                        flag = true;
+                    } else if(result.status === 'fail') {
+                        alert('error!!!');
+                    } else {
+                        alert(result.message);
+                    }
+                },
+                error: function () {
+                    alert("error!!!");
+                }
+            });
+
+            if (flag) {
+                const form = document.createElement('form');
+                form.setAttribute("charset", "UTF-8");
+                form.setAttribute("accept-charset", "UTF-8");
+                form.setAttribute("role", "form");
+                form.setAttribute("method", "post");
+                form.setAttribute("action", "/order/guest/" + orderId);
+
+                const input = document.createElement("input");
+                input.setAttribute("type", "hidden");
+                input.setAttribute("name", "password");
+                input.setAttribute("type", "password");
+                input.setAttribute("value", orderPassword);
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+</main>
+
+</html>

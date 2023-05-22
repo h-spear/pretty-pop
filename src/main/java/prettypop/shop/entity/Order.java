@@ -2,6 +2,7 @@ package prettypop.shop.entity;
 
 import lombok.Builder;
 import lombok.Getter;
+import org.aspectj.weaver.ast.Or;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -37,6 +38,9 @@ public class Order extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
+    private boolean guest;
+    private String guestPassword;
+
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "DELIVERY_ID")
     private Delivery delivery;
@@ -47,7 +51,7 @@ public class Order extends BaseEntity {
     @Builder
     public Order(Member member, List<OrderItem> orderItems, int earnedPoint, int usedPoint, int deliveryFee, int paymentAmount, Delivery delivery) {
         setMember(member);
-        orderItems.stream().forEach(orderItem -> orderItem.setOrder(this));
+        orderItems.forEach(orderItem -> orderItem.setOrder(this));
         this.orderDate = LocalDateTime.now();
         this.orderItems = orderItems;
         this.earnedPoint = earnedPoint;
@@ -56,12 +60,29 @@ public class Order extends BaseEntity {
         this.paymentAmount = paymentAmount;
         this.orderStatus = OrderStatus.ORDER;
         setDelivery(delivery);
+        this.guest = false;
+    }
+
+    @Builder(builderClassName = "guestBuilder", builderMethodName = "guestBuilder")
+    public Order(List<OrderItem> orderItems, int deliveryFee, int paymentAmount, Delivery delivery, String guestPassword) {
+        orderItems.forEach(orderItem -> orderItem.setOrder(this));
+        this.member = null;
+        this.orderDate = LocalDateTime.now();
+        this.orderItems = orderItems;
+        this.deliveryFee = deliveryFee;
+        this.paymentAmount = paymentAmount;
+        this.orderStatus = OrderStatus.ORDER;
+        setDelivery(delivery);
+        this.guest = true;
+        this.guestPassword = guestPassword;
     }
 
     public void completeOrder() {
         orderStatus = OrderStatus.COMPLETED;
         delivery.setDeliveryStatus(DeliveryStatus.COMPLETED);
-        member.increasePoint(earnedPoint);
+        if (member != null) {
+            member.increasePoint(earnedPoint);
+        }
     }
 
     public void cancelOrder() {
@@ -77,7 +98,9 @@ public class Order extends BaseEntity {
     }
 
     private void setMember(Member member) {
-        this.member = member;
-        member.getOrders().add(this);
+        if (member != null) {
+            this.member = member;
+            member.getOrders().add(this);
+        }
     }
 }
