@@ -9,7 +9,10 @@ import org.springframework.transaction.annotation.Transactional;
 import prettypop.shop.dto.item.*;
 import prettypop.shop.dto.order.OrderItemDto;
 import prettypop.shop.entity.*;
-import prettypop.shop.repository.*;
+import prettypop.shop.repository.CartItemRepository;
+import prettypop.shop.repository.ItemRepository;
+import prettypop.shop.repository.MemberRepository;
+import prettypop.shop.repository.WishItemRepository;
 import prettypop.shop.repository.query.ItemQueryRepository;
 
 import java.util.*;

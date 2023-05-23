@@ -10,6 +10,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import prettypop.shop.dto.item.ItemCountRequest;
 import prettypop.shop.dto.order.OrderCreateParam;
+import prettypop.shop.dto.order.OrderGuestCreateParam;
 import prettypop.shop.entity.*;
 import prettypop.shop.repository.*;
 
@@ -37,6 +38,7 @@ class OrderServiceTest {
     private static final Long ORDER_ID = 20L;
     private static final String RECIPIENT_NAME = "test";
     private static final String RECIPIENT_CONTACT = "010-1234-5678";
+    private static final String GUEST_PASSWORD = "1234";
     private static final Address RECIPIENT_ADDRESS = new Address("12345", "RoadAddress", "JibunAddress", "Detail");
     private static final String MEMO = "Lorem Ipsum is simply dummy text of the printing and typesetting industry.";
     private static final int EARNED_POINT = 1000;
@@ -63,7 +65,7 @@ class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("상품 주문에 성공한다")
+    @DisplayName("회원이 상품 주문에 성공한다")
     void createOrderTest() throws Exception {
         // given
         OrderCreateParam orderParam = getOrderCreateParam();
@@ -95,7 +97,30 @@ class OrderServiceTest {
     }
 
     @Test
-    @DisplayName("배송이 완료되면 회원에게 포인트가 지급되고 배송 완료, 주문 완료 상태가 된다.")
+    @DisplayName("비회원으로 상품 주문에 성공한다")
+    void createGuestOrderTest() throws Exception {
+        // given
+        OrderGuestCreateParam orderParam = getOrderGuestCreateParam();
+
+        // when
+        orderService.createGuestOrder(orderParam);
+
+        // then
+        // 배송 정보를 저장한다.
+        verify(deliveryRepository, times(1)).save(any(Delivery.class));
+
+        // OrderItem 저장한다.
+        verify(orderItemRepository, times(1)).saveAll(any(Iterable.class));
+
+        // 주문 정보를 저장한다.
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.ORDER);
+        assertThat(order.getOrderItems().size()).isEqualTo(3);
+        assertThat(order.getOrderItems()).contains(orderItems.get(0), orderItems.get(1), orderItems.get(2));
+        verify(orderRepository, times(1)).save(any(Order.class));
+    }
+
+    @Test
+    @DisplayName("회원 주문 시 배송이 완료되면 회원에게 포인트가 지급되고 배송 완료, 주문 완료 상태가 된다.")
     void completeDeliveryTest() throws Exception {
         // mock
         when(orderRepository.findByIdWithFetchJoin(ORDER_ID)).thenReturn(Optional.of(order));
@@ -106,7 +131,6 @@ class OrderServiceTest {
         assertThat(member.getPoint()).isEqualTo(BASE_POINT + EARNED_POINT);
         assertThat(delivery.getDeliveryStatus()).isEqualTo(DeliveryStatus.COMPLETED);
     }
-
 
     private void mockingData() {
         delivery = new Delivery(RECIPIENT_NAME, RECIPIENT_CONTACT, RECIPIENT_ADDRESS, MEMO);
@@ -134,6 +158,24 @@ class OrderServiceTest {
         orderParam.setDeliveryFee(DELIVERY_FEE);
         orderParam.setPaymentAmount(PAYMENT_AMOUNT);
         orderParam.setUsedPoint(USED_POINT);
+
+        List<ItemCountRequest> itemRequests = new ArrayList<>();
+        itemRequests.add(new ItemCountRequest(items.get(0).getId(), 1));// 상품1을 1개 구매
+        itemRequests.add(new ItemCountRequest(items.get(1).getId(), 2));// 상품2을 2개 구매
+        itemRequests.add(new ItemCountRequest(items.get(2).getId(), 3));// 상품3을 3개 구매
+        orderParam.setOrderItemRequests(itemRequests);
+        return orderParam;
+    }
+
+    private OrderGuestCreateParam getOrderGuestCreateParam() {
+        OrderGuestCreateParam orderParam = new OrderGuestCreateParam();
+        orderParam.setRecipientName(RECIPIENT_NAME);
+        orderParam.setRecipientContact(RECIPIENT_CONTACT);
+        orderParam.setRecipientAddress(RECIPIENT_ADDRESS);
+        orderParam.setMemo(MEMO);
+        orderParam.setDeliveryFee(DELIVERY_FEE);
+        orderParam.setPaymentAmount(PAYMENT_AMOUNT);
+        orderParam.setGuestPassword(GUEST_PASSWORD);
 
         List<ItemCountRequest> itemRequests = new ArrayList<>();
         itemRequests.add(new ItemCountRequest(items.get(0).getId(), 1));// 상품1을 1개 구매
