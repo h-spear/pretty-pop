@@ -1,6 +1,5 @@
 package prettypop.shop.repository;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -30,6 +29,12 @@ class MemberRepositoryTest {
         Member member = Member.builder()
                 .username("username")
                 .password("password")
+                .name("testUser")
+                .birthDate(LocalDate.of(2000,12,14))
+                .gender(Gender.MALE)
+                .nickname("nickname")
+                .phoneNumber("010-1234-5678")
+                .address(new Address("12345", "address1", "address2", null))
                 .build();
         member.addRole("ROLE_ADMIN");
         Member savedMember = memberRepository.save(member);

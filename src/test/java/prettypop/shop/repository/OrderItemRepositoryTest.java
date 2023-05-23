@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import prettypop.shop.entity.*;
 
 import javax.persistence.EntityManager;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -98,7 +99,16 @@ class OrderItemRepositoryTest {
      * Item 5개로 똑같은 Order 2개 생성
      */
     private void initData() {
-        Member member = Member.builder().username("test1").build();
+        Member member = Member.builder()
+                .username("test")
+                .password("password")
+                .name("testUser")
+                .birthDate(LocalDate.of(2000,12,14))
+                .gender(Gender.MALE)
+                .nickname("nickname")
+                .phoneNumber("010-1234-5678")
+                .address(new Address("12345", "address1", "address2", null))
+                .build();
         Member savedMember = memberRepository.save(member);
         memberIdMap.put(0, savedMember.getId());
 
@@ -128,7 +138,7 @@ class OrderItemRepositoryTest {
                 orderItems.add(savedOrderItem);
                 orderItemIdMap.put(i * 5 + j, savedOrderItem.getId());
             }
-            Delivery delivery = new Delivery("test1", null, null, null);
+            Delivery delivery = new Delivery("test", "010-1234-5678", new Address("12345", "address1", "address2", null), null);
 
             Order order = Order.builder()
                     .member(savedMember)
