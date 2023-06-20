@@ -54,18 +54,18 @@
 
 ## ⬛ 도메인 설계
 
--   [Entity](https://github.com/h-spear/pretty-pop/issues/1)
+![ENTITY](docs/ENTITY.png)
 
 <br>
 
 ## ⬛ ERD
 
--   [ERD](https://github.com/h-spear/pretty-pop/issues/61)
+![ERD](docs/ERD.png)
 
 <br>
 
 ## ⬛ API
 
--   [API](https://github.com/h-spear/pretty-pop/issues/24)
+![API](docs/API.png)
 
 <br>
