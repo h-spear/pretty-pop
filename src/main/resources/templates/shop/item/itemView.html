@@ -74,7 +74,13 @@
                                        th:text="|#{label.item.status} : #{itemStatus.used}|">status2</p>
                                 </div>
                                 <p th:text="|#{label.item.salesVolume} : *{salesVolume}#{unit.count}|">Sales Volume : 123</p>
-                                <p th:text="|#{label.item.stock} : *{stockQuantity}#{unit.count}|">Stock : 9999</p>
+
+                                <div th:if="*{stockQuantity > 0}">
+                                    <p th:text="|#{label.item.stock} : *{stockQuantity}#{unit.count}|">Stock : 9999</p>
+                                </div>
+                                <div th:if="*{stockQuantity <= 0}">
+                                    <p class="fs-4 text-danger" th:text="|#{message.emptyStock}|">Empty</p>
+                                </div>
                             </div>
                             <p class="lead" th:if="*{description != null}" th:text="*{description}" style="font-size: 12px">
                                 Lorem ipsum dolor sit amet consectetur adipisicing elit.
@@ -89,7 +95,14 @@
                                 <!-- 구매하기 버튼 -->
                                 <div>
                                     <button class="btn btn-outline-primary flex-shrink-0" type="button"
+                                            th:if="*{stockQuantity > 0}"
                                             th:onclick="createOrder()">
+                                        <span th:text="#{button.item.buy}">buy</span>
+                                    </button>
+                                    <button class="btn btn-outline-primary flex-shrink-0" type="button"
+                                            th:if="*{stockQuantity <= 0}"
+                                            th:onclick="createOrder()"
+                                            disabled>
                                         <span th:text="#{button.item.buy}">buy</span>
                                     </button>
                                 </div>
@@ -101,7 +114,14 @@
 <!--                                        <span th:text="#{button.item.cart}">cart</span>-->
 <!--                                    </a>-->
                                     <button class="btn btn-outline-dark flex-shrink-0 ms-3" type="button"
-                                            onclick="addCart()">
+                                            onclick="addCart()"
+                                            th:if="*{stockQuantity > 0}">
+                                        <span th:text="#{button.item.cart}">cart</span>
+                                    </button>
+                                    <button class="btn btn-outline-dark flex-shrink-0 ms-3" type="button"
+                                            onclick="addCart()"
+                                            th:if="*{stockQuantity <= 0}"
+                                            disabled>
                                         <span th:text="#{button.item.cart}">cart</span>
                                     </button>
                                 </div>
