@@ -150,14 +150,20 @@
                    href="#" th:href="@{/items/{id}(id=${item.id})}"
                    class="col p-2 mb-3 card-effect text-decoration-none text-black">
                     <div class="card h-100 w-100 border-0 mb-3">
-                        <!-- Sale badge-->
-                        <div th:if="${item.purchasePrice < item.originalPrice && itemStat.index <= 2}"
-                             class="badge bg-primary text-white position-absolute"
-                             style="top: 2.0rem; right: 0.5rem">Sale</div>
-                        <!-- Sale badge-->
-                        <div th:if="${item.purchasePrice < item.originalPrice && itemStat.index > 2}"
-                             class="badge bg-primary text-white position-absolute"
-                             style="top: 0.5rem; right: 0.5rem">Sale</div>
+                        <!-- Product image-->
+                        <img class="card-img-top"
+                             style="border-radius: 0%"
+                             src="/images/item/preparing-image.png"
+                             th:if="*{item.getThumbnailImageUrl() == null}"
+                             th:classappend="*{item.stockQuantity <= 0} ? 'opacity-50' : ''"
+                             alt="Not Image" />
+                        <img class="card-img-top"
+                             style="border-radius: 0%"
+                             src=""
+                             th:src="*{item.getThumbnailImageUrl()}"
+                             th:if="*{item.getThumbnailImageUrl() != null}"
+                             th:classappend="*{item.stockQuantity <= 0} ? 'opacity-50' : ''"
+                             alt="Not Image" />
 
                         <!-- Rank badge-->
                         <div th:if="${itemStat.index == 0}"
@@ -170,18 +176,25 @@
                              class="badge bg-info text-white position-absolute"
                              style="top: 0.5rem; right: 0.5rem">3rd</div>
 
-                        <!-- Product image-->
-                        <img class="card-img-top"
-                             style="border-radius: 0%"
-                             src="/images/item/preparing-image.png"
-                             th:if="*{item.getThumbnailImageUrl() == null}"
-                             alt="Not Image" />
-                        <img class="card-img-top"
-                             style="border-radius: 0%"
-                             src=""
-                             th:src="*{item.getThumbnailImageUrl()}"
-                             th:if="*{item.getThumbnailImageUrl() != null}"
-                             alt="Not Image" />
+                        <!-- Sale badge -->
+                        <div th:if="${item.stockQuantity > 0}">
+                            <div th:if="${item.purchasePrice < item.originalPrice && itemStat.index <= 2}"
+                                 class="badge bg-primary text-white position-absolute"
+                                 style="top: 2.0rem; right: 0.5rem">Sale</div>
+                            <div th:if="${item.purchasePrice < item.originalPrice && itemStat.index > 2}"
+                                 class="badge bg-primary text-white position-absolute"
+                                 style="top: 0.5rem; right: 0.5rem">Sale</div>
+                        </div>
+
+                        <!-- Sold out badge -->
+                        <div th:if="${item.stockQuantity <= 0}">
+                            <div th:if="${itemStat.index <= 2}"
+                                 class="badge bg-danger text-white position-absolute"
+                                 style="top: 2.0rem; right: 0.5rem">Sold out</div>
+                            <div th:if="${itemStat.index > 2}"
+                                 class="badge bg-danger text-white position-absolute"
+                                 style="top: 0.5rem; right: 0.5rem">Sold out</div>
+                        </div>
 
                         <!-- Product details-->
                         <div class="card-body p-2">
@@ -257,23 +270,29 @@
                        href="#" th:href="@{/items/{id}(id=${item.id})}"
                        class="col p-2 m-1 card-effect text-decoration-none text-black">
                         <div class="card h-100 w-100 border-0 mb-2">
-                            <!-- Sale badge-->
-                            <div th:if="${item.purchasePrice < item.originalPrice}"
-                                 class="badge bg-primary text-white position-absolute"
-                                 style="top: 0.5rem; right: 0.5rem">Sale</div>
 
                             <!-- Product image-->
                             <img class="card-img-top"
                                  style="border-radius: 0%"
                                  src="/images/item/preparing-image.png"
                                  th:if="*{item.getThumbnailImageUrl() == null}"
+                                 th:classappend="*{item.stockQuantity <= 0} ? 'opacity-50' : ''"
                                  alt="Not Image" />
                             <img class="card-img-top"
                                  style="border-radius: 0%"
                                  src=""
                                  th:src="*{item.getThumbnailImageUrl()}"
                                  th:if="*{item.getThumbnailImageUrl() != null}"
+                                 th:classappend="*{item.stockQuantity <= 0} ? 'opacity-50' : ''"
                                  alt="Not Image" />
+
+                            <!-- Sale badge-->
+                            <div th:if="${item.stockQuantity > 0 && item.purchasePrice < item.originalPrice}"
+                                 class="badge bg-primary text-white position-absolute"
+                                 style="top: 0.5rem; right: 0.5rem">Sale</div>
+                            <div th:if="${item.stockQuantity <= 0}"
+                                 class="badge bg-danger text-white position-absolute"
+                                 style="top: 0.5rem; right: 0.5rem">Sold out</div>
 
                             <!-- Product details-->
                             <div id="itemDetails" class="card-body p-2">

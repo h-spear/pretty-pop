@@ -71,6 +71,10 @@
         #selectFilter > p {
             margin: 0;
         }
+
+        .item-empty-stock {
+            background-color: red;
+        }
     </style>
 
     <div class="max-width-1000 w-100 d-flex justify-content-between">
@@ -268,27 +272,29 @@
                     <a th:each="item: ${itemQueryResults}"
                        href="#" th:href="@{/items/{id}(id=${item.id})}"
                        class="col p-2 mb-3 card-effect text-decoration-none text-black">
+
                         <div class="card h-100 w-100 border-0 mb-3">
-                            <!-- Sale badge-->
-                            <div th:if="${item.purchasePrice < item.originalPrice}"
-                                 class="badge bg-primary text-white position-absolute"
-                                 style="top: 0.5rem; right: 0.5rem">Sale</div>
-                            <!--                        &lt;!&ndash; Cart badge&ndash;&gt;-->
-                            <!--                        <button class="badge border-0 position-absolute d-flex align-items-center badge-cart" style="top: 0.3rem; left: 0.1rem; background: transparent;">-->
-                            <!--                            <i class="fa-solid fa-cart-shopping"></i>-->
-                            <!--                        </button>-->
                             <!-- Product image-->
                             <img class="card-img-top"
                                  style="border-radius: 0%"
                                  src="/images/item/preparing-image.png"
                                  th:if="*{item.getThumbnailImageUrl() == null}"
+                                 th:classappend="*{item.stockQuantity <= 0} ? 'opacity-50' : ''"
                                  alt="Not Image" />
                             <img class="card-img-top"
                                  style="border-radius: 0%"
                                  src=""
                                  th:src="*{item.getThumbnailImageUrl()}"
                                  th:if="*{item.getThumbnailImageUrl() != null}"
+                                 th:classappend="*{item.stockQuantity <= 0} ? 'opacity-50' : ''"
                                  alt="Not Image" />
+                            <!-- Sale badge-->
+                            <div th:if="${item.stockQuantity > 0 && item.purchasePrice < item.originalPrice}"
+                                 class="badge bg-primary text-white position-absolute"
+                                 style="top: 0.5rem; right: 0.5rem">Sale</div>
+                            <div th:if="${item.stockQuantity <= 0}"
+                                 class="badge bg-danger text-white position-absolute"
+                                 style="top: 0.5rem; right: 0.5rem">Sold out</div>
 
                             <!-- Product details-->
                             <div id="itemDetails" class="card-body p-2">
